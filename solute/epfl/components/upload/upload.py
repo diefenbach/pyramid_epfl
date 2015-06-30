@@ -76,6 +76,7 @@ class Upload(FormInputBase):
     compo_js_params = ['fire_change_immediately', 'allowed_file_types', 'show_remove_icon', 'maximum_file_size',
                        'value']
     compo_js_name = 'Upload'
+    compo_js_extras = ['handle_click']
 
     def __init__(self, page, cid, label=None, name=None, default="", validation_type="", **extra_params):
         """Download component.

@@ -3,22 +3,24 @@ div.epfl-upload-file-over {
 }
 
 div.epfl-dropzone {
-    border-width: 2px;
-    border-color: #D7D7D7;
-    border-style: dashed;
+    border: 2px dashed #D7D7D7;
     border-radius: 15px;
+}
+
+div.epfl-dropzone.active {
+    border-color: #1BB7A0;
 }
 
 img.epfl-upload-image {
     width: 100%;
 }
 
-p.epfl-dropzone-addicon{
-    position:relative;
-    top:35%;
+p.epfl-dropzone-addicon {
+    position: relative;
+    top: 35%;
 }
 
 i.epfl-upload-remove-icon {
-    position:absolute;
-    right:15px;
+    position: absolute;
+    right: 15px;
 }

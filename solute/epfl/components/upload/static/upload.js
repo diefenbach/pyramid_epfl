@@ -34,24 +34,91 @@ Object.defineProperty(epfl.TypeAhead.prototype, 'add_icon', {
     }
 });
 
+Object.defineProperty(epfl.TypeAhead.prototype, 'remove_icon', {
+    get: function () {
+        return this.elm.find(".epfl-upload-remove-icon");
+    }
+});
+
+epfl.Upload.prototype.handle_drag_over = function(e) {
+        e.preventDefault();
+        this.add_icon.hide();
+        this.drop_zone.addClass('active');
+};
+
+epfl.Upload.prototype.handle_drag_leave = function(e) {
+        e.preventDefault();
+        this.add_icon.show();
+        this.drop_zone.removeClass('active');
+};
+
+epfl.Upload.prototype.handle_drop = function(e) {
+    //file drop event on drop zone, prevent default for no redirection to file
+    var obj = this;
+    e.preventDefault();
+
+    //show the image and hide the plus icon
+    obj.add_icon.hide();
+    obj.image.show();
+    obj.drop_zone.css({"border-color": "#D7D7D7"});
+
+    //get the html tag of the dragged image
+    var dataTransfer = $(e.dataTransfer.getData('text/html'));
+
+    //extract src and check if the image is from a epfl compo
+    var url = dataTransfer.attr("src");
+    var droppedCid = dataTransfer.data("cid") || null;
+    var isEpflUpload = dataTransfer.hasClass("epfl-upload-image");
+    var isEpflImage = dataTransfer.hasClass("epfl-img-component-image");
+
+
+    var type = null;
+    //if the image has a url(src) its source is from the browser else the source is desktop
+    if (url) {
+        type = "extern";
+        if (isEpflUpload) {
+            type = "epfl_upload_image";
+        }
+        if (isEpflImage) {
+            type = "epfl_image";
+        }
+        obj.image.attr('src', url);
+        sendChange(url, type, droppedCid);
+    } else {
+        //load the desktop file to show it in the image tag
+        var files = e.dataTransfer.files;
+        type = "desktop";
+        if (files.length) {
+
+            if (!validateFile(files[0])) {
+                return;
+            }
+            obj.reader.readAsDataURL(files[0]);
+            obj.reader.onload = readerFinishedLoading;
+        }
+    }
+};
+
+epfl.Upload.prototype.handle_click = function (e) {
+    epfl.ComponentBase.prototype.handle_click.call(this, e);
+    if (obj.drop_zone.is(e.target)) {
+        this.send_event('click', {});
+    }
+};
+
 epfl.Upload.prototype.after_response = function(data) {
     epfl.ComponentBase.prototype.after_response.call(this, data);
 
     var obj = this;
 
     var reader = new FileReader();
+    obj.reader = reader;
 
     /**************************************************************************
      Helper Functions
      *************************************************************************/
 
-    if (typeof String.prototype.endsWith !== 'function') {
-        // Check if the given string ends with the given suffix.
-        // As endsWith will (should) be implemented with ES6 this might get obsolete
-        String.prototype.endsWith = function(suffix){
-            return this.indexOf(suffix, this.length - suffix.length) !== -1;
-        }
-    }
+
 
     var validateFile = function (file) {
         var type_is_allowed = false;
@@ -109,66 +176,6 @@ epfl.Upload.prototype.after_response = function(data) {
      Event Functions
      *************************************************************************/
 
-    //file drop event on drop zone, prevent default for no redirection to file
-    var dropEvent = function (ev) {
-        ev.preventDefault();
-
-        //show the image and hide the plus icon
-        obj.add_icon.hide();
-        obj.image.show();
-        obj.drop_zone.css({"border-color": "#D7D7D7"});
-
-        //get the html tag of the dragged image
-        var dataTransfer = $(ev.dataTransfer.getData('text/html'));
-
-        //extract src and check if the image is from a epfl compo
-        var url = dataTransfer.attr("src");
-        var droppedCid = dataTransfer.data("cid") || null;
-        var isEpflUpload = dataTransfer.hasClass("epfl-upload-image");
-        var isEpflImage = dataTransfer.hasClass("epfl-img-component-image");
-
-
-        var type = null;
-        //if the image has a url(src) its source is from the browser else the source is desktop
-        if (url) {
-            type = "extern";
-            if (isEpflUpload) {
-                type = "epfl_upload_image";
-            }
-            if (isEpflImage) {
-                type = "epfl_image";
-            }
-            obj.image.attr('src', url);
-            sendChange(url, type, droppedCid);
-        } else {
-            //load the desktop file to show it in the image tag
-            var files = ev.dataTransfer.files;
-            type = "desktop";
-            if (files.length) {
-
-                if (!validateFile(files[0])) {
-                    return;
-                }
-                reader.readAsDataURL(files[0]);
-                reader.onload = readerFinishedLoading;
-            }
-        }
-    };
-
-    //drag a file over, prevent default for no redirection
-    var dragOverEvent = function (ev) {
-        ev.preventDefault();
-        obj.add_icon.hide();
-        obj.drop_zone.css({"border-color": "#1BB7A0"});
-    };
-
-    //drag file out event
-    var dragLeaveEvent = function (ev) {
-        ev.preventDefault();
-        obj.add_icon.show();
-        obj.drop_zone.css({"border-color": "#D7D7D7"});
-    };
-
     //fired when the fileinput changes
     var fileInputChange = function (event, data) {
         var file;
@@ -206,14 +213,6 @@ epfl.Upload.prototype.after_response = function(data) {
         reader.onload = readerFinishedLoading;
     };
 
-    var obj.drop_zoneClick = function () {
-        if (obj.params.fire_change_immediately) {
-            epfl.send(epfl.make_component_event(cid, "click", {}));
-        } else {
-            epfl.dispatch_event(cid, "click", {});
-        }
-    };
-
     //Add File Event from file input
     var fileInputAdd = function (evt, data) {
         try {
@@ -231,10 +230,15 @@ epfl.Upload.prototype.after_response = function(data) {
      *************************************************************************/
 
     //Drop Zone Events
-    obj.drop_zone.on("dragover", dragOverEvent);
-    obj.drop_zone.on("dragleave", dragLeaveEvent);
-    obj.drop_zone.on('drop', dropEvent);
-    obj.drop_zone.click(dropZoneClick);
+    obj.drop_zone.on("dragover",  function (e) {
+        obj.handle_drag_over(e);
+    });
+    obj.drop_zone.on("dragleave", function (e) {
+        obj.handle_drag_leave(e);
+    });
+    obj.drop_zone.on('drop', function (e) {
+        obj.handle_drop(e);
+    });
 
     //File Input Events
     $(obj.input_selector).fileupload({
@@ -246,10 +250,19 @@ epfl.Upload.prototype.after_response = function(data) {
     if (obj.params.show_remove_icon) {
         var remove_icon = $("#" + cid + " .epfl-upload-remove-icon");
         if (remove_icon.length) {
-            $(remove_icon).click(function () {
+            obj.remove_icon.click(function () {
                 sendChange(null, null, null);
             });
         }
     }
 
 };
+
+// TODO: Remove this once ES6 is standard!
+if (typeof String.prototype.endsWith !== 'function') {
+    // Check if the given string ends with the given suffix.
+    // As endsWith will (should) be implemented with ES6 this might get obsolete
+    String.prototype.endsWith = function(suffix){
+        return this.indexOf(suffix, this.length - suffix.length) !== -1;
+    }
+}
