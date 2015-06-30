@@ -1,19 +1,45 @@
 epfl.Upload = function (cid, params) {
     epfl.ComponentBase.call(this, cid, params);
+};
+
+epfl.Upload.inherits_from(epfl.ComponentBase);
+
+Object.defineProperty(epfl.TypeAhead.prototype, 'input_selector', {
+    get: function () {
+        return this.elm.find('#' + this.cid + '_input');
+    }
+});
+
+Object.defineProperty(epfl.TypeAhead.prototype, 'img_container', {
+    get: function () {
+        return this.elm.find('#' + this.cid + '_img');
+    }
+});
+
+Object.defineProperty(epfl.TypeAhead.prototype, 'drop_zone', {
+    get: function () {
+        return this.elm.find('div.epfl-dropzone');
+    }
+});
+
+Object.defineProperty(epfl.TypeAhead.prototype, 'image', {
+    get: function () {
+        return this.elm.find('img.epfl-upload-image');
+    }
+});
+
+Object.defineProperty(epfl.TypeAhead.prototype, 'add_icon', {
+    get: function () {
+        return this.elm.find('p.epfl-dropzone-addicon');
+    }
+});
+
+epfl.Upload.prototype.after_response = function(data) {
+    epfl.ComponentBase.prototype.after_response.call(this, data);
+
+    var obj = this;
 
     var reader = new FileReader();
-    //params
-    var fire_change_immediately = params["fire_change_immediately"];
-    var allowed_file_types = params["allowed_file_types"];
-    var show_remove_icon = params["show_remove_icon"];
-
-    //jquery selectors
-    var selector = "#" + cid;
-    var inputSelector = selector + "_input";
-    var img_container = $(selector + '_img');
-    var dropZone = $(selector + " div.epfl-dropzone");
-    var image = $(selector + " img.epfl-upload-image");
-    var addIcon = $(selector + " p.epfl-dropzone-addicon");
 
     /**************************************************************************
      Helper Functions
@@ -31,10 +57,10 @@ epfl.Upload = function (cid, params) {
         var type_is_allowed = false;
         var i = 0;
         //check if file type is allowed
-        if (allowed_file_types) {
+        if (obj.params.allowed_file_types) {
             if (file) {
-                for (; i < allowed_file_types.length; i++){
-                    if(file.name.endsWith(allowed_file_types[i])){
+                for (; i < obj.params.allowed_file_types.length; i++){
+                    if(file.name.endsWith(obj.params.allowed_file_types[i])){
                         type_is_allowed = true;
                     }
                 }
@@ -56,7 +82,7 @@ epfl.Upload = function (cid, params) {
     };
     //Send the change event
     var sendChange = function (value, type, droppedCid) {
-        if (fire_change_immediately) {
+        if (obj.params.fire_change_immediately) {
             epfl.send(epfl.make_component_event(cid, "change", {
                 "value": value,
                 "type": type,
@@ -73,8 +99,8 @@ epfl.Upload = function (cid, params) {
 
     // called when the reader is finished sets the image in the container and fires change event
     var readerFinishedLoading = function () {
-        if (img_container.find('img').length !== 0) {
-            img_container.find('img').attr('src', reader.result);
+        if (obj.img_container.find('img').length !== 0) {
+            obj.img_container.find('img').attr('src', reader.result);
         }
         sendChange(reader.result, "desktop", null)
     };
@@ -88,9 +114,9 @@ epfl.Upload = function (cid, params) {
         ev.preventDefault();
 
         //show the image and hide the plus icon
-        addIcon.hide();
-        image.show();
-        dropZone.css({"border-color": "#D7D7D7"});
+        obj.add_icon.hide();
+        obj.image.show();
+        obj.drop_zone.css({"border-color": "#D7D7D7"});
 
         //get the html tag of the dragged image
         var dataTransfer = $(ev.dataTransfer.getData('text/html'));
@@ -112,7 +138,7 @@ epfl.Upload = function (cid, params) {
             if (isEpflImage) {
                 type = "epfl_image";
             }
-            image.attr('src', url);
+            obj.image.attr('src', url);
             sendChange(url, type, droppedCid);
         } else {
             //load the desktop file to show it in the image tag
@@ -132,15 +158,15 @@ epfl.Upload = function (cid, params) {
     //drag a file over, prevent default for no redirection
     var dragOverEvent = function (ev) {
         ev.preventDefault();
-        addIcon.hide();
-        dropZone.css({"border-color": "#1BB7A0"});
+        obj.add_icon.hide();
+        obj.drop_zone.css({"border-color": "#1BB7A0"});
     };
 
     //drag file out event
     var dragLeaveEvent = function (ev) {
         ev.preventDefault();
-        addIcon.show();
-        dropZone.css({"border-color": "#D7D7D7"});
+        obj.add_icon.show();
+        obj.drop_zone.css({"border-color": "#D7D7D7"});
     };
 
     //fired when the fileinput changes
@@ -180,8 +206,8 @@ epfl.Upload = function (cid, params) {
         reader.onload = readerFinishedLoading;
     };
 
-    var dropZoneClick = function () {
-        if (fire_change_immediately) {
+    var obj.drop_zoneClick = function () {
+        if (obj.params.fire_change_immediately) {
             epfl.send(epfl.make_component_event(cid, "click", {}));
         } else {
             epfl.dispatch_event(cid, "click", {});
@@ -205,19 +231,19 @@ epfl.Upload = function (cid, params) {
      *************************************************************************/
 
     //Drop Zone Events
-    dropZone.on("dragover", dragOverEvent);
-    dropZone.on("dragleave", dragLeaveEvent);
-    dropZone.on('drop', dropEvent);
-    dropZone.click(dropZoneClick);
+    obj.drop_zone.on("dragover", dragOverEvent);
+    obj.drop_zone.on("dragleave", dragLeaveEvent);
+    obj.drop_zone.on('drop', dropEvent);
+    obj.drop_zone.click(dropZoneClick);
 
     //File Input Events
-    $(inputSelector).fileupload({
+    $(obj.input_selector).fileupload({
         add: fileInputAdd,
         dropZone: $("#" + cid + " div.epfl-upload-input-zone")
     });
 
     //Remove Icon Event
-    if (show_remove_icon) {
+    if (obj.params.show_remove_icon) {
         var remove_icon = $("#" + cid + " .epfl-upload-remove-icon");
         if (remove_icon.length) {
             $(remove_icon).click(function () {
@@ -227,5 +253,3 @@ epfl.Upload = function (cid, params) {
     }
 
 };
-
-epfl.Upload.inherits_from(epfl.ComponentBase);
