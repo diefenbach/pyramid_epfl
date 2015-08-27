@@ -45,7 +45,12 @@ var epfl = {};
     epfl.console_log = function () {
         var args = Array.prototype.slice.call(arguments);
         var now = new Date();
-        var error_prefix = "[EPFL JS ERROR]:[" + now.getHours() + ":" + now.getMinutes() + "." + now.getSeconds() + "]:";
+        var error_prefix = "[EPFL JS ERROR]:[";
+        error_prefix += now.getHours() >= 10 ? now.getHours() : "0" + now.getHours();
+        error_prefix += ":";
+        error_prefix += now.getMinutes() >= 10 ? now.getMinutes() : "0" + now.getMinutes();
+        error_prefix += ".";
+        error_prefix += now.getSeconds() + "]:";
         args.unshift(error_prefix);
         console.error.apply(console, args);
     };
