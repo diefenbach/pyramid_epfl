@@ -11,7 +11,7 @@ Function.prototype.inherits_from = function(super_constructor) {
     this.prototype.constructor = super_constructor;
 }; // inheritance
 
-var epfl = new Object();
+var epfl = {};
 
 if (window.epfl_flush_active === undefined) {
     window.epfl_flush_active = false;
@@ -23,7 +23,7 @@ if (window.epfl_flush_again === undefined) {
 
 
 
-epfl_module = function() {
+(function() {
 
     epfl.queue = [];
     epfl.event_id = 0;
@@ -34,22 +34,7 @@ epfl_module = function() {
     epfl.init_page = function(opts) {
         $(".epfl_hover_image").bind_hover_border_events();
         $("body").append("<div id='epfl_please_wait'><i class='fa fa-spinner fa-spin fa-5x text-primary'></i></div>");
-
-        $("#loader").remove(); // remove the std-mcp2 ajax-loader image
-
-/*        var scroll_pos = $(".epfl_scroll_pos").val(); // Restoring Scroll-Pos
-        if (scroll_pos) {
-            var tmp = scroll_pos.split("x");
-            $(document).scrollLeft(parseInt(tmp[0]));
-            $(document).scrollTop(parseInt(tmp[1]));
-        };
-
-
-        $(window).scroll(function() { // Capturing Scroll-Pos
-            var scroll_pos = $(document).scrollLeft() + "x" + $(document).scrollTop();
-            $(".epfl_scroll_pos").val(scroll_pos)
-        });
-*/
+        epfl.pleaseWaitSelector = $("#epfl_please_wait");
 
         epfl.new_tid(opts["tid"], true);
         epfl.ptid = opts["ptid"];
@@ -57,6 +42,15 @@ epfl_module = function() {
         epfl.init_struct();
         epfl.after_response();
     };
+
+    epfl.console_log = function () {
+        var args = Array.prototype.slice.call(arguments);
+        var now = new Date();
+        var error_prefix = "[EPFL JS ERROR]:[" + now.getHours() + ":" + now.getMinutes() + "." + now.getSeconds() + "]:";
+        args.unshift(error_prefix);
+        console.error.apply(console, args);
+    };
+
 
     epfl.dispatch_event = function (elm, type, data) {
         setTimeout(function () {
@@ -118,33 +112,34 @@ epfl_module = function() {
     epfl.init_component = function(cid, class_name, params) {
         var constructor = epfl[class_name];
         if (!constructor) {
-            console.log("JS-ERROR: The component '" + class_name + "' does not exist!");
+            epfl.console_log("The component '" + class_name + "' does not exist!")
             return;
         }
-        var compo_obj = new constructor(cid, params);
-        epfl.components[cid] = compo_obj;
+        epfl.components[cid] = new constructor(cid, params);
     };
 
-    epfl.replace_component = function(cid, parts) {
+    epfl.replace_component = function (cid, parts) {
         for (var part_name in parts) {
-            if (part_name == "js") continue;
-            if (part_name == "prefetch") continue;
-            var part_html = parts[part_name];
-            var epflid = cid;
-            if (part_name != "main") {
-                epflid = cid + "$" + part_name;
+            if (parts.hasOwnProperty(part_name)) {
+                if (part_name == "js") continue;
+                if (part_name == "prefetch") continue;
+                var part_html = parts[part_name];
+                var epflid = cid;
+                if (part_name != "main") {
+                    epflid = cid + "$" + part_name;
+                }
+                var el = $("[epflid='" + epflid + "']");
+                if (el.length == 0) {
+                    epfl.console_log("Element not found!", cid, parts);
+                    return;
+                }
+                var parts_jq = $(part_html);
+                if (parts["prefetch"]) {
+                    $.ajax(parts["prefetch"], {async: false});
+                }
+                el.replaceWith(parts_jq);
+                epfl.init_struct();
             }
-            var el = $("[epflid='" + epflid + "']");
-            if (el.length == 0) {
-                console.log("Element not found!", cid, parts);
-                return;
-            }
-            var parts_jq = $(part_html);
-            if (parts["prefetch"]) {
-                $.ajax(parts["prefetch"], {async: false});
-            }
-            el.replaceWith(parts_jq);
-            epfl.init_struct();
         }
         eval(parts["js"]);
     };
@@ -250,7 +245,7 @@ epfl_module = function() {
             },
             error: function (httpRequest, message, errorThrown) {
                 epfl.show_message({"msg": "Server Error: " + errorThrown, "typ": "error", "fading": true});
-                console.log(httpRequest);
+                epfl.console_log(httpRequest);
                 if (unqueued) {
                     return;
                 }
@@ -284,8 +279,8 @@ epfl_module = function() {
             if (epfl.queue[i]["eq"] == equiv) {
                 epfl.queue.splice(i, 1);
                 break;
-            };
-        };
+            }
+        }
         epflevent["eq"] = equiv;
         epfl.enqueue(epflevent);
     };
@@ -295,14 +290,12 @@ epfl_module = function() {
         for (var i = 0; i < epfl.queue.length; i++) {
             if (epfl.queue[i]["eq"] != equiv) {
                 new_queue.push(epfl.queue[i]);
-            };
-        };
+            }
+        }
         epfl.queue = new_queue;
     };
 
-
     epfl.make_component_event = function(component_id, event_name, params, lazy_mode) {
-
         if (!params) params = {};
         if (!lazy_mode) lazy_mode = false;
 
@@ -315,8 +308,7 @@ epfl_module = function() {
     };
 
     epfl.make_page_event = function(event_name, params) {
-
-        if (!params) params = {};
+        params = params || {};
 
         return {"id": epfl.make_event_id(),
                 "t": "pe",
@@ -329,24 +321,26 @@ epfl_module = function() {
         return epfl.event_id;
     };
 
-    epfl.json_request = function(event, callback_func) {
-        epfl.flush(function() {
+    epfl.json_request = function (event, callback_func) {
+        epfl.flush(function () {
             var ajax_target_url = location.href;
-            $.ajax({url: ajax_target_url,
-                    global: false,
-                    type: "POST",
-                    cache: false,
-                    data: JSON.stringify({"tid": epfl.tid, "q": [event]}),
-                    contentType: "application/json",
-                    dataType: "json",
-                    success: function(data) { callback_func(data) },
-                    error: function(httpRequest, message, errorThrown) {
-                        epfl.show_message({"msg": "txt_system_error: " + errorThrown, "typ": "error", "fading": true});
-                    }
-                   });
+            $.ajax({
+                url: ajax_target_url,
+                global: false,
+                type: "POST",
+                cache: false,
+                data: JSON.stringify({"tid": epfl.tid, "q": [event]}),
+                contentType: "application/json",
+                dataType: "json",
+                success: function (data) {
+                    callback_func(data)
+                },
+                error: function (httpRequest, message, errorThrown) {
+                    epfl.show_message({"msg": "txt_system_error: " + errorThrown, "typ": "error", "fading": true});
+                }
+            });
         });
     };
-
 
     epfl.show_please_wait = function(is_ajax) { // Should be called as onsubmit
         if (is_ajax) {
@@ -355,12 +349,12 @@ epfl_module = function() {
             epfl.show_please_wait_counter = 1;
         }
         if (epfl.show_please_wait_counter == 1) {
-            $('#epfl_please_wait').fadeIn();
+            epfl.pleaseWaitSelector.fadeIn();
         } else {
-            $('#epfl_please_wait').stop(true);
-            $('#epfl_please_wait').show();
+            epfl.pleaseWaitSelector.stop(true);
+            epfl.pleaseWaitSelector.show();
         }
-        $('#epfl_please_wait').center();
+        epfl.pleaseWaitSelector.center();
     };
 
     epfl.hide_please_wait = function(is_ajax) { // Should be called as onsubmit
@@ -370,8 +364,8 @@ epfl_module = function() {
             epfl.show_please_wait_counter = 0;
         }
         if (epfl.show_please_wait_counter == 0) {
-            $('#epfl_please_wait').stop(true);
-            $('#epfl_please_wait').fadeOut();
+            epfl.pleaseWaitSelector.stop(true);
+            epfl.pleaseWaitSelector.fadeOut();
         };
     };
 
@@ -413,27 +407,27 @@ epfl_module = function() {
         }
     };
 
-    epfl.reload_page = function() {
-        var frm = $('<form id="__epfl_submit_form__" method="POST" action="#"></form>');
-        frm.append('<input type="hidden" name="tid" value="' + epfl.tid + '">');
+    epfl.make_submit_form = function (action, tid) {
+        var frm = $('<form id="__epfl_submit_form__" method="POST" action="' + action + '"></form>');
+        if (tid) {
+            frm.append('<input type="hidden" name="tid" value="' + tid + '">');
+        }
         $(document.body).append(frm);
-        $("#__epfl_submit_form__").submit();
-        $("#__epfl_submit_form__").remove();
+        var epfl_submit_form = $("#__epfl_submit_form__");
+        epfl_submit_form.submit();
+        epfl_submit_form.remove();
     };
 
-    epfl.go_next = function(target_url) {
-        var frm = $('<form id="__epfl_submit_form__" method="POST" action="' + encodeURI(target_url) + '"></form>');
-        frm.append('<input type="hidden" name="tid" value="' + epfl.tid + '"');
-        $(document.body).append(frm);
-        $("#__epfl_submit_form__").submit();
-        $("#__epfl_submit_form__").remove();
+    epfl.reload_page = function () {
+        epfl.make_submit_form("#", epfl.tid);
     };
 
-    epfl.jump = function(target_url) {
-        var frm = $('<form id="__epfl_submit_form__" method="POST" action="' + encodeURI(target_url) + '"></form>');
-        $(document.body).append(frm);
-        $("#__epfl_submit_form__").submit();
-        $("#__epfl_submit_form__").remove();
+    epfl.go_next = function (target_url) {
+        epfl.make_submit_form(encodeURI(target_url), epfl.tid);
+    };
+
+    epfl.jump = function (target_url) {
+        epfl.make_submit_form(encodeURI(target_url));
     };
 
     epfl.jump_extern = function(target_url, target) {
@@ -449,10 +443,10 @@ epfl_module = function() {
         }
     };
 
-    epfl.handle_dynamic_extra_content= function(content) {
-        content.forEach(function (data) {
-            $(document.body).append(data)
-        });
+    epfl.handle_dynamic_extra_content = function(content) {
+        $(document.body).append(content.reduce(function (prev, curr) {
+            return prev + cur
+        }));
     };
 
     epfl.new_tid = function (tid, initial) {
@@ -503,13 +497,17 @@ epfl_module = function() {
     /* Lifecycle methods */
     epfl.before_request = function () {
         for (var cid in epfl.components) {
-            epfl.components[cid].before_request();
+            if(epfl.components.hasOwnProperty(cid)) {
+                epfl.components[cid].before_request();
+            }
         }
     };
 
     epfl.before_response = function (data) {
         for (var cid in epfl.components) {
-            epfl.components[cid].before_response(data);
+            if (epfl.components.hasOwnProperty(cid)) {
+                epfl.components[cid].before_response(data);
+            }
         }
     };
 
@@ -523,10 +521,8 @@ epfl_module = function() {
             compo._elm = compo.elm;
         }
     };
+})();
 
-};
-
-epfl_module();
 
 $(window).bind("beforeunload", epfl.unload_page);
 
