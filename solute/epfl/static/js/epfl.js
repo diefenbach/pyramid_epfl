@@ -1,17 +1,16 @@
-
 if (typeof Object.create !== 'function') {
     Object.create = function (o) {
-        function F() {};
+        function F() {
+        }
+
         F.prototype = o;
         return new F();
     };
 } // for older browsers
-Function.prototype.inherits_from = function(super_constructor) {
+Function.prototype.inherits_from = function (super_constructor) {
     this.prototype = Object.create(super_constructor.prototype);
     this.prototype.constructor = super_constructor;
 }; // inheritance
-
-var epfl = {};
 
 if (window.epfl_flush_active === undefined) {
     window.epfl_flush_active = false;
@@ -21,18 +20,18 @@ if (window.epfl_flush_again === undefined) {
     window.epfl_flush_again = false;
 }
 
+var epfl = {};
 
-
-(function() {
-
+(function () {
     epfl.queue = [];
     epfl.event_id = 0;
     epfl.components = {};
     epfl.component_data = {};
     epfl.show_please_wait_counter = 0;
+    epfl.flush_queue = [];
+    epfl.flush_queue_active = false;
 
-    epfl.init_page = function(opts) {
-        $(".epfl_hover_image").bind_hover_border_events();
+    epfl.init_page = function (opts) {
         $("body").append("<div id='epfl_please_wait'><i class='fa fa-spinner fa-spin fa-5x text-primary'></i></div>");
         epfl.pleaseWaitSelector = $("#epfl_please_wait");
 
@@ -50,7 +49,6 @@ if (window.epfl_flush_again === undefined) {
         args.unshift(error_prefix);
         console.error.apply(console, args);
     };
-
 
     epfl.dispatch_event = function (elm, type, data) {
         setTimeout(function () {
@@ -109,10 +107,10 @@ if (window.epfl_flush_again === undefined) {
         }, 0);
     };
 
-    epfl.init_component = function(cid, class_name, params) {
+    epfl.init_component = function (cid, class_name, params) {
         var constructor = epfl[class_name];
         if (!constructor) {
-            epfl.console_log("The component '" + class_name + "' does not exist!")
+            epfl.console_log("The component '", class_name, "' does not exist!");
             return;
         }
         epfl.components[cid] = new constructor(cid, params);
@@ -144,15 +142,15 @@ if (window.epfl_flush_again === undefined) {
         eval(parts["js"]);
     };
 
-    epfl.hide_component = function(cid) {
-          $("[epflid='" + cid + "']").replaceWith("<div epflid='" + cid + "'></div>");
+    epfl.hide_component = function (cid) {
+        $("[epflid='" + cid + "']").replaceWith("<div epflid='" + cid + "'></div>");
     };
 
-    epfl.switch_component = function(cid) {
+    epfl.switch_component = function (cid) {
         $('[epflid=' + cid + ']').remove();
     };
 
-    epfl.destroy_component = function(cid) {
+    epfl.destroy_component = function (cid) {
         var compo = epfl.components[cid];
         if (compo) {
             compo.destroy();
@@ -161,15 +159,12 @@ if (window.epfl_flush_again === undefined) {
         $('[epflid=' + cid + ']').remove();
     };
 
-    epfl.unload_page = function() {
+    epfl.unload_page = function () {
         epfl.flush(null, true);
     };
 
-    epfl.flush_queue = [];
-    epfl.flush_queue_active = false;
 
     epfl.flush = function (callback_func, sync) {
-
         if (epfl.queue.length == 0) {
             // queue empty
             if (callback_func) {
@@ -209,7 +204,6 @@ if (window.epfl_flush_again === undefined) {
     };
 
     epfl.post_event = function (queue, sync, callback_func, unqueued) {
-
         return $.ajax({
             url: location.href,
             global: false,
@@ -223,15 +217,19 @@ if (window.epfl_flush_again === undefined) {
                 try {
                     data = $.parseJSON(data);
                     epfl.before_response(data);
-                } catch(e) {
+                } catch (e) {
                     if (e.name != 'SyntaxError') {
                         throw e;
                     }
                     try {
                         epfl.before_response();
                         $.globalEval(data);
-                    } catch(e) {
-                        epfl.show_message({"msg": "Error (" + e.name + ") when running Server response: " + e.message, "typ": "error", "fading": true});
+                    } catch (e) {
+                        epfl.show_message({
+                            "msg": "Error (" + e.name + ") when running Server response: " + e.message,
+                            "typ": "error",
+                            "fading": true
+                        });
                     }
                 }
                 if (callback_func) {
@@ -261,20 +259,20 @@ if (window.epfl_flush_again === undefined) {
         });
     };
 
-    epfl.send = function(epflevent, callback_func) {
+    epfl.send = function (epflevent, callback_func) {
         epfl.enqueue(epflevent);
         epfl.flush(callback_func);
     };
 
-    epfl.send_async = function(epflevent, callback_func) {
+    epfl.send_async = function (epflevent, callback_func) {
         epfl.post_event([epflevent], false, callback_func, true);
     };
 
-    epfl.enqueue = function(epflevent) {
+    epfl.enqueue = function (epflevent) {
         epfl.queue.push(epflevent);
     };
 
-    epfl.repeat_enqueue = function(epflevent, equiv) {
+    epfl.repeat_enqueue = function (epflevent, equiv) {
         for (var i = 0; i < epfl.queue.length; i++) {
             if (epfl.queue[i]["eq"] == equiv) {
                 epfl.queue.splice(i, 1);
@@ -285,7 +283,7 @@ if (window.epfl_flush_again === undefined) {
         epfl.enqueue(epflevent);
     };
 
-    epfl.dequeue = function(equiv) {
+    epfl.dequeue = function (equiv) {
         var new_queue = [];
         for (var i = 0; i < epfl.queue.length; i++) {
             if (epfl.queue[i]["eq"] != equiv) {
@@ -295,28 +293,32 @@ if (window.epfl_flush_again === undefined) {
         epfl.queue = new_queue;
     };
 
-    epfl.make_component_event = function(component_id, event_name, params, lazy_mode) {
+    epfl.make_component_event = function (component_id, event_name, params, lazy_mode) {
         if (!params) params = {};
         if (!lazy_mode) lazy_mode = false;
 
-        return {"id": epfl.make_event_id(),
-                "t": "ce",
-                "lazy_mode": lazy_mode,
-                "cid": component_id,
-                "e": event_name,
-                "p": params};
+        return {
+            "id": epfl.make_event_id(),
+            "t": "ce",
+            "lazy_mode": lazy_mode,
+            "cid": component_id,
+            "e": event_name,
+            "p": params
+        };
     };
 
-    epfl.make_page_event = function(event_name, params) {
+    epfl.make_page_event = function (event_name, params) {
         params = params || {};
 
-        return {"id": epfl.make_event_id(),
-                "t": "pe",
-                "e": event_name,
-                "p": params};
+        return {
+            "id": epfl.make_event_id(),
+            "t": "pe",
+            "e": event_name,
+            "p": params
+        };
     };
 
-    epfl.make_event_id = function() {
+    epfl.make_event_id = function () {
         epfl.event_id += 1;
         return epfl.event_id;
     };
@@ -342,7 +344,7 @@ if (window.epfl_flush_again === undefined) {
         });
     };
 
-    epfl.show_please_wait = function(is_ajax) { // Should be called as onsubmit
+    epfl.show_please_wait = function (is_ajax) { // Should be called as onsubmit
         if (is_ajax) {
             epfl.show_please_wait_counter += 1;
         } else {
@@ -354,10 +356,10 @@ if (window.epfl_flush_again === undefined) {
             epfl.pleaseWaitSelector.stop(true);
             epfl.pleaseWaitSelector.show();
         }
-        epfl.pleaseWaitSelector.center();
+        epfl.center_element(epfl.pleaseWaitSelector);
     };
 
-    epfl.hide_please_wait = function(is_ajax) { // Should be called as onsubmit
+    epfl.hide_please_wait = function (is_ajax) { // Should be called as onsubmit
         if (is_ajax) {
             epfl.show_please_wait_counter -= 1;
         } else {
@@ -366,10 +368,10 @@ if (window.epfl_flush_again === undefined) {
         if (epfl.show_please_wait_counter == 0) {
             epfl.pleaseWaitSelector.stop(true);
             epfl.pleaseWaitSelector.fadeOut();
-        };
+        }
     };
 
-    epfl.show_message = function(params) {
+    epfl.show_message = function (params) {
         var msg = params['msg'];
         var typ = params['typ'];
         var fading = params['fading'];
@@ -430,12 +432,12 @@ if (window.epfl_flush_again === undefined) {
         epfl.make_submit_form(encodeURI(target_url));
     };
 
-    epfl.jump_extern = function(target_url, target) {
+    epfl.jump_extern = function (target_url, target) {
         var win = window.open(target_url, target);
         win.focus();
     };
 
-    epfl.exec_in_page = function(tid, js_src, search_downwards) {
+    epfl.exec_in_page = function (tid, js_src, search_downwards) {
         if (epfl.tid == tid) {
             eval(js_src);
         } else {
@@ -443,7 +445,7 @@ if (window.epfl_flush_again === undefined) {
         }
     };
 
-    epfl.handle_dynamic_extra_content = function(content) {
+    epfl.handle_dynamic_extra_content = function (content) {
         $(document.body).append(content.reduce(function (prev, curr) {
             return prev + cur
         }));
@@ -463,7 +465,7 @@ if (window.epfl_flush_again === undefined) {
         var params = {};
         if (prmstr != null && prmstr != "") {
             var prmarr = prmstr.split("&");
-            for ( var i = 0; i < prmarr.length; i++) {
+            for (var i = 0; i < prmarr.length; i++) {
                 var tmparr = prmarr[i].split("=");
                 if (tmparr[0] != "tid") {
                     params[tmparr[0]] = tmparr[1];
@@ -485,7 +487,7 @@ if (window.epfl_flush_again === undefined) {
         }
     };
 
-    History.Adapter.bind(window,'statechange',function(){
+    History.Adapter.bind(window, 'statechange', function () {
         var state = History.getState();
         if (epfl.tid == state.data.tid) {
             return;
@@ -497,7 +499,7 @@ if (window.epfl_flush_again === undefined) {
     /* Lifecycle methods */
     epfl.before_request = function () {
         for (var cid in epfl.components) {
-            if(epfl.components.hasOwnProperty(cid)) {
+            if (epfl.components.hasOwnProperty(cid)) {
                 epfl.components[cid].before_request();
             }
         }
@@ -513,56 +515,29 @@ if (window.epfl_flush_again === undefined) {
 
     epfl.after_response = function () {
         for (var cid in epfl.components) {
-            var compo = epfl.components[cid];
-            if (compo._elm && compo._elm.get(0) == compo.elm.get(0)) {
-                continue;
+            if (epfl.components.hasOwnProperty(cid)) {
+                var compo = epfl.components[cid];
+                if (compo._elm && compo._elm.get(0) == compo.elm.get(0)) {
+                    continue;
+                }
+                compo.after_response();
+                compo._elm = compo.elm;
             }
-            compo.after_response();
-            compo._elm = compo.elm;
         }
     };
+
+    epfl.center_element = function (element, parent) {
+        if (parent) {
+            parent = this.parent();
+        } else {
+            parent = window;
+        }
+        element.css({
+            "position": "absolute",
+            "top": ((($(parent).height() - element.outerHeight()) / 2) + $(parent).scrollTop() + "px"),
+            "left": ((($(parent).width() - element.outerWidth()) / 2) + $(parent).scrollLeft() + "px")
+        });
+    }
 })();
 
-
 $(window).bind("beforeunload", epfl.unload_page);
-
-(function($) {
-    jQuery.fn.extend({
-        highlight_hover_border: function () {
-            this.removeClass("epfl_hover_image");
-            this.addClass("epfl_hover_image_selected");
-            this.unbind_hover_border_events();
-            this.css("border-color", "blue");
-        },
-        unhighlight_hover_border: function () {
-            this.addClass("epfl_hover_image");
-            this.removeClass("epfl_hover_image_selected");
-            this.bind_hover_border_events();
-            this.css("border-color", "transparent");
-        },
-        unbind_hover_border_events: function () {
-            this.unbind("mouseenter mouseleave");
-        },
-        bind_hover_border_events: function () {
-            this.hover(
-                function () {
-                    $(this).css("border-color", "#8080ff");
-                },
-                function () {
-                    $(this).css("border-color", "transparent");
-                });
-        },
-        center: function (parent) {
-            if (parent) {
-                parent = this.parent();
-            } else {
-                parent = window;
-            }
-            this.css({
-                "position": "absolute",
-                "top": ((($(parent).height() - this.outerHeight()) / 2) + $(parent).scrollTop() + "px"),
-                "left": ((($(parent).width() - this.outerWidth()) / 2) + $(parent).scrollLeft() + "px")
-            });
-        }
-    });
-})(jQuery);
