@@ -280,7 +280,7 @@ def test_change_dropzone_fileinput_no_preview(page):
     assert compo.get_value() == IMAGE_BASE_64_BROWSER, "Wrong Value"
     assert base64.b64encode(compo.get_as_binary()) == IMAGE_BASE_64_SERVER, "get as binary wrong result"
 
-    assert_remove_icon(compo)
+    # assert_remove_icon(compo)
 
     compo.handle_remove_icon()
     compo.render_cache = None

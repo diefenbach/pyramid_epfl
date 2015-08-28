@@ -37,6 +37,7 @@ var epfl = {};
 
         epfl.new_tid(opts["tid"], true);
         epfl.ptid = opts["ptid"];
+        epfl.log_time = opts["log_time"];
         $(document).attr("data:tid", epfl.tid);
         epfl.init_struct();
         epfl.after_response();
@@ -209,6 +210,7 @@ var epfl = {};
     };
 
     epfl.post_event = function (queue, sync, callback_func, unqueued) {
+
         return $.ajax({
             url: location.href,
             global: false,
@@ -228,7 +230,19 @@ var epfl = {};
                     }
                     try {
                         epfl.before_response();
+                        var start;
+                        try {
+                            start = window.performance.now();
+                        } catch (e) {
+                        }
                         $.globalEval(data);
+                        try {
+                            if (epfl.log_time && start && !unqueued) {
+                                var time_used = window.performance.now() - start;
+                                epfl.send_async(epfl.make_page_event("log_time", {time_used: time_used}));
+                            }
+                        } catch (e) {
+                        }
                     } catch (e) {
                         epfl.show_message({
                             "msg": "Error (" + e.name + ") when running Server response: " + e.message,
@@ -248,7 +262,7 @@ var epfl = {};
             },
             error: function (httpRequest, message, errorThrown) {
                 epfl.show_message({"msg": "Server Error: " + errorThrown, "typ": "error", "fading": true});
-                epfl.console_log(httpRequest);
+                console.log(httpRequest);
                 if (unqueued) {
                     return;
                 }
@@ -263,7 +277,7 @@ var epfl = {};
             }
         });
     };
-
+    
     epfl.send = function (epflevent, callback_func) {
         epfl.enqueue(epflevent);
         epfl.flush(callback_func);

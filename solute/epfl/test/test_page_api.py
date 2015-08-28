@@ -106,7 +106,7 @@ def test_component_regeneration_performance(pyramid_req):
                                          ('child_node_0', None))})
 
     # There still is a non linear scaling factor in EPFLs rendering process.The non linear part is strongly depth
-    # dependent so this test reflects what happens in 2 layers with 5050 child components total.
+    # dependent so this test reflects what happens in 2 layers with 10.000 child components total.
     compo_depth = 10
     compo_width = 1000
 

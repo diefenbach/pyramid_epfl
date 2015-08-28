@@ -42,6 +42,25 @@ def generate_dynamic_class_id():
     return "{0:08x}".format(DYNAMIC_CLASS_COUNTER.next())
 
 
+def log_timing(key, timing, server=None, port=None, request=None):
+    if not server or not port:
+        if not request:
+            request = threadlocal.get_current_request()
+        registry = request.registry
+        settings = registry.settings
+        if not server:
+            server = settings.get('epfl.performance_log.server')
+        if not port:
+            port = int(settings.get('epfl.performance_log.port'))
+
+    if use_statsd:
+        client = statsd.StatsClient(server, port)
+    else:
+        client = pystatsd.Client(server, port)
+
+    client.timing(key, timing)
+
+
 class Lifecycle(object):
     _state = {}
 
@@ -123,12 +142,7 @@ class Lifecycle(object):
             lifecycle_name=lifecycle_name.replace('.', '_'),
         )
 
-        if use_statsd:
-            client = statsd.StatsClient(server, port)
-        else:
-            client = pystatsd.Client(server, port)
-
-        client.timing(key, int((self.end_time - self.start_time) * 1000))
+        log_timing(key, int((self.end_time - self.start_time) * 1000), server=server, port=port)
 
 
 class DictTransformer(object):

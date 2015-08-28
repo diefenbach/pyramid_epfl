@@ -10,6 +10,7 @@ from pyramid.response import Response
 from pyramid import security
 
 import ujson as json
+import socket
 
 from solute.epfl.core import epflclient, epflutil, epflacl
 from solute.epfl.core.epflutil import Lifecycle
@@ -325,7 +326,8 @@ class Page(object):
         """ returns a js-snipped which initializes the page. called only once per page """
 
         opts = {"tid": self.transaction.get_id(),
-                "ptid": self.transaction.get_pid()}
+                "ptid": self.transaction.get_pid(),
+                "log_time": self.request.registry.settings.get('epfl.performance_log.enabled') == 'True'}
 
         return "epfl.init_page(" + json.encode(opts) + ")"
 
@@ -454,6 +456,24 @@ class Page(object):
         Trigger a redraw for the root_node.
         """
         self.root_node.redraw()
+
+    def handle_log_time(self, time_used):
+        request = self.request
+        settings = request.registry.settings
+
+        route_name = request.matched_route.name
+
+        key = settings.get(
+            'epfl.performance_log.prefix',
+            'epfl.performance.{route_name}.{lifecycle_name}'
+        ).format(
+            host=socket.gethostname().replace('.', '_'),
+            fqdn=socket.getfqdn().replace('.', '_'),
+            route_name=route_name.replace('.', '_'),
+            lifecycle_name="js_parsing",
+        )
+
+        epflutil.log_timing(key, time_used, request=self.request)
 
     def add_js_response(self, js_string):
         """

@@ -823,7 +823,10 @@ class ComponentBase(object):
             # Render context can be supplied as a dict.
             js_raw.append(env.get_template(js_part).render(context))
 
-        self.render_cache['main'] = jinja2.Markup(env.get_template(self.template_name).render(context).strip())
+        template = env.get_template(self.template_name)
+        rendered_data = template.render(context)
+        rendered_data = rendered_data.strip()
+        self.render_cache['main'] = jinja2.Markup(rendered_data)
 
         handles = self.get_handles()
         if handles:
@@ -1393,8 +1396,10 @@ class ComponentList(MutableSequence):
         return len(self.container_compo.struct_dict)
 
     def __getitem__(self, index):
-        cid = self.container_compo.struct_dict.keys()[index]
-        return getattr(self.container_compo.page, cid)
+        return self.container_compo.page.transaction.get_component_instance(
+            self.container_compo.page,
+            self.container_compo.struct_dict._keys[index]
+        )
 
     def __delitem__(self, index):
         pass
