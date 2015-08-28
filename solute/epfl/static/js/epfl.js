@@ -61,7 +61,7 @@ epfl_module = function() {
     epfl.dispatch_event = function (elm, type, data) {
         setTimeout(function () {
             if (typeof elm == 'string') {
-                elm = $('[epflid=' + elm + ']');
+                elm = $('.epflid_class_' + elm + '');
             }
             if (elm.length == 0) {
                 return;
@@ -134,7 +134,7 @@ epfl_module = function() {
             if (part_name != "main") {
                 epflid = cid + "$" + part_name;
             }
-            var el = $("[epflid='" + epflid + "']");
+            var el = $(".epflid_class_" + epflid + "");
             if (el.length == 0) {
                 console.log("Element not found!", cid, parts);
                 return;
@@ -150,11 +150,11 @@ epfl_module = function() {
     };
 
     epfl.hide_component = function(cid) {
-          $("[epflid='" + cid + "']").replaceWith("<div epflid='" + cid + "'></div>");
+          $(".epflid_class_" + cid + "").replaceWith("<div epflid='" + cid + "'></div>");
     };
 
     epfl.switch_component = function(cid) {
-        $('[epflid=' + cid + ']').remove();
+        $('.epflid_class_' + cid + '').remove();
     };
 
     epfl.destroy_component = function(cid) {
@@ -163,7 +163,7 @@ epfl_module = function() {
             compo.destroy();
             delete epfl.components[cid];
         }
-        $('[epflid=' + cid + ']').remove();
+        $('.epflid_class_' + cid + '').remove();
     };
 
     epfl.unload_page = function() {

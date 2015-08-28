@@ -22,7 +22,7 @@ epfl.ComponentBase = function (cid, params) {
 
 Object.defineProperty(epfl.ComponentBase.prototype, 'elm', {
     get: function () {
-        return $("[epflid='" + this.cid + "']");
+        return $(".epflid_class_" + this.cid + "");
     }
 });
 

@@ -17,6 +17,8 @@ import jinja2
 import jinja2.runtime
 from jinja2.exceptions import TemplateNotFound
 
+import re
+
 
 class MissingContainerComponentException(Exception):
     pass
@@ -825,7 +827,20 @@ class ComponentBase(object):
 
         template = env.get_template(self.template_name)
         rendered_data = template.render(context)
-        rendered_data = rendered_data.strip()
+
+        pattern = re.compile('[^<]*<[^>]*class="([^"]*)"')
+        class_pattern = re.compile('class="[^"]*"', flags=re.MULTILINE)
+        start_pattern = re.compile('[^<]*(<[^ >]*)')
+        matches = pattern.match(rendered_data)
+        css_cls = 'epflid_class_' + self.cid
+        if matches:
+            css_cls += ' ' + matches.groups()[0]
+            rendered_data = class_pattern.sub('', rendered_data, count=1)
+
+        tag = start_pattern.match(rendered_data).groups()[0]
+
+        rendered_data = start_pattern.sub(tag + ' class="%s" ' % css_cls, rendered_data, count=1)
+
         self.render_cache['main'] = jinja2.Markup(rendered_data)
 
         handles = self.get_handles()
