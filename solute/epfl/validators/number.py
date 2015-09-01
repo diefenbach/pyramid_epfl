@@ -17,7 +17,8 @@ class NumberValidator(ValidatorBase):
         """
         if (min_value or max_value) and error_message == 'Value is required!':
             error_message = 'Value is outside of limit!'
-        super(NumberValidator, self).__init__(value=value, error_message=error_message, *args, **kwargs)
+        super(NumberValidator, self).__init__(value=value, min_value=min_value, max_value=max_value,
+                                              error_message=error_message, *args, **kwargs)
 
     def validate(self, value=None, min_value=None, max_value=None, error_message=None, **kwargs):
         # Check if mandatory and present.
