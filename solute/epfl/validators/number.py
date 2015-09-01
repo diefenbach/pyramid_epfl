@@ -32,18 +32,18 @@ class NumberValidator(ValidatorBase):
         # Can value be cast to float or int respectively.
         try:
             if self.float:
-                float(value)
+                value = float(value)
             else:
-                int(value)
+                value = int(value)
         except ValueError:
             self.error_message = error_message
             return False
 
         # Ensure value is within boundaries of min_value and max_value respectively.
-        if min_value is not None and int(value) < min_value:
+        if min_value is not None and value < min_value:
             self.error_message = error_message
             return False
-        elif max_value is not None and int(value) > max_value:
+        elif max_value is not None and value > max_value:
             self.error_message = error_message
             return False
 
