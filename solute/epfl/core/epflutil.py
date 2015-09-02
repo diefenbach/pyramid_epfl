@@ -16,6 +16,7 @@ from solute.epfl import core
 import threading
 import functools
 import itertools
+from os import getpid
 
 # statsd is preferred over pystatsd since the latter is apparently not maintained any longer.
 use_statsd = True
@@ -33,7 +34,8 @@ DYNAMIC_CLASS_COUNTER = itertools.count()
 def generate_cid():
     """Generates a CID using next(), which is an atomic operation on itertools.count() generators.
     """
-    return "{0:08x}".format(COMPONENT_COUNTER.next())
+    prefix = socket.getfqdn().replace('.', '_')
+    return "{0}_{1}_{2:08x}".format(prefix, getpid(), COMPONENT_COUNTER.next())
 
 
 def generate_dynamic_class_id():
