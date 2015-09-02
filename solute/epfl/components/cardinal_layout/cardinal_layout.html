@@ -1,4 +1,11 @@
-<div class="{{ 'col-sm-12' if compo.container_compo else ('container' if (not compo.constrained is defined and compo.constrained) else 'container-fluid') }}{{ " "+compo.css_cls if compo.css_cls else "" }}"
+{% if compo.container_compo %}
+    {% set container_type = "col-sm-12" %}
+{% elif compo.constrained is defined and compo.constrained %}
+    {% set container_type = "container" %}
+{% else %}
+    {% set container_type = "container-fluid" %}
+{% endif %}
+<div class="{{ container_type }}{{ " "+compo.css_cls if compo.css_cls else "" }}"
      id="{{compo.cid}}" epflid="{{ compo.cid }}">
     {% if compo.cardinal_components('north') and 'north' in compo.plain %}
     <div class="row">
