@@ -28,14 +28,14 @@ except ImportError:
 
 
 COMPONENT_COUNTER = itertools.count()
+COMPONENT_COUNTER_PREFIX = socket.getfqdn().replace('.', '_')
 DYNAMIC_CLASS_COUNTER = itertools.count()
 
 
 def generate_cid():
     """Generates a CID using next(), which is an atomic operation on itertools.count() generators.
     """
-    prefix = socket.getfqdn().replace('.', '_')
-    return "{0}_{1}_{2:08x}".format(prefix, getpid(), COMPONENT_COUNTER.next())
+    return "{0}_{1}_{2:08x}".format(COMPONENT_COUNTER_PREFIX, getpid(), COMPONENT_COUNTER.next())
 
 
 def generate_dynamic_class_id():
