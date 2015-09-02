@@ -135,6 +135,8 @@ class Transaction(MutableMapping):
         """
         if cid not in self.instances:
             compo_info = self.get_component(cid)
+            if compo_info is None:
+                raise Exception('Component with cid %s not found in transaction.' % cid)
             ubc = epflcomponentbase.UnboundComponent.create_from_state(compo_info['class'])
             self.instances[cid] = ubc(page,
                                       cid,

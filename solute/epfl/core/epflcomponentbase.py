@@ -1396,10 +1396,14 @@ class ComponentList(MutableSequence):
         return len(self.container_compo.struct_dict)
 
     def __getitem__(self, index):
-        return self.container_compo.page.transaction.get_component_instance(
-            self.container_compo.page,
-            self.container_compo.struct_dict._keys[index]
-        )
+        try:
+            return self.container_compo.page.transaction.get_component_instance(
+                self.container_compo.page,
+                self.container_compo.struct_dict._keys[index]
+            )
+        except Exception as e:
+            e.message += '\nParent cid was %s.' % self.container_compo.cid
+            raise e
 
     def __delitem__(self, index):
         pass
