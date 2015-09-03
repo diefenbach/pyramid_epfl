@@ -16,7 +16,6 @@ class ListLayout(epflcomponentbase.ComponentContainerBase):
     #: identify the actual list type
     list_type = ["list-layout"]
 
-
     def __init__(self, page, cid, **extra_params):
         """Simple list style container component.
         """

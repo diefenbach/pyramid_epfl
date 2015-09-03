@@ -1,11 +1,19 @@
 {% macro render() %}
     {% set compo = kwargs.compo %}
-    {% if compo.height %}
-    <div class="epfl-list" style="height: {{ compo.height }}px;{{ " display: none;" if compo.hide_list else "" }}"
-         height="{{ compo.height }}">
+    {% set add_attr = '' %}
+    {% if compo.height and compo.hide_list %}
+        {% set add_attr = ' style="height: %spx; display: none;" height="%s"' % (compo.height, compo.height) %}
+    {% elif compo.height and not compo.hide_list %}
+        {% set add_attr = ' style="height: %spx;" height="%s"' % (compo.height, compo.height) %}
+    {% elif compo.hide_list %}
+        {% set add_attr = ' style="display: none;"' %}
     {% else %}
-    <div class="epfl-list">
+        {% set add_attr = '' %}
     {% endif %}
-    {{ caller() }}
+    {% if compo.hide_list %}
+        {% set hide = 'display: none; ' %}
+    {% endif %}
+    <div class="epfl-list"{{ add_attr }}>
+        {{ caller() }}
     </div>
 {% endmacro %}
