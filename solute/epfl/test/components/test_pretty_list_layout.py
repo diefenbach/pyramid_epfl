@@ -13,11 +13,6 @@ def bool_quad(request, bool_toggle):
     return request.param, bool_toggle
 
 
-@pytest.fixture(params=['center', 'west', 'east', 'north', 'south'])
-def cardinal(request):
-    return request.param
-
-
 def test_height_and_hidden(page, bool_quad):
     height_toggle, visible_toggle = bool_quad
     height = None
@@ -40,3 +35,14 @@ def test_height_and_hidden(page, bool_quad):
         assert 'display: none;' in page.root_node.render()
     else:
         assert 'display: none;' not in page.root_node.render()
+
+
+def test_list_style(page):
+    page.root_node = components.PrettyListLayout(
+        list_type=components.PrettyListLayout.list_type + ['additional-list-class']
+    )
+
+    page.handle_transaction()
+
+    pattern = re.compile('class="[^"]*additional-list-class[^"]*"')
+    assert pattern.search(page.root_node.render())
