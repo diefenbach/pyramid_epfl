@@ -4,9 +4,9 @@
     {% if compo.row_count > compo.row_limit and compo.show_pagination %}
     <div class="col-sm-12 text-center">
         <ul class="pagination-sm pagination" id="{{ compo.cid }}_pagination" style="margin: 5px 0; ">
-        	{% set current_page = (compo.row_offset/compo.row_limit)|round(method='floor')|int %}
+            {% set current_page = (compo.row_offset/compo.row_limit)|round(method='floor')|int %}
             {% set max_page = (compo.row_count/compo.row_limit)|round(method='floor')|int %}
-            {% if max_page > 4 %}
+            {% if max_page > (compo.visible_pages_limit - 1) %}
             <li class="{{ '' if compo.row_offset > 0 else 'disabled' }}">
                 <span aria-hidden="true">&laquo;</span>
             </li>
@@ -14,30 +14,31 @@
             <li class="{{ '' if compo.row_offset > 0 else 'disabled' }}">
                 <span aria-hidden="true">&lt;</span>
             </li>
-            {% if max_page > 4 %}
-            	{% if (max_page-current_page) < 2 %}
-            		{% set pagination_start = (((compo.row_count/compo.row_limit)|round(method='floor')|int)-4)*compo.row_limit %}
-            		{% set pagination_end = compo.row_count %}
-            	{% elif current_page < 3 %}
-            		{% set pagination_start = 0 %}
-            		{% set pagination_end = 5*compo.row_limit %}
-            	{% else %}
-            		{% set pagination_start = (current_page-2)*compo.row_limit %}
-            		{% set pagination_end = (current_page+3)*compo.row_limit %}
-            	{% endif %}
+            {% if max_page > (compo.visible_pages_limit - 1) %}
+                {% set pages_before_and_after_current_page = ((compo.visible_pages_limit / 2)|round(method='ceil')|int)-1 %}
+                {% if (max_page-current_page) < pages_before_and_after_current_page %}
+                    {% set pagination_start = (max_page-(compo.visible_pages_limit - 1))*compo.row_limit %}
+                    {% set pagination_end = compo.row_count %}
+                {% elif current_page < (compo.visible_pages_limit - pages_before_and_after_current_page) %}
+                    {% set pagination_start = 0 %}
+                    {% set pagination_end = compo.visible_pages_limit*compo.row_limit %}
+                {% else %}
+                    {% set pagination_start = (current_page-pages_before_and_after_current_page)*compo.row_limit %}
+                    {% set pagination_end = (current_page+pages_before_and_after_current_page + 1)*compo.row_limit %}
+                {% endif %}
             {% else %}
-            	{% set pagination_start = 0 %}
-            	{% set pagination_end = compo.row_count %}
+                {% set pagination_start = 0 %}
+                {% set pagination_end = compo.row_count %}
             {% endif %}
             {% for i in range(pagination_start, pagination_end, compo.row_limit) %}
-	            <li class="{{ 'active' if i == compo.row_offset else '' }}">
-	                <span>{{ (i/compo.row_limit + 1)|round(method='ceil')|int }}</span>
-	            </li>
-	        {% endfor %}
+                <li class="{{ 'active' if i == compo.row_offset else '' }}">
+                    <span>{{ (i/compo.row_limit + 1)|round(method='ceil')|int }}</span>
+                </li>
+            {% endfor %}
             <li class="{{ '' if compo.row_offset + compo.row_limit < compo.row_count else 'disabled' }}">
                 <span aria-hidden="true">&gt;</span>
             </li>
-            {% if max_page > 4 %}
+            {% if max_page > (compo.visible_pages_limit - 1) %}
             <li class="{{ '' if compo.row_offset + compo.row_limit < compo.row_count else 'disabled' }}">
                 <span aria-hidden="true">&raquo;</span>
             </li>
