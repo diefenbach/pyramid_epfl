@@ -57,7 +57,6 @@ from grouped_link_list_layout.grouped_link_list_layout import GroupedLinkListLay
 from hover_link_list_layout.hover_link_list_layout import HoverLinkListLayout
 from context_list_layout.context_list_layout import ContextListLayout, ContextListEntry
 from table_layout.table_layout import TableLayout
-from flexible_text_list.flexible_text_list import FlexibleTextList
 from selectable_list.selectable_list import SelectableList
 from text_list.text_list import TextList
 
@@ -96,7 +95,6 @@ def add_routes(config):
     HoverLinkListLayout.add_pyramid_routes(config)
     ContextListLayout.add_pyramid_routes(config)
     TableLayout.add_pyramid_routes(config)
-    FlexibleTextList.add_pyramid_routes(config)
     SelectableList.add_pyramid_routes(config)
 
     TypeAhead.add_pyramid_routes(config)
