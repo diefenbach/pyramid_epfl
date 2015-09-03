@@ -16,7 +16,7 @@ def test_render_number_of_shown_pages(page):
 
     page.root_node = components.PaginatedListLayout(
         show_pagination=True,
-        number_of_pagination_pages=9,
+        visible_pages_limit=9,
         row_offset=row_offset,
         row_limit=row_limit,
         row_count=row_count,
@@ -33,7 +33,7 @@ def test_render_number_of_shown_pages(page):
     ]
     for before, after in entities_to_replace:
         compo_html = compo_html.replace(before, after)
-    
+
     compo_html = etree.fromstring(compo_html)
     pagination_bar = compo_html.find(".//ul[@class='pagination-sm pagination']")
     li_tags = pagination_bar.findall("li")

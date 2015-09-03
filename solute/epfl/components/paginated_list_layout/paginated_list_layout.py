@@ -23,7 +23,7 @@ class PaginatedListLayout(PrettyListLayout):
     show_pagination = True  #: Set to true to show the pagination bar.
     show_search = True  #: Set to true to enable the search field.
     search_placeholder = "Search..."  #: Placeholder text for the search input.
-    number_of_pagination_pages = 5  #: Specify the number of pages that should be visible in the pagination bar.
+    visible_pages_limit = 5  #: Specify the number of pages that should be visible in the pagination bar.
 
     search_focus = False  #: Set to true if the search field should receive focus on load.
 
