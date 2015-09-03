@@ -75,6 +75,3 @@ class LinkListLayout(PaginatedListLayout):
     def default_child_cls(*args, **kwargs):
         kwargs['list_element'] = True
         return Link(*args, **kwargs)
-
-    def is_current_url(self, url):
-        return self.page.request.matched_route.path == url
