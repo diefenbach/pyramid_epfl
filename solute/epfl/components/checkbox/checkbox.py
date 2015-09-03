@@ -30,8 +30,7 @@ class Checkbox(FormInputBase):
     #: where only one checkbox can be checked at a time.
     group = []
 
-    js_parts = FormInputBase.js_parts[:]
-    js_parts.extend(['checkbox/checkbox.js'])
+    js_parts = FormInputBase.js_parts + ['checkbox/checkbox.js']
     js_name = FormInputBase.js_name + [("solute.epfl.components:checkbox/static", "checkbox.js")]
     css_name = FormInputBase.css_name + [("solute.epfl.components:checkbox/static", "checkbox.css")]
 
