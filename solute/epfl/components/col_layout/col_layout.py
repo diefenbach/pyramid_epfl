@@ -35,7 +35,7 @@ class ColLayout(epflcomponentbase.ComponentContainerBase):
 
     asset_spec = "solute.epfl.components:col_layout/static"
     css_name = ["col_layout.css"]
-    js_name = ["col_layout.js"]
+    js_name = []
     js_parts = []
 
     template_name = "col_layout/col_layout.html"
@@ -43,9 +43,6 @@ class ColLayout(epflcomponentbase.ComponentContainerBase):
     vertical_center = False  #: If set to true, child components are centered vertically.
 
     css_cls = None  #: Add the value of css_cls to the css class of the outermost div
-
-    new_style_compo = True
-    compo_js_name = 'ColLayout'
 
     def __init__(self, page, cid, vertical_center=False, css_cls=None, **extra_params):
         """
