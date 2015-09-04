@@ -124,10 +124,7 @@ def page(pyramid_req):
 
 
 ignored_classes = [
-    # "Loading", "PopoverContainer", "Selectize", "ToggleListLayout", "Dragable", "DragBox", "Dropable",
-    # "Headbar", "InputLabel", "Modal", "MultiSelect", "MultiSelectTransfer", "Sidebar", "SimpleTable",
-    # "SimpleTree", "TableListLayout", "TreeLayout", "ModelBox", "SimpleDroppable", "Simpletree",
-    # "TreeLeafEntry", "DroppableTreeLayout", "Droppable", "DraggableTreeLeafEntry", "ImageList"
+    'ContextListEntry'
 ]
 
 
