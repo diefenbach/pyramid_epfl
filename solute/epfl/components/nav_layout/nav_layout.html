@@ -1,4 +1,4 @@
-<nav class="nav navbar-inverse" role="navigation" id="{{compo.cid}}" epflid="{{ compo.cid }}">
+<nav class="nav navbar-inverse" role="navigation" id="{{ compo.cid }}" epflid="{{ compo.cid }}">
     <div class="container-fluid">
         <div class="navbar-header">
             <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
@@ -8,12 +8,15 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            {% if compo.title %}
+            {% if compo.title or compo.img %}
                 <a class="navbar-brand" href="/">
-                {% if compo.img %}
-                        <img src="{{ compo.img }}" alt="{{ compo.title }}" class="pull-left">
-                {% endif %}
-                    {{ compo.title }}
+                    {% if compo.img and compo.title %}
+                        <img src="{{ compo.img }}" alt="{{ compo.title }}" class="pull-left" />
+                    {% elif compo.img %}
+                        <img src="{{ compo.img }}" class="pull-left" />
+                    {% else %}
+                        {{ compo.title }}
+                    {% endif %}
                 </a>
             {% endif %}
         </div>
