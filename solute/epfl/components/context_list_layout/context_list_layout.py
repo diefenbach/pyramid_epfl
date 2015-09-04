@@ -11,6 +11,7 @@ class ContextListEntry(epflcomponentbase.ComponentContainerBase):
     """
     template_name = "context_list_layout/entry.html"
     asset_spec = "solute.epfl.components:context_list_layout/static"
+    data = None
 
 
 class ContextListLayout(PaginatedListLayout):

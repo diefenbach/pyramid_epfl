@@ -16,7 +16,7 @@ def test_render_with_no_options(page):
     assert compo_html.attrib.get('id', None) == "%s" % compo.cid, "id not found"
     assert "epfl-datetimepicker" in compo_html.attrib.get('class', None), "class not found"
 
-    input = compo_html.find("div").find("input")
+    input = compo_html.find("div").find("div").find("input")
     assert input is not None, "Could not find input"
 
 
@@ -47,7 +47,7 @@ def test_render_with_options(page):
     assert "col-sm-4" in label.attrib.get("class", None), "wrong label col"
     assert label.attrib.get("style", None) == "test_label_style"
 
-    input = compo_html.find("div").find("input")
+    input = compo_html.find("div").find("div").find("input")
     assert input is not None, "Could not find input"
     assert input.attrib.get("placeholder", None) is not None, "No Placeholder"
     assert input.attrib.get("value", None) == "2015.07.10", "wrong value"
@@ -55,7 +55,6 @@ def test_render_with_options(page):
     assert input.attrib.get("name", None) == "datetime_input"
     assert input.attrib.get("style", None) == "test_input_style"
     assert input.attrib.get("disabled", None) == "disabled"
-
 
 
 def test_render_with_options_and_vertical(page):
@@ -86,14 +85,14 @@ def test_render_with_options_and_vertical(page):
     assert label.text == "datetime_input", "wrong label text"
     assert label.attrib.get("style", None) == "test_label_style"
 
-    input = compo_html.findall("div")[1].find("div").find("input")
-    assert input is not None, "Could not find input"
-    assert input.attrib.get("placeholder", None) is not None, "No Placeholder"
-    assert input.attrib.get("value", None) == "2015.07.10", "wrong value"
-    assert input.attrib.get("data-initial-value", None) == "2015.07.10", "wrong value"
-    assert input.attrib.get("name", None) == "datetime_input"
-    assert input.attrib.get("style", None) == "test_input_style"
-    assert input.attrib.get("disabled", None) == "disabled"
+    input_field = compo_html.findall("div")[1].find("div").find("div").find("input")
+    assert input_field is not None, "Could not find input"
+    assert input_field.attrib.get("placeholder", None) is not None, "No Placeholder"
+    assert input_field.attrib.get("value", None) == "2015.07.10", "wrong value"
+    assert input_field.attrib.get("data-initial-value", None) == "2015.07.10", "wrong value"
+    assert input_field.attrib.get("name", None) == "datetime_input"
+    assert input_field.attrib.get("style", None) == "test_input_style"
+    assert input_field.attrib.get("disabled", None) == "disabled"
 
 
 def test_calendar_icon(page):
