@@ -14,6 +14,3 @@ class HoverLinkListLayout(LinkListLayout):
                       'url': None}
     
     js_parts = LinkListLayout.js_parts + ["hover_link_list_layout/hover_link_list_layout.js"]
-
-
-
