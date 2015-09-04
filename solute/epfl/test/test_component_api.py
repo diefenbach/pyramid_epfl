@@ -48,6 +48,8 @@ def container_type(request, page, component_container_type_class):
         child_cls = ComponentBase
 
     default_args = getattr(component_container_type_class, 'data_interface', {})
+    if type(default_args) is property:
+        default_args = component_container_type_class.__original_attribute_data_interface
 
     # For dynamic tests the Component will be added dynamically to a ComponentContainerBase root_node.
     root_node = ComponentContainerBase
