@@ -2,11 +2,11 @@
     {% set compo = kwargs.compo %}
     {% set add_attr = '' %}
     {% if compo.height and compo.hide_list %}
-        {% set add_attr = ' style="height: %spx; display: none;" height="%s"' % (compo.height, compo.height) %}
+        {% set add_attr = (' style="height: %spx; display: none;" height="%s"' % (compo.height, compo.height))|safe %}
     {% elif compo.height and not compo.hide_list %}
-        {% set add_attr = ' style="height: %spx;" height="%s"' % (compo.height, compo.height) %}
+        {% set add_attr = (' style="height: %spx;" height="%s"' % (compo.height, compo.height))|safe %}
     {% elif compo.hide_list %}
-        {% set add_attr = ' style="display: none;"' %}
+        {% set add_attr = ' style="display: none;"'|safe %}
     {% else %}
         {% set add_attr = '' %}
     {% endif %}
