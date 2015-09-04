@@ -1,3 +1,5 @@
+# * encoding: utf-8
+
 import unittest
 import time
 import pytest
@@ -467,3 +469,40 @@ def test_documentation(pyramid_req):
         )])
 
     assert len(errors) == 0, "\n" + errors
+
+
+def test_unicode_ajax_response(pyramid_req):
+    """Check if the rendering process generates all a valid utf-8 encoded response
+    """
+
+    # Create a Transaction with an assigned root_node.
+    page = Page(pyramid_req)
+    page.request.is_xhr = True
+    page.page_request.params = {"q": []}
+    transaction = page.transaction
+    transaction['components_assigned'] = True
+    transaction.set_component('root_node',
+                              {'cid': 'root_node',
+                               'slot': None,
+                               'config': {},
+                               'class': (ComponentContainerBase,
+                                         {},
+                                         ('root_node', None))})
+
+    page.handle_transaction()
+
+    base_components = 10
+    leaf_components = 200
+
+    # Generate a response with a unicode string.
+    page.root_node.add_js_response(unicode('console.log("ää");'))
+
+    # Redraw and handle_ajax_events, so that all necessary output will be generated.
+    page.root_node.redraw()
+
+    page.handle_ajax_events()
+
+    assert True not in [c.is_rendered for c in page.get_active_components()]
+
+    out = page.render()
+    assert 'console.log("ää");' in out
