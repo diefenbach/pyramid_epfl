@@ -11,7 +11,7 @@ class RecursiveTree(epflcomponentbase.ComponentContainerBase):
     css_name = ['recursive_tree.css']
 
     compo_state = epflcomponentbase.ComponentContainerBase.compo_state + [
-        'icon_open', 'icon_close', 'label', 'get_data', 'show_children', 'data_interface','scroll_position'
+        'icon_open', 'icon_close', 'label', 'get_data', 'show_children', 'data_interface', 'scroll_position'
     ]
     icon_open = None  #: Icon displayed when children are shown.
     icon_close = None  #: Icon displayed when children are hidden.
