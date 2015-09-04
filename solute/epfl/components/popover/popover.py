@@ -63,7 +63,7 @@ class Popover(epflcomponentbase.ComponentBase):
         :param color: The color class to be used for the button
         :param disabled: Set to true if button should be disabled
         :param small_button: Set to true if a small button should be rendered
-        :param trigger: Set how the popover is triggerd. possible values: click (default), hover, focus
+        :param trigger: Set how the popover is triggered. possible values: click (default), hover, focus
 
         """
         super(Popover, self).__init__(page, cid,
