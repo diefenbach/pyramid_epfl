@@ -7,7 +7,7 @@ from textwrap import wrap
 import solute.epfl.test
 
 test_dir = os.path.dirname(inspect.getsourcefile(solute.epfl.test))  #: The directory where all EPFL tests reside.
-ignore_tests = True
+ignore_tests = False
 
 
 class AssertBase(object):
