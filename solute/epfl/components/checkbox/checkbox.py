@@ -18,8 +18,8 @@ class Checkbox(FormInputBase):
 
     validation_type = 'bool'  #: Validate this field as a boolean.
 
-    #: If set to True, label and checkbox are not splitted to different bootstrap rows,
-    #: but placed directly next to each other.
+    #: If set to True, label and checkbox are not split to different bootstrap rows, but placed directly next to each
+    #: other.
     compact = False
 
     #: If set to True, this checkbox belongs to a group of checkboxes where always just one can be checked.
