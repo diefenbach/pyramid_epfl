@@ -29,8 +29,8 @@ class SimpleToggle(FormInputBase):
         "enabled_icon", "disabled_icon", "enabled_icon_size", "disabled_icon_size", "enabled_icon_color",
         "disabled_icon_color"]
 
-    enabled_icon = "toggle-on"  #: font-awesome icon to be renderd if value == True
-    disabled_icon = "toggle-off"  #: font-awesome icon to be renderd if value == False
+    enabled_icon = "toggle-on"  #: font-awesome icon to be rendered if value == True
+    disabled_icon = "toggle-off"  #: font-awesome icon to be rendered if value == False
     enabled_icon_size = "lg"  #: font-awesome icon size if value == True example lg,2x,3x etc
     disabled_icon_size = "lg"  #: font-awesome icon size if value == False  lg,2x,3x etc
     enabled_icon_color = "primary"  #: bootstrap color if value == True example: primary default warning etc
