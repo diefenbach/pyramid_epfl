@@ -27,4 +27,3 @@ class StackedProgress(epflcomponentbase.ComponentBase):
         :param value: The value of the progress bar
         """
         super(StackedProgress, self).__init__(page, cid, value=value, **extra_params)
-
