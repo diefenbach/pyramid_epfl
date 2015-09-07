@@ -39,6 +39,7 @@ setuptools.setup(
         "python-dateutil",
         "redis",
         "statsd",
+        "requests",
         "collections2"
     ],
     setup_requires=[
