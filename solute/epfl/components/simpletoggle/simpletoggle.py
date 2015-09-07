@@ -18,10 +18,8 @@ class SimpleToggle(FormInputBase):
 
     validation_type = 'bool'  #: Form validation selector.
 
-    js_name = FormInputBase.js_name + \
-              [("solute.epfl.components:simpletoggle/static", "simpletoggle.js")]
-    css_name = FormInputBase.css_name + \
-               [("solute.epfl.components:simpletoggle/static", "simpletoggle.css")]
+    js_name = FormInputBase.js_name + [("solute.epfl.components:simpletoggle/static", "simpletoggle.js")]
+    css_name = FormInputBase.css_name + [("solute.epfl.components:simpletoggle/static", "simpletoggle.css")]
 
     default = False  #: The default value of the toggle.
 
