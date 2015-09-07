@@ -15,7 +15,7 @@ class StackedProgress(epflcomponentbase.ComponentBase):
         progress = StackedProgress(value=[(20, "progress-bar-success"), (30, "progress-bar-warning progress-bar-striped")])
 
     """
-    template_name = "progress/stacked_progress.html"
+    template_name = "stacked_progress/stacked_progress.html"
 
     compo_state = ["value"]
 

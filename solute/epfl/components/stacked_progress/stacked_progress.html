@@ -1,0 +1,6 @@
+<div class="progress epfl-progress" id="{{ compo.cid }}" epflid="{{ compo.cid }}">
+    {% for prog_bar in compo.value %}
+        <div class="progress-bar {{ prog_bar[1] }}" style="width: {{ prog_bar[0] }}%">
+        </div>
+    {% endfor %}
+</div>
