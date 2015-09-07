@@ -53,6 +53,8 @@ class RecursiveTree(epflcomponentbase.ComponentContainerBase):
                 if type(self.data_interface) is list:
                     data_interface = self.data_interface[:]
                     self.data_interface = data_interface.pop(0)
+                    if len(data_interface) == 1:
+                        data_interface = data_interface[0]
                     self.default_child_cls = self.default_child_cls(get_data=data, data_interface=data_interface)
                 else:
                     self.default_child_cls = self.default_child_cls(get_data=data)

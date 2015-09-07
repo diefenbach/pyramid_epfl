@@ -121,6 +121,9 @@ class Lifecycle(object):
         """Log the time this state was active (between checkin and checkout) to the configured graphite server.
         """
         request = threadlocal.get_current_request()
+        if not request:
+            return
+
         registry = request.registry
         settings = registry.settings
 
