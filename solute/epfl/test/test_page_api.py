@@ -491,9 +491,6 @@ def test_unicode_ajax_response(pyramid_req):
 
     page.handle_transaction()
 
-    base_components = 10
-    leaf_components = 200
-
     # Generate a response with a unicode string.
     page.root_node.add_js_response(u'console.log("ää");')
 
