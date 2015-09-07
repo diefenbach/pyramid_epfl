@@ -495,7 +495,7 @@ def test_unicode_ajax_response(pyramid_req):
     leaf_components = 200
 
     # Generate a response with a unicode string.
-    page.root_node.add_js_response(unicode('console.log("ää");'))
+    page.root_node.add_js_response(u'console.log("ää");')
 
     # Redraw and handle_ajax_events, so that all necessary output will be generated.
     page.root_node.redraw()
@@ -505,4 +505,5 @@ def test_unicode_ajax_response(pyramid_req):
     assert True not in [c.is_rendered for c in page.get_active_components()]
 
     out = page.render()
-    assert 'console.log("ää");' in out
+    assert u'console.log("ää");' in out
+    out.encode('utf-8')

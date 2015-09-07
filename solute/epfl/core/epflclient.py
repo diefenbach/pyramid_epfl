@@ -198,9 +198,15 @@ class EPFLResponse(object):
 
         for el in self.ajax_response:
             if type(el) is unicode:
-                out.append(el.encode("utf-8"))
-            else:
                 out.append(el)
+            else:
+                try:
+                    # First try pythons standards, an asci encoded string will be decoded and a unicode will be
+                    # returned.
+                    out.append(unicode(el))
+                except UnicodeDecodeError:
+                    # In case of error we support utf-8, nothing else.
+                    out.append(unicode(el.decode('utf-8')))
 
         # collect the other-pages js
         for page_obj in self.page_request.get_handeled_pages():
