@@ -13,6 +13,7 @@ class SelectableList(LinkListLayout):
 
     #: List type extension, see :attr:`ListLayout.list_type` for details.
     list_type = LinkListLayout.list_type + ['selectable']
+    event_name = 'select'  #: Default event to be triggered on clicks.
 
     search_text = None  #: search text for custom search text handling
 
@@ -27,7 +28,6 @@ class SelectableList(LinkListLayout):
 
     @staticmethod
     def default_child_cls(*args, **kwargs):
-        kwargs["event_name"] = "select"
         kwargs["double_click_event_name"] = "double_click"
         return LinkListLayout.default_child_cls(*args, **kwargs)
 
