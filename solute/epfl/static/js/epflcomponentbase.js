@@ -86,7 +86,7 @@ epfl.ComponentBase.prototype.after_response = function (data) {
                 }
                 obj.handle_drop_leave(event);
                 obj.drop_target = current_target;
-                obj.send_event('drop_accepts', {
+                obj.send_async_event('drop_accepts', {
                     cid: obj.drop_target,
                     moved_cid: moved_cid
                 }, function (data) {
@@ -102,6 +102,7 @@ epfl.ComponentBase.prototype.after_response = function (data) {
                 }, 0);
             })
             .on('drop', function(event) {
+                event.stopPropagation();
                 event.preventDefault();
                 obj.handle_drop(event);
             });
@@ -111,6 +112,7 @@ epfl.ComponentBase.prototype.after_response = function (data) {
         obj.elm
             .attr('draggable', true)
             .on('dragstart', function (event) {
+                event.stopPropagation();
                 var dT = event.dataTransfer;
                 dT.setData('text', obj.cid);
                 dT.dropEffect = 'move';
