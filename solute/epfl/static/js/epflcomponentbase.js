@@ -103,7 +103,6 @@ epfl.ComponentBase.prototype.after_response = function (data) {
             })
             .on('drop', function(event) {
                 event.stopPropagation();
-                event.stopImmediatePropagation();
                 event.preventDefault();
                 obj.handle_drop(event);
             });
