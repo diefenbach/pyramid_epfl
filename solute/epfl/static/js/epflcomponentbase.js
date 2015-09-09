@@ -102,6 +102,7 @@ epfl.ComponentBase.prototype.after_response = function (data) {
                 }, 0);
             })
             .on('drop', function(event) {
+                event.stopPropagation();
                 event.stopImmediatePropagation();
                 event.preventDefault();
                 obj.handle_drop(event);
@@ -112,6 +113,7 @@ epfl.ComponentBase.prototype.after_response = function (data) {
         obj.elm
             .attr('draggable', true)
             .on('dragstart', function (event) {
+                event.stopPropagation();
                 var dT = event.dataTransfer;
                 dT.setData('text', obj.cid);
                 dT.dropEffect = 'move';
