@@ -167,7 +167,7 @@ def extract_static_assets_from_components(compo_list):
                 continue
             js_name.append(js)
             js_paths.append(ar.resolve('/'.join(js)).abspath())
-        cls.js_name += getattr(cls, 'js_name_no_bundle', [])
+        cls.js_name = cls.js_name + getattr(cls, 'js_name_no_bundle', [])
 
         for css in cls.css_name:
             if type(css) is not tuple:
@@ -176,7 +176,7 @@ def extract_static_assets_from_components(compo_list):
                 continue
             css_name.append(css)
             css_paths.append(ar.resolve('/'.join(css)).abspath())
-        cls.css_name += getattr(cls, 'css_name_no_bundle', [])
+        cls.css_name = cls.css_name + getattr(cls, 'css_name_no_bundle', [])
 
     return js_paths, js_name, css_paths, css_name
 
