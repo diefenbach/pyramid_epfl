@@ -8,9 +8,13 @@ from solute.epfl.core.epflpage import Page
 from solute.epfl.core.epflcomponentbase import ComponentBase
 from solute.epfl.core.epflcomponentbase import ComponentContainerBase
 from solute.epfl import components
+from solute.epfl import extract_static_assets_from_components
 
 from collections2.dicts import OrderedDict
 import inspect
+
+from page import PageWithJS, PageWithJSNoBundle, PageWithCSS, PageWithCSSNoBundle, PageWithCSSandJS, \
+    PageWithCSSandJSNoBundle
 
 # from fixtures import pyramid_req
 
@@ -504,3 +508,32 @@ def test_unicode_ajax_response(pyramid_req):
     out = page.render()
     assert u'console.log("ää");' in out
     out.encode('utf-8')
+
+
+def test_css_js_combination():
+    cls_list = [PageWithJS, PageWithJSNoBundle, PageWithCSS, PageWithCSSNoBundle, PageWithCSSandJS,
+                PageWithCSSandJSNoBundle]
+
+    js_name = [cls.js_name for cls in cls_list]
+    css_name = [cls.css_name for cls in cls_list]
+
+    extract_static_assets_from_components(cls_list)
+
+    assert js_name[0] == PageWithJS.js_name
+    assert js_name[1] != PageWithJSNoBundle.js_name
+    assert js_name[1] + PageWithJSNoBundle.js_name_no_bundle == PageWithJSNoBundle.js_name
+    assert css_name[0] == PageWithJS.css_name
+    assert css_name[1] == PageWithJSNoBundle.css_name
+
+    assert js_name[2] == PageWithCSS.js_name
+    assert js_name[3] == PageWithCSSNoBundle.js_name
+    assert css_name[2] == PageWithCSS.css_name
+    assert css_name[3] != PageWithCSSNoBundle.css_name
+    assert css_name[3] + PageWithCSSNoBundle.css_name_no_bundle == PageWithCSSNoBundle.css_name
+
+    assert js_name[4] == PageWithCSSandJS.js_name
+    assert js_name[5] != PageWithCSSandJSNoBundle.js_name
+    assert js_name[4] + PageWithCSSandJSNoBundle.js_name_no_bundle == PageWithCSSandJSNoBundle.js_name
+    assert css_name[4] == PageWithCSSandJS.css_name
+    assert css_name[5] != PageWithCSSandJSNoBundle.css_name
+    assert css_name[5] + PageWithCSSandJSNoBundle.css_name_no_bundle == PageWithCSSandJSNoBundle.css_name
