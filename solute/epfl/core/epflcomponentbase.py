@@ -905,7 +905,7 @@ class ComponentBase(object):
         map(
             lambda x: cls._handles.append(x[7:]),
             filter(
-                lambda name: name.startswith('handle_') and name != 'handle_event',
+                lambda name: name[:7] == 'handle_' and name != 'handle_event',
                 dir(cls)
             )
         )
