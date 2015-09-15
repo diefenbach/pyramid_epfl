@@ -182,10 +182,7 @@ class Transaction(MutableMapping):
         :param cid: component id of target component.
         :returns: dict
         """
-        try:
-            return self['compo_store'][cid]
-        except KeyError:
-            return None
+        return self['compo_store'].get(cid)
 
     def set_component(self, cid, compo_info, position=None, compo_obj=None):
         """Set the components entry in this :class:`Transaction` instance. In some cases where the compo_info is not
