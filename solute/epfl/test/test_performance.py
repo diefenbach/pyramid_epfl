@@ -1,8 +1,6 @@
 import pytest
 from solute.epfl import components, epflassets
-from solute.epfl.core import epflcomponentbase
 import time
-import timeit
 
 
 """
@@ -14,122 +12,21 @@ SelectableList performance on Produktdaten page points toward implementation err
 
 
 @pytest.fixture(params=[
-    # 1000,
+    1000,
     2500,
-    # 5000,
-    # 10000,
+    5000,
+    10000,
 ])
 def compo_count(request):
     return request.param
 
 
-def test_static_container_with_base_children(page, compo_count):
-    page.root_node = epflcomponentbase.ComponentContainerBase(
-        node_list=[
-            components.Text(
-                text='text compo %s' % i
-            ) for i in range(0, compo_count)
-        ]
-    )
-    start = time.time()
-    out = page()
-    end = time.time()
-
-    print end - start
-    assert False
+@pytest.fixture(params=[1, 2, 3])
+def toggle(request):
+    return request.param
 
 
-def test_static_selectable_list_wide(page):
-    compo_count = 2500
-    page.root_node = components.CardinalLayout(
-        node_list=[
-            components.Box(
-                node_list=[
-                    components.Box(
-                        node_list=[
-                            components.Box(
-                                node_list=[
-                                    components.ColLayout(
-                                        node_list=[
-                                            components.SelectableList(
-                                                links=[
-                                                    {'id': i, 'text': 'text compo %s' % i}
-                                                    for i in range(0, compo_count)
-                                                ]
-                                            ),
-                                            components.SelectableList(
-                                                links=[
-                                                    {'id': i, 'text': 'text compo %s' % i}
-                                                    for i in range(0, compo_count)
-                                                ]
-                                            ),
-                                            components.SelectableList(
-                                                links=[
-                                                    {'id': i, 'text': 'text compo %s' % i}
-                                                    for i in range(0, compo_count)
-                                                ]
-                                            ),
-                                            components.SelectableList(
-                                                links=[
-                                                    {'id': i, 'text': 'text compo %s' % i}
-                                                    for i in range(0, compo_count)
-                                                ]
-                                            ),
-                                        ]
-                                    )
-                                ]
-                            )
-                        ]
-                    )
-                ]
-            )
-        ]
-    )
-    start = time.time()
-    out = page()
-    end = time.time()
-
-    print end - start
-    assert False
-
-
-def test_static_selectable_list_high(page):
-    compo_count = 5000
-    page.root_node = components.CardinalLayout(
-        node_list=[
-            components.Box(
-                node_list=[
-                    components.Box(
-                        node_list=[
-                            components.Box(
-                                node_list=[
-                                    components.ColLayout(
-                                        node_list=[
-                                            components.SelectableList(
-                                                links=[
-                                                    {'id': i, 'text': 'text compo %s' % i}
-                                                    for i in range(0, compo_count)
-                                                ]
-                                            ),
-                                        ]
-                                    )
-                                ]
-                            )
-                        ]
-                    )
-                ]
-            )
-        ]
-    )
-    start = time.time()
-    out = page()
-    end = time.time()
-
-    print end - start
-    assert False
-
-
-def test_transaction_access_high(page):
+def test_static_selectable_list_wide(toggle, page, compo_count):
     page.model = MyModel
     page.root_node = components.CardinalLayout(
         node_list=[
@@ -142,7 +39,22 @@ def test_transaction_access_high(page):
                                     components.ColLayout(
                                         node_list=[
                                             components.SelectableList(
-                                                cid='selectable_list',
+                                                row_limit=compo_count,
+                                                data_interface={'id': None, 'text': None},
+                                                get_data='my_data'
+                                            ),
+                                            components.SelectableList(
+                                                row_limit=compo_count,
+                                                data_interface={'id': None, 'text': None},
+                                                get_data='my_data'
+                                            ),
+                                            components.SelectableList(
+                                                row_limit=compo_count,
+                                                data_interface={'id': None, 'text': None},
+                                                get_data='my_data'
+                                            ),
+                                            components.SelectableList(
+                                                row_limit=compo_count,
                                                 data_interface={'id': None, 'text': None},
                                                 get_data='my_data'
                                             ),
@@ -156,15 +68,52 @@ def test_transaction_access_high(page):
             )
         ]
     )
+    start = time.time()
+    out = page()
+    end = time.time()
 
-    page()
+    print end - start, float(end-start) / compo_count / 4
+    assert False
 
+
+def test_static_selectable_list_high(toggle, page, compo_count):
+    page.model = MyModel
+    page.root_node = components.CardinalLayout(
+        node_list=[
+            components.Box(
+                node_list=[
+                    components.Box(
+                        node_list=[
+                            components.Box(
+                                node_list=[
+                                    components.ColLayout(
+                                        node_list=[
+                                            components.SelectableList(
+                                                row_limit=compo_count * 4,
+                                                data_interface={'id': None, 'text': None},
+                                                get_data='my_data'
+                                            ),
+                                        ]
+                                    )
+                                ]
+                            )
+                        ]
+                    )
+                ]
+            )
+        ]
+    )
+    start = time.time()
+    out = page()
+    end = time.time()
+
+    print end - start, float(end-start) / compo_count / 4
     assert False
 
 
 class MyModel(epflassets.ModelBase):
-    def load_my_data(self, *args, **kwargs):
+    def load_my_data(self, calling_compo, row_offset=None, row_limit=None, row_data=None, *args, **kwargs):
         return [
             {'id': i, 'text': 'text compo %s' % i}
-            for i in range(0, 10000)
+            for i in range(0, row_limit)
         ]
