@@ -1286,7 +1286,7 @@ class ComponentContainerBase(ComponentBase):
         # Rebuild order.
         for i, data_id in enumerate(new_order):
             try:
-                key = self.compo_struct[i + tipping_point]
+                key = data_cid_dict[data_id]
                 if self.page.transaction.get_component(key).get('config', {}).get('id', None) != data_id:
                     self.switch_component(self.cid, data_cid_dict[data_id], position=i + tipping_point)
                     self.redraw()
