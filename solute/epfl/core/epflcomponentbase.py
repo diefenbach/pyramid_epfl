@@ -199,7 +199,7 @@ class UnboundComponent(object):
         stripped_conf.pop('cid', None)
         stripped_conf.pop('slot', None)
         if len(stripped_conf) > 0:
-            conf_hash = str(stripped_conf).__hash__()
+            conf_hash = str(stripped_conf)
             try:
                 return self.__global_dynamic_class_store__[(conf_hash, self.__unbound_cls__)]
             except KeyError:
@@ -227,7 +227,7 @@ class UnboundComponent(object):
                       'cid': self.position[0],
                       'slot': slot}
         container.page.transaction.set_component(self.position[0], compo_info, position=position)
-        return getattr(container.page, self.position[0])
+        return container.page.transaction.get_component_instance(container.page, self.position[0])
 
     def create_by_compo_info(self, *args, **kwargs):
         """
@@ -420,7 +420,7 @@ class ComponentBase(object):
             else:
                 config_value = getattr(self, attr_name)
 
-            setattr(self, attr_name, copy.deepcopy(config_value))  # copy from class to instance
+            setattr(self, attr_name, copy.copy(config_value))  # copy from class to instance
 
         return self
 
@@ -474,8 +474,8 @@ class ComponentBase(object):
         return self.___unbound_component__
 
     @property
-    def struct_dict(self):
-        return self.compo_info.setdefault('compo_struct', odict())
+    def compo_struct(self):
+        return self.compo_info.setdefault('compo_struct', list())
 
     @property
     def container_slot(self):
@@ -848,18 +848,18 @@ class ComponentBase(object):
         cls.set_handles(force_update=True)
         cls.combined_compo_state = set(cls.compo_state + cls.base_compo_state)
 
+        def getter(n):
+            return lambda self: self.get_state_attr(n, getattr(self, '__original_attribute_%s' % n))
+
+        def setter(n):
+            return lambda self, value: self.set_state_attr(n, value)
+
         for name in cls.combined_compo_state:
             original = getattr(cls, name, None)
-            if type(original) is property:
+            if isinstance(original, property):
                 continue
 
             setattr(cls, '__original_attribute_%s' % name, original)
-
-            def getter(n):
-                return lambda self: self.get_state_attr(n, getattr(self, '__original_attribute_%s' % n))
-
-            def setter(n):
-                return lambda self, value: self.set_state_attr(n, value)
 
             setattr(cls, name, property(
                 fget=getter(name),
@@ -876,18 +876,40 @@ class ComponentBase(object):
             raise Exception("You illegally set a cid as a class attribute in " + repr(cls))
 
     @classmethod
+    def get_base_keys(cls):
+        try:
+            return cls.__base_keys
+        except AttributeError:
+            pass
+
+        cls.__base_keys = cls.__dict__.keys()
+        for o in cls.__bases__:
+            if o is object:
+                continue
+            cls.__base_keys += o.get_base_keys()
+
+        return cls.__base_keys
+
+    @classmethod
     def set_handles(cls, force_update=True):
         """Put the names of all handle functions this class provides into a list that can be supplied to the javascript.
         This allows the client side epfl parts to be aware of which component actually handles which events.
+        This method has been optimized in regards to high performance, thus the usage of both filter and map. The
+        get_base_keys method is
 
         :param force_update: If True the handles will be set anew irregardless of whether they have been set before.
         """
-        if cls._handles is None or force_update:
-            cls._handles = []
-            for name in dir(cls):
-                if not name.startswith('handle_') or name == 'handle_event':
-                    continue
-                cls._handles.append(name[7:])
+        if cls._handles is not None and not force_update:
+            return
+
+        cls._handles = []
+        map(
+            lambda x: cls._handles.append(x[7:]),
+            filter(
+                lambda name: name.startswith('handle_') and name != 'handle_event',
+                cls.get_base_keys()
+            )
+        )
 
     def get_handles(self):
         self.set_handles(False)
@@ -1199,6 +1221,7 @@ class ComponentContainerBase(ComponentBase):
         """Returns true if component uses get_data scheme."""
         return self.default_child_cls is not None
 
+    @profile
     def update_children(self, force=False):
         """If a default_child_cls has been set this updates all child components to reflect the current state from
         get_data(). Will raise an exception if called twice without the force parameter present."""
@@ -1262,11 +1285,10 @@ class ComponentContainerBase(ComponentBase):
             self.redraw()
 
         # Rebuild order.
-        compo_struct = self.compo_info['compo_struct']
         for i, data_id in enumerate(new_order):
             try:
-                key = compo_struct.keys()[i + tipping_point]
-                if compo_struct[key].get('config', {}).get('id', None) != data_id:
+                key = self.compo_struct[i + tipping_point]
+                if self.page.transaction.get_component(key).get('config', {}).get('id', None) != data_id:
                     self.switch_component(self.cid, data_cid_dict[data_id], position=i + tipping_point)
                     self.redraw()
             except AttributeError:
@@ -1311,6 +1333,7 @@ class ComponentContainerBase(ComponentBase):
         pass
 
     @Lifecycle(name=('container_component', 'init_transaction'))
+    @profile
     def init_transaction(self):
         """
         Components derived from :class:`ComponentContainerBase` will use their :attr:`node_list` to generate their
@@ -1393,13 +1416,13 @@ class ComponentList(MutableSequence):
         pass
 
     def __len__(self):
-        return len(self.container_compo.struct_dict)
+        return len(self.container_compo.compo_struct)
 
     def __getitem__(self, index):
         try:
             return self.container_compo.page.transaction.get_component_instance(
                 self.container_compo.page,
-                self.container_compo.struct_dict._keys[index]
+                self.container_compo.compo_struct[index]
             )
         except Exception as e:
             e.message += '\nParent cid was %s.' % self.container_compo.cid
