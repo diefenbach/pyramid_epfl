@@ -907,7 +907,7 @@ class ComponentBase(object):
             lambda x: cls._handles.append(x[7:]),
             filter(
                 lambda name: name.startswith('handle_') and name != 'handle_event',
-                cls.get_base_keys()
+                dir(cls)
             )
         )
 
