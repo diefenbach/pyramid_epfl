@@ -226,8 +226,11 @@ class Transaction(MutableMapping):
         if 'ccid' in compo:
             container = self.get_component(compo['ccid'])
             container['compo_struct'].remove(cid)
+        else:
+            self['compo_struct'].remove(cid)
 
-        for child_cid in compo.get('compo_struct', []):
+        # List has to be copied, since del_component modifies it.
+        for child_cid in list(compo.get('compo_struct', [])):
             if self.has_component(child_cid):
                 self.del_component(child_cid)
 
