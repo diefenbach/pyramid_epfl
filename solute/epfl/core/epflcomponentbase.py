@@ -1221,7 +1221,6 @@ class ComponentContainerBase(ComponentBase):
         """Returns true if component uses get_data scheme."""
         return self.default_child_cls is not None
 
-    @profile
     def update_children(self, force=False):
         """If a default_child_cls has been set this updates all child components to reflect the current state from
         get_data(). Will raise an exception if called twice without the force parameter present."""
@@ -1333,7 +1332,6 @@ class ComponentContainerBase(ComponentBase):
         pass
 
     @Lifecycle(name=('container_component', 'init_transaction'))
-    @profile
     def init_transaction(self):
         """
         Components derived from :class:`ComponentContainerBase` will use their :attr:`node_list` to generate their
