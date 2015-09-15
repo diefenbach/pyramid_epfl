@@ -39,21 +39,25 @@ def test_static_selectable_list_wide(toggle, page, compo_count):
                                     components.ColLayout(
                                         node_list=[
                                             components.SelectableList(
+                                                skip_child_access=True,
                                                 row_limit=compo_count,
                                                 data_interface={'id': None, 'text': None},
                                                 get_data='my_data'
                                             ),
                                             components.SelectableList(
+                                                skip_child_access=True,
                                                 row_limit=compo_count,
                                                 data_interface={'id': None, 'text': None},
                                                 get_data='my_data'
                                             ),
                                             components.SelectableList(
+                                                skip_child_access=True,
                                                 row_limit=compo_count,
                                                 data_interface={'id': None, 'text': None},
                                                 get_data='my_data'
                                             ),
                                             components.SelectableList(
+                                                skip_child_access=True,
                                                 row_limit=compo_count,
                                                 data_interface={'id': None, 'text': None},
                                                 get_data='my_data'
@@ -89,6 +93,7 @@ def test_static_selectable_list_high(toggle, page, compo_count):
                                     components.ColLayout(
                                         node_list=[
                                             components.SelectableList(
+                                                skip_child_access=True,
                                                 row_limit=compo_count * 4,
                                                 data_interface={'id': None, 'text': None},
                                                 get_data='my_data'
