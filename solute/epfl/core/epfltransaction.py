@@ -10,7 +10,6 @@ from redis import StrictRedis
 import cPickle as pickle
 from copy import deepcopy
 from collections2 import OrderedDict as odict
-
 import types, copy, string, uuid, time
 
 from collections import MutableMapping, defaultdict
@@ -227,7 +226,6 @@ class Transaction(MutableMapping):
         if 'ccid' in compo:
             container = self.get_component(compo['ccid'])
             container['compo_struct'].remove(cid)
-        self['compo_store'].pop(cid)
 
         for child_cid in compo.get('compo_struct', []):
             if self.has_component(child_cid):
@@ -235,6 +233,8 @@ class Transaction(MutableMapping):
 
         if cid in self.instances:
             del self.instances[cid]
+
+        self['compo_store'].pop(cid)
 
     def has_component(self, cid):
         """Check if the child component has an entry in this :class:`Transaction` instance.
