@@ -875,26 +875,12 @@ class ComponentBase(object):
             raise Exception("You illegally set a cid as a class attribute in " + repr(cls))
 
     @classmethod
-    def get_base_keys(cls):
-        try:
-            return cls.__base_keys
-        except AttributeError:
-            pass
-
-        cls.__base_keys = cls.__dict__.keys()
-        for o in cls.__bases__:
-            if o is object:
-                continue
-            cls.__base_keys += o.get_base_keys()
-
-        return cls.__base_keys
-
-    @classmethod
     def set_handles(cls, force_update=True):
         """Put the names of all handle functions this class provides into a list that can be supplied to the javascript.
         This allows the client side epfl parts to be aware of which component actually handles which events.
-        This method has been optimized in regards to high performance, thus the usage of both filter and map. The
-        get_base_keys method is
+        Apparently this is the fastest of the options compared to either map/filter or list style comprehension.
+        Even though it should not be faster than the later and isn't if measured by itself. Something apparently slows
+        down if you do it the other way.
 
         :param force_update: If True the handles will be set anew irregardless of whether they have been set before.
         """
@@ -902,13 +888,9 @@ class ComponentBase(object):
             return
 
         cls._handles = []
-        map(
-            lambda x: cls._handles.append(x[7:]),
-            filter(
-                lambda name: name[:7] == 'handle_' and name != 'handle_event',
-                dir(cls)
-            )
-        )
+        for name in dir(cls):
+            if name[:7] == 'handle_' and name != 'handle_event':
+                cls._handles.append(name[7:])
 
     def get_handles(self):
         self.set_handles(False)
