@@ -337,10 +337,9 @@ class Page(object):
         env = {"epfl_base_html": self.base_html,
                "epfl_base_title": self.title,
                "css_imports": self.get_css_imports,
-               "js_imports": self.get_js,
-               "root_node": self.root_node}
+               "js_imports": self.get_js}
 
-        env.update([(value.cid, value) for value in self.get_active_components() if value.container_compo is None])
+        env.update([(cid, self.components[cid]) for cid in self.transaction['compo_struct']])
         return env
 
     @Lifecycle(name=('page', 'render'))
