@@ -16,9 +16,12 @@ table.fht-table, .fht-table {
 }
 
 .epfl-table-layout-container {
-    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: auto;
 }
-
+.epfl-table-layout-container.fixed-header {
+    overflow-y: hidden;
+}
 tr.epfl-table-layout.row-default {
 }
 

@@ -4,7 +4,15 @@
     {% if compo.title is defined %}
         <div class="panel-heading">{{ compo.title }}</div>
     {% endif %}
-    <div id="{{ compo.cid }}_container"  class="epfl-table-layout-container" {{ 'style="height: '|safe + (compo.height - 80)|string + 'px;"'|safe if compo.height else ''}}>
+    <div id="{{ compo.cid }}_container" class="epfl-table-layout-container{{ " fixed-header" if compo.fixed_header else "" }}"
+    {% if compo.height %}
+        {% if compo.row_count > compo.row_limit and compo.show_pagination %}
+        style="height: {{ (compo.height - 80)|string }}px;"
+        {% else %}
+        style="height: {{ compo.height }}px;"
+        {% endif %}
+    {% endif %}
+    >
         <table id="table_{{ compo.cid }}" class="table table-condensed table-hover epfl-table-layout"
             {% if compo.style is defined %}
                 style="{{ compo.style }}"
@@ -31,7 +39,7 @@
                                     <i class="header-sortable fa fa-sort-desc"></i>
                                 {% endif %}
                             {% endif %}
-                            
+
                             </th>
                             {% endif %}
                         {% endfor %}
