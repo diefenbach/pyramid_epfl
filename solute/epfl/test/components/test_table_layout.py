@@ -37,9 +37,9 @@ def test_title(page, bool_toggle):
         assert '<div class="panel-heading">test title</div>' not in page.root_node.render()
 
 
-def test_height(page, bool_toggle):
+def test_height(page, bool_quad):
     height = None
-    if bool_toggle:
+    if bool_quad[0]:
         height = 300
 
     page.root_node = components.TableLayout(
@@ -48,7 +48,17 @@ def test_height(page, bool_toggle):
 
     page.handle_transaction()
 
-    if bool_toggle:
+    if bool_quad[0]:
+        page.root_node.row_count = 10
+        if bool_quad[1]:
+            page.root_node.row_limit = 15
+        else:
+            page.root_node.row_limit = 5
+
+    if bool_quad[0] and bool_quad[1]:
+        assert 'style="height: 300px;"' in page.root_node.render()
+        assert 'style="height: 220px;"' not in page.root_node.render()
+    elif bool_quad[0] and not bool_quad[1]:
         assert 'style="height: 300px;"' in page.root_node.render()
         assert 'style="height: 220px;"' in page.root_node.render()
     else:
