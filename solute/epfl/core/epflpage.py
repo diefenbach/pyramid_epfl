@@ -147,11 +147,32 @@ class Page(object):
 
         out += self.call_cleanup(self.request.is_xhr)
 
+        self.logging()
+
         response = Response(body=out.encode("utf-8"),
                             status=200,
                             content_type=content_type)
         response.headerlist.extend(self.remember_cookies)
         return response
+
+    def logging(self):
+        route_name = 'compo_class_cache'
+        lifecycle_name = 'size'
+
+        key = self.request.registry.settings.get(
+            'epfl.performance_log.prefix',
+            'epfl.performance.{route_name}.{lifecycle_name}'
+        ).format(
+            host=socket.gethostname().replace('.', '_'),
+            fqdn=socket.getfqdn().replace('.', '_'),
+            route_name=route_name.replace('.', '_'),
+            lifecycle_name=lifecycle_name.replace('.', '_'),
+        )
+        epflutil.log_timing(
+            key,
+            len(epflcomponentbase.UnboundComponent.__global_dynamic_class_store__),
+            request=self.request
+        )
 
     @Lifecycle(name=('page', 'after_event_handling'))
     def after_event_handling(self):
