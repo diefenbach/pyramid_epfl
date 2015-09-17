@@ -156,6 +156,9 @@ class Page(object):
         return response
 
     def logging(self):
+        if self.request.registry.settings.get('epfl.performance_log.enabled') != 'True':
+            return
+
         route_name = 'compo_class_cache'
         lifecycle_name = 'size'
 
