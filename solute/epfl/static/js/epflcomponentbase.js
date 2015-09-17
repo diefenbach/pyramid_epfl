@@ -68,6 +68,16 @@ epfl.ComponentBase.prototype.after_response = function (data) {
             obj.handle_click(event);
         });
     }
+    if (this.params && this.params.extras_handle_mouse_in) {
+        obj.elm.mouseenter(function (event) {
+            obj.handle_mouse_in(event);
+        });
+    }
+    if (this.params && this.params.extras_handle_mouse_out) {
+        obj.elm.mouseleave(function (event) {
+            obj.handle_mouse_out(event);
+        });
+    }
 
     if (this.params && this.params.extras_handle_drop) {
         obj.elm
@@ -157,6 +167,16 @@ epfl.ComponentBase.prototype.handle_click = function (event) {
     if (this.is_closest(event.target)) {
         this.handle_local_click(event);
     }
+};
+
+epfl.ComponentBase.prototype.handle_mouse_in = function (event) {
+    /* Executed on mouse enter events if extras_handle_mouse_in is set to true. */
+    this.send_event("mouse_in", {});
+};
+
+epfl.ComponentBase.prototype.handle_mouse_out = function (event) {
+    /* Executed on mouse leave events if extras_handle_mouse_out is set to true. */
+    this.send_event("mouse_out", {});
 };
 
 epfl.ComponentBase.prototype.handle_double_click = function (event) {
