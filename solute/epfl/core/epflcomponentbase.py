@@ -752,7 +752,7 @@ class ComponentBase(object):
             raise Exception('Programming Error: Unknown post event handler type.')
 
         try:
-            post_event_callable = getattr(self.page.components[cid], 'on_%s' % post_event)
+            post_event_callable = getattr(self.page.components[cid], 'on_' + post_event)
         except AttributeError:
             raise Exception('Programming Error: Component {cid} has no post event handler named {post_event}.'.format(
                 cid=cid, post_event=post_event
@@ -791,18 +791,17 @@ class ComponentBase(object):
         if self.render_cache is not None:
             return self.render_cache[target]
 
-        self.render_cache = {'main': '', 'js': '', 'js_raw': ''}
+        self.render_cache = {'main': '', 'js_raw': ''}
 
         if not self.is_visible(False):
             # this is the container where the component can be placed if visible afterwards
             self.render_cache['main'] = jinja2.Markup("<div epflid='{cid}'></div>".format(cid=self.cid))
             return self.render_cache[target]
 
-        js_raw = []
-
         if self.components:
-            for compo in self.components:
-                js_raw.append(compo.render(target='js_raw'))
+            js_raw = [compo.render(target='js_raw') for compo in self.components]
+        else:
+            js_raw = []
 
         self.is_rendered = True
 
@@ -818,18 +817,15 @@ class ComponentBase(object):
             js_raw.append(env.get_template(js_part).render(context))
 
         template = env.get_template(self.template_name)
-        self.render_cache['main'] = template.render(context)
-        # rendered_data = rendered_data.strip()
-        # self.render_cache['main'] = jinja2.Markup(rendered_data)
+        self.render_cache['main'] = jinja2.Markup(template.render(context))
 
         handles = self.get_handles()
         if handles:
-            set_component_info = 'epfl.set_component_info("' + self.cid + '", "handle", ' + str(handles) + ');'
+            set_component_info = 'epfl.set_component_info("' + self.cid + '", "handle", [\'' +\
+                                 '\', \''.join(handles) + '\']);'
             js_raw.append(set_component_info)
 
         self.render_cache['js_raw'] = ''.join(js_raw)
-        self.render_cache['js'] = jinja2.Markup(
-            '<script type="text/javascript">' + self.render_cache['js_raw'] + '</script>')
 
         return self.render_cache[target]
 
@@ -841,7 +837,7 @@ class ComponentBase(object):
         cls.combined_compo_state = set(cls.compo_state + cls.base_compo_state)
 
         def getter(n):
-            return lambda self: self.get_state_attr(n, getattr(self, '__original_attribute_%s' % n))
+            return lambda self: self.get_state_attr(n, getattr(self, '__original_attribute_' + n))
 
         def setter(n):
             return lambda self, value: self.set_state_attr(n, value)
@@ -851,7 +847,7 @@ class ComponentBase(object):
             if isinstance(original, property):
                 continue
 
-            setattr(cls, '__original_attribute_%s' % name, original)
+            setattr(cls, '__original_attribute_' + name, original)
 
             setattr(cls, name, property(
                 fget=getter(name),
@@ -880,10 +876,7 @@ class ComponentBase(object):
         if cls._handles is not None and not force_update:
             return
 
-        cls._handles = []
-        for name in dir(cls):
-            if name[:7] == 'handle_' and name != 'handle_event':
-                cls._handles.append(name[7:])
+        cls._handles = [name[7:] for name in dir(cls) if name[:7] == 'handle_' and name != 'handle_event']
 
     def get_handles(self):
         self.set_handles(False)
@@ -962,7 +955,7 @@ class ComponentBase(object):
             params[param_name] = getattr(self, param_name)
 
         for param_name in self.compo_js_extras:
-            params['extras_%s' % param_name] = True
+            params['extras_' + param_name] = True
 
         return 'epfl.init_component("{cid}", "{compo_cls}", {params});'.format(
             cid=self.cid,
@@ -1147,11 +1140,18 @@ class ComponentContainerBase(ComponentBase):
 
         return self
 
+    _themed_template_cache = None
+
     def get_themed_template(self, env, target):
         """
         Return a list of templates in the order they should be used for rendering. Deals with template inheritance based
         on the theme_path and the target templates found in the folders of the theme_path.
         """
+        if not self._themed_template_cache:
+            self._themed_template_cache = {}
+        elif target in self._themed_template_cache:
+            return self._themed_template_cache[target]
+
         theme_paths = self.theme_path
         if type(theme_paths) is dict:
             theme_paths = theme_paths.get(target, theme_paths['default'])
@@ -1161,18 +1161,20 @@ class ComponentContainerBase(ComponentBase):
             try:
                 if theme_path[0] in ['<', '>']:
                     direction = theme_path[0]
-                    render_funcs.insert(0, env.get_template('%s/%s.html' % (theme_path[1:], target)).module.render)
+                    render_funcs.insert(0, env.get_template(theme_path[1:] + '/' + target + '.html').module.render)
                     continue
-                tpl = env.get_template('%s/%s.html' % (theme_path, target))
+                tpl = env.get_template(theme_path + '/' + target + '.html')
                 render_funcs.append(tpl.module.render)
-                return direction, render_funcs
+                self._themed_template_cache[target] = direction, render_funcs
+                return self._themed_template_cache[target]
             except TemplateNotFound:
                 continue
 
-        tpl = env.get_template('%s/%s.html' % (self.theme_path_default, target))
+        tpl = env.get_template(self.theme_path_default + '/' + target + '.html')
         render_funcs.append(tpl.module.render)
 
-        return direction, render_funcs
+        self._themed_template_cache[target] = direction, render_funcs
+        return self._themed_template_cache[target]
 
     def get_render_environment(self, env):
         """
