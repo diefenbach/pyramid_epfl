@@ -49,7 +49,7 @@ class SelectableList(LinkListLayout):
     def handle_set_row(self, row_offset, row_limit, row_data=None):
         super(SelectableList, self).handle_set_row(row_offset, row_limit, row_data)
         if row_data is not None:
-            if self.search_text != row_data.get("search"):
+            if self.reset_row_offset_on_search_change and self.search_text != row_data.get("search"):
                 # search parameter has been changed, move to the first page.
                 self.row_offset = 0
             self.search_text = row_data.get("search")
