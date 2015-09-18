@@ -56,3 +56,10 @@ class PaginatedListLayout(PrettyListLayout):
                                                   search_focus=search_focus,
                                                   visible_pages_limit=visible_pages_limit,
                                                   height=height, **kwargs)
+
+    def handle_set_row(self, row_offset, row_limit, row_data=None):
+        if self.row_data and row_data:
+            if self.row_data.get("search", None) != row_data.get("search", None):
+                # search parameter has been changed, move to the first page.
+                row_offset = 0
+        super(PaginatedListLayout, self).handle_set_row(row_offset, row_limit, row_data)

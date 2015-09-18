@@ -28,6 +28,9 @@ class TextList(PaginatedListLayout):
 
     def handle_set_row(self, row_offset, row_limit, row_data=None):
         if row_data is not None:
+            if self.search_text != row_data.get("search"):
+                # search parameter has been changed, move to the first page.
+                self.row_offset = 0
             self.search_text = row_data.get("search")
         self.update_children()
         self.redraw()
