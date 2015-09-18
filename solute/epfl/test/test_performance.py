@@ -26,6 +26,7 @@ def toggle(request):
     return request.param
 
 
+@pytest.mark.skipif('"--slowtests" not in sys.argv')
 def test_static_selectable_list_wide(toggle, page, compo_count):
     page.model = MyModel
     page.root_node = components.CardinalLayout(
@@ -80,6 +81,7 @@ def test_static_selectable_list_wide(toggle, page, compo_count):
     assert False
 
 
+@pytest.mark.skipif('"--slowtests" not in sys.argv')
 def test_static_selectable_list_high(toggle, page, compo_count):
     page.model = MyModel
     page.root_node = components.CardinalLayout(
