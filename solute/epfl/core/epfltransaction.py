@@ -132,7 +132,6 @@ class Transaction(MutableMapping):
         """
         return self['compo_store'].keys()
 
-    @profile
     def get_component_instance(self, page, cid):
         """Initiates components on demand.
 

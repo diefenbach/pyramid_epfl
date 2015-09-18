@@ -197,7 +197,6 @@ class UnboundComponent(object):
         return ubc
 
     @property
-    @profile
     def __dynamic_class__(self):
         """
         If the config contains entries besides cid and slot a dynamic class is returned. This offers just in time
@@ -210,8 +209,7 @@ class UnboundComponent(object):
         stripped_conf.pop('cid', None)
         stripped_conf.pop('slot', None)
         if len(stripped_conf) > 0:
-            conf_hash = str(stripped_conf)
-            # conf_hash = hash(((key, val) for key, val in stripped_conf.iteritems()))
+            conf_hash = hash(((key, val) for key, val in stripped_conf.iteritems()))
             try:
                 return self.__global_dynamic_class_store__[(conf_hash, self.__unbound_cls__)]
             except KeyError:
