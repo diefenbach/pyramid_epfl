@@ -35,7 +35,6 @@ class SelectableList(LinkListLayout):
 
     def handle_select(self):
         cid = getattr(self.page, self.epfl_event_trace[0]).cid
-
         self.page.components[cid].active = not self.page.components[cid].active
         if self.page.components[cid].active:
             self.selected_ids.add(self.page.components[cid].id)
@@ -50,9 +49,26 @@ class SelectableList(LinkListLayout):
         # Overwrite me for doubleclick handling
         pass
 
+    def get_selected(self):
+        """
+        This method returns a list of selected components.
+        Caution: This method is only available for compatibility reasons. It should be
+        considered deprecated and will probably be removed soon.
+        The reason for this is that the list of selected components does not contain selected
+        entries that are currently not visible in the component (for example, due to pagination)
+        get_selected_ids(self) should be used for this.
+
+        :return: a list with selected components
+        """
+        return [compo for compo in self.components if compo.active]
+
     def get_selected_ids(self):
         """
-        :return: a list with selected compontents
+        This method returns a set of selected component ids. Compared to get_selected(self),
+        this method also returns entries that have been selected but are currently not visible
+        (for example, due to pagination).
+
+        :return: a set with selected component ids.
         """
         return self.selected_ids
 
