@@ -210,11 +210,12 @@ class UnboundComponent(object):
         stripped_conf.pop('cid', None)
         stripped_conf.pop('slot', None)
         if len(stripped_conf) > 0:
-            conf_hash = stripped_conf.__str__()
-            try:
-                return self.__global_dynamic_class_store__[(conf_hash, self.__unbound_cls__)]
-            except KeyError:
-                pass
+            if self.__use_global_store__:
+                conf_hash = stripped_conf.__str__()
+                try:
+                    return self.__global_dynamic_class_store__[(conf_hash, self.__unbound_cls__)]
+                except KeyError:
+                    pass
 
             dynamic_class_id = epflutil.generate_dynamic_class_id()
             name = '{name}_auto_{dynamic_class_id}'.format(
@@ -226,10 +227,11 @@ class UnboundComponent(object):
                 setattr(self.__dynamic_class_store__, param, self.__unbound_config__[param])
             setattr(self.__dynamic_class_store__, '___unbound_component__', self)
 
-            if not self.__use_global_store__:
-                return self.__dynamic_class_store__
-            self.__global_dynamic_class_store__[(conf_hash, self.__unbound_cls__)] = self.__dynamic_class_store__
-            return self.__global_dynamic_class_store__[(conf_hash, self.__unbound_cls__)]
+            if self.__use_global_store__:
+                self.__global_dynamic_class_store__[(conf_hash, self.__unbound_cls__)] = self.__dynamic_class_store__
+                return self.__global_dynamic_class_store__[(conf_hash, self.__unbound_cls__)]
+
+            return self.__dynamic_class_store__
 
         else:
             return self.__unbound_cls__
