@@ -1280,8 +1280,8 @@ class ComponentContainerBase(ComponentBase):
 
         # Rebuild order.
         for i, data_id in enumerate(new_order):
-            compo_obj = self.components[i + tipping_point]
-            if compo_obj.id != data_id:
+            compo_obj = self.compo_info['compo_struct'][i + tipping_point]
+            if compo_obj['config']['id'] != data_id:
                 self.switch_component(self.cid, data_cid_dict[data_id], position=i + tipping_point)
                 self.redraw()
 
