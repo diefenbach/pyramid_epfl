@@ -1265,7 +1265,9 @@ class ComponentContainerBase(ComponentBase):
         compo_len = len(self.components)
 
         # IDs of data not yet represented by a component. Matching components are created.
-        for data_id in set(new_order).difference(current_order):
+        for data_id in new_order:
+            if data_id in current_order:
+                continue
             position = data_order_dict[data_id]
             if position > compo_len:
                 position = None
