@@ -312,6 +312,9 @@ class Transaction(MutableMapping):
         transaction_timeout = self.request.registry.settings.get('epfl.transaction.timeout', 1800)
         if store_type == 'redis':
             self.redis.setex('TA_%s' % self.tid, transaction_timeout, pickle.dumps(self._data))
+        elif store_type == 'redis_context':
+            with self.redis_context() as redis:
+                redis.setex('TA_%s' % self.tid, pickle.dumps(self._data, pickle.HIGHEST_PROTOCOL), transaction_timeout)
         elif store_type == 'memory':
             self.memory['TA_%s' % self.tid] = self._data
         else:
@@ -328,11 +331,16 @@ class Transaction(MutableMapping):
         if not self.tid:
             raise Exception('Transaction store was accessed before transaction id was set.')
 
-        default_data = {'compo_store': {}}
+        default_data = {'compo_store': {}, 'compo_struct': []}
 
         store_type = self.request.registry.settings.get('epfl.transaction.store')
-        if store_type == 'redis':
-            data = self.redis.get('TA_%s' % self.tid)
+        if store_type in ['redis', 'redis_context']:
+
+            if store_type == 'redis_context':
+                with self.redis_context() as redis:
+                    data = redis.get('TA_%s' % self.tid)
+            else:
+                data = self.redis.get('TA_%s' % self.tid)
             if data:
                 self._data = pickle.loads(data)
                 self._data_original = pickle.loads(data)
@@ -362,6 +370,9 @@ class Transaction(MutableMapping):
         store_type = self.request.registry.settings.get('epfl.transaction.store')
         if store_type == 'redis':
             self.redis.delete('TA_%s' % self.tid)
+        elif store_type == 'redis_context':
+            with self.redis_context() as redis:
+                redis.delete('TA_%s' % self.tid)
         elif store_type == 'memory':
             del self.memory['TA_%s' % self.tid]
         else:
@@ -395,3 +406,5 @@ class Transaction(MutableMapping):
         """
         return self._data == self._data_original
 
+    def redis_context(self):
+        raise Exception('You have to implement this method!')
