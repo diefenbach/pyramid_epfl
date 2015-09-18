@@ -367,6 +367,7 @@ class ComponentBase(object):
     compo_js_name = 'ComponentBase'  #: Name of the JS Class.
 
     render_cache = None  #: If the component has been rendered this request the cache is filled.
+    _themed_template_cache = None  #: If the components theme has been retrieved this will be cached here.
 
     # Input Helper:
     value = None  #: The actual value of the input element that is posted upon form submission.
@@ -1149,8 +1150,6 @@ class ComponentContainerBase(ComponentBase):
             self.setup_component_slots()
 
         return self
-
-    _themed_template_cache = None
 
     def get_themed_template(self, env, target):
         """
