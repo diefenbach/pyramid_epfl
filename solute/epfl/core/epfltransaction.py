@@ -148,7 +148,7 @@ class Transaction(MutableMapping):
             self.instances[cid] = ubc(page,
                                       cid,
                                       __instantiate__=True,
-                                      **compo_info['config'])
+                                      config=compo_info['config'])
         return self.instances[cid]
 
     def get_active_components(self):

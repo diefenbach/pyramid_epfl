@@ -181,6 +181,8 @@ class UnboundComponent(object):
             config.update(kwargs)
             return UnboundComponent(self.__unbound_cls__, config)
         else:
+            if 'config' in kwargs:
+                kwargs.update(kwargs.pop('config'))
             self.__unbound_config__.update(kwargs)
             self.__dynamic_class_store__ = None
             kwargs['__instantiate__'] = True
@@ -402,7 +404,7 @@ class ComponentBase(object):
 
     @classmethod
     def create_by_compo_info(cls, page, compo_info, container_id):
-        compo_obj = cls(page, compo_info['cid'], __instantiate__=True, **compo_info["config"])
+        compo_obj = cls(page, compo_info['cid'], __instantiate__=True, config=compo_info["config"])
         if container_id:
             container_compo = page.components[container_id]  # container should exist before their content
             compo_obj.set_container_compo(container_compo, compo_info["slot"])
