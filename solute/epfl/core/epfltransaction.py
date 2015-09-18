@@ -407,4 +407,4 @@ class Transaction(MutableMapping):
         return self._data == self._data_original
 
     def redis_context(self):
-        raise Exception('You have to implement this method!')
+        raise NotImplementedError('You have to implement this method!')
