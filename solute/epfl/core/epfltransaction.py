@@ -181,7 +181,7 @@ class Transaction(MutableMapping):
             position = len(self.get_component(ccid)['compo_struct'])
 
         new_parent = self.get_component(compo_info['ccid'])
-        new_parent.compo_struct.insert(position, cid)
+        new_parent['compo_struct'].insert(position, cid)
 
     def get_component(self, cid):
         """Return the components entry in this :class:`Transaction` instance.

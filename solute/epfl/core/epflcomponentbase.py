@@ -475,7 +475,7 @@ class ComponentBase(object):
 
     @property
     def position(self):
-        return self.container_compo.compo_info['compo_struct'].key_index(self.cid)
+        return self.container_compo.compo_info['compo_struct'].index(self.cid)
 
     @property
     def slot(self):
@@ -1280,8 +1280,8 @@ class ComponentContainerBase(ComponentBase):
 
         # Rebuild order.
         for i, data_id in enumerate(new_order):
-            compo = self.page.transaction.get_component(data_cid_dict[data_id])
-            if compo.get('config', {}).get('id', None) != data_id:
+            compo_obj = self.components[i + tipping_point]
+            if compo_obj.id != data_id:
                 self.switch_component(self.cid, data_cid_dict[data_id], position=i + tipping_point)
                 self.redraw()
 
