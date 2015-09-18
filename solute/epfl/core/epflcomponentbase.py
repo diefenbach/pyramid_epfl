@@ -155,6 +155,7 @@ class UnboundComponent(object):
     """
     __dynamic_class_store__ = None  #: Internal caching for :attr:`UnboundComponent.__dynamic_class__`
     __global_dynamic_class_store__ = {}  #: Global caching for :attr:`UnboundComponent.__dynamic_class__`
+    __use_global_store__ = True  #: Flag whether to use the global dynamic class cache.
 
     def __init__(self, cls, config):
         """
@@ -224,6 +225,9 @@ class UnboundComponent(object):
             for param in self.__unbound_config__:
                 setattr(self.__dynamic_class_store__, param, self.__unbound_config__[param])
             setattr(self.__dynamic_class_store__, '___unbound_component__', self)
+
+            if not self.__use_global_store__:
+                return self.__dynamic_class_store__
             self.__global_dynamic_class_store__[(conf_hash, self.__unbound_cls__)] = self.__dynamic_class_store__
             return self.__global_dynamic_class_store__[(conf_hash, self.__unbound_cls__)]
 
