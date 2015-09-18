@@ -209,7 +209,7 @@ class UnboundComponent(object):
         stripped_conf.pop('cid', None)
         stripped_conf.pop('slot', None)
         if len(stripped_conf) > 0:
-            conf_hash = hash(((key, val) for key, val in stripped_conf.iteritems()))
+            conf_hash = stripped_conf.__str__()
             try:
                 return self.__global_dynamic_class_store__[(conf_hash, self.__unbound_cls__)]
             except KeyError:
@@ -886,7 +886,6 @@ class ComponentBase(object):
         """
         if cls._handles is not None and not force_update:
             return
-
         cls._handles = [name[7:] for name in dir(cls) if name[:7] == 'handle_' and name != 'handle_event']
 
     def get_handles(self):
