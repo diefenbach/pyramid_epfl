@@ -18,6 +18,13 @@ import jinja2.runtime
 from jinja2.exceptions import TemplateNotFound
 
 
+try:
+    profile
+except NameError:
+    def profile(cb):
+        return cb
+
+
 class MissingContainerComponentException(Exception):
     pass
 
@@ -168,6 +175,7 @@ class UnboundComponent(object):
         Pseudo instantiation helper that returns a new UnboundComponent by updating the config. This can also be used to
         generate an instantiated Component if one is needed with the __instantiate__ keyword set to True.
         """
+
         if kwargs.pop('__instantiate__', None) is None:
             config = self.__unbound_config__.copy()
             config.update(kwargs)
@@ -187,6 +195,7 @@ class UnboundComponent(object):
         return ubc
 
     @property
+    @profile
     def __dynamic_class__(self):
         """
         If the config contains entries besides cid and slot a dynamic class is returned. This offers just in time
@@ -200,6 +209,7 @@ class UnboundComponent(object):
         stripped_conf.pop('slot', None)
         if len(stripped_conf) > 0:
             conf_hash = str(stripped_conf)
+            # conf_hash = hash(((key, val) for key, val in stripped_conf.iteritems()))
             try:
                 return self.__global_dynamic_class_store__[(conf_hash, self.__unbound_cls__)]
             except KeyError:

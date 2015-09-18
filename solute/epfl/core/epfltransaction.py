@@ -16,6 +16,13 @@ from collections import MutableMapping, defaultdict
 from solute.epfl.core import epflcomponentbase
 
 
+try:
+    profile
+except NameError:
+    def profile(cb):
+        return cb
+
+
 class TransactionRouteViolation(Exception):
     pass
 
@@ -125,6 +132,7 @@ class Transaction(MutableMapping):
         """
         return self['compo_store'].keys()
 
+    @profile
     def get_component_instance(self, page, cid):
         """Initiates components on demand.
 
