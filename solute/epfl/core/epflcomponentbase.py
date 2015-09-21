@@ -9,7 +9,7 @@ from pyramid import security
 
 from solute.epfl.core import epflclient, epflutil, epflacl, epflvalidators
 from solute.epfl import validators
-from solute.epfl.core.epflutil import Lifecycle
+from solute.epfl.core.epflutil import Lifecycle, generate_dynamic_class_id, generate_cid
 
 import ujson as json
 
@@ -160,7 +160,7 @@ class UnboundComponent(object):
 
         # Copy config and create a cid if none exists.
         self.position = (
-            self.__unbound_config__.pop('cid', None) or epflutil.generate_cid(),
+            self.__unbound_config__.pop('cid', None) or generate_cid(),
             self.__unbound_config__.pop('slot', None)
         )
 
@@ -210,16 +210,14 @@ class UnboundComponent(object):
                 except KeyError:
                     pass
 
-            dynamic_class_id = epflutil.generate_dynamic_class_id()
+            dynamic_class_id = generate_dynamic_class_id()
             name = '{name}_auto_{dynamic_class_id}'.format(
                 name=self.__unbound_cls__.__name__,
                 dynamic_class_id=dynamic_class_id
             )
-            self.__dynamic_class_store__ = type(name, (self.__unbound_cls__, ), {})
-            for param in self.__unbound_config__:
-                setattr(self.__dynamic_class_store__, param, self.__unbound_config__[param])
-            setattr(self.__dynamic_class_store__, '___unbound_component__', self)
+            self.__dynamic_class_store__ = type(name, (self.__unbound_cls__, ), self.__unbound_config__)
 
+            setattr(self.__dynamic_class_store__, '___unbound_component__', self)
             setattr(self.__dynamic_class_store__, '__epfl_do_not_track', not self.__use_global_store__)
 
             if self.__use_global_store__:
@@ -1360,7 +1358,7 @@ class ComponentContainerBase(ComponentBase):
         else:
             # Generate UUID if no cid has been set previously.
             if not cid:
-                cid = epflutil.generate_cid()
+                cid = generate_cid()
             compo_obj.register_in_transaction(self, slot, position=position)
 
         # the transaction-setup has to be redone because the component can be displayed directly in this request.

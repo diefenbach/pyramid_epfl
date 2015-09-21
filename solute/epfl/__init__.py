@@ -221,7 +221,7 @@ def includeme(config):
     The main configuration of the EPFL
     """
     epflcomponentbase.UnboundComponent.__use_global_store__ = config.get_settings().get('epfl.use_global_class_cache',
-                                                                                        'True') == 'True'
+                                                                                        'False') == 'True'
 
     config.include('pyramid_jinja2')
 

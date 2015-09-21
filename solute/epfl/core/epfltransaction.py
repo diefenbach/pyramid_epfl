@@ -16,13 +16,6 @@ from collections import MutableMapping, defaultdict
 from solute.epfl.core import epflcomponentbase
 
 
-try:
-    profile
-except NameError:
-    def profile(cb):
-        return cb
-
-
 class TransactionRouteViolation(Exception):
     pass
 
