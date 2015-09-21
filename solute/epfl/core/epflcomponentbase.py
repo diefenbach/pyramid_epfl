@@ -18,13 +18,6 @@ import jinja2.runtime
 from jinja2.exceptions import TemplateNotFound
 
 
-try:
-    profile
-except NameError:
-    def profile(cb):
-        return cb
-
-
 class MissingContainerComponentException(Exception):
     pass
 

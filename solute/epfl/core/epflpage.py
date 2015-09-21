@@ -16,13 +16,6 @@ from solute.epfl.core import epflclient, epflutil, epflacl
 from solute.epfl.core.epflutil import Lifecycle
 
 
-try:
-    profile
-except NameError:
-    def profile(cb):
-        return cb
-
-
 class LazyProperty(object):
     """
     Wrapper function used for just in time initialization of components by calling the registered callback.
