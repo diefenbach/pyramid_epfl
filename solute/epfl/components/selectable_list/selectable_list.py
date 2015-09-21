@@ -9,7 +9,7 @@ class SelectableList(LinkListLayout):
     """
     data_interface = {'id': None, 'text': None}
 
-    compo_state = LinkListLayout.compo_state + ["search_text"]
+    compo_state = LinkListLayout.compo_state + ["search_text", "selected_ids"]
 
     #: List type extension, see :attr:`ListLayout.list_type` for details.
     list_type = LinkListLayout.list_type + ['selectable']
@@ -17,6 +17,8 @@ class SelectableList(LinkListLayout):
     search_text = None  #: search text for custom search text handling
 
     scroll_pos = None  #: Scrollbar position this is used to jump back to the last scroll pos after redraw
+
+    selected_ids = set()  #: a set with selected component ids
 
     def __init__(self, page, cid, data_interface=None, *args, **extra_params):
         """
@@ -34,6 +36,13 @@ class SelectableList(LinkListLayout):
     def handle_select(self):
         cid = getattr(self.page, self.epfl_event_trace[0]).cid
         self.page.components[cid].active = not self.page.components[cid].active
+        if self.page.components[cid].active:
+            self.selected_ids.add(self.page.components[cid].id)
+        else:
+            try:
+                self.selected_ids.remove(self.page.components[cid].id)
+            except KeyError:
+                pass
         self.page.components[cid].redraw()
 
     def handle_double_click(self):
@@ -42,9 +51,26 @@ class SelectableList(LinkListLayout):
 
     def get_selected(self):
         """
-        :return: a list with selected compontents
+        This method returns a list of selected components.
+        Caution: This method is only available for compatibility reasons. It should be
+        considered deprecated and will probably be removed soon.
+        The reason for this is that the list of selected components does not contain selected
+        entries that are currently not visible in the component (for example, due to pagination)
+        get_selected_ids(self) should be used for this.
+
+        :return: a list with selected components
         """
         return [compo for compo in self.components if compo.active]
+
+    def get_selected_ids(self):
+        """
+        This method returns a set of selected component ids. Compared to get_selected(self),
+        this method also returns entries that have been selected but are currently not visible
+        (for example, due to pagination).
+
+        :return: a set with selected component ids.
+        """
+        return self.selected_ids
 
     def handle_set_row(self, row_offset, row_limit, row_data=None):
         super(SelectableList, self).handle_set_row(row_offset, row_limit, row_data)
@@ -55,3 +81,10 @@ class SelectableList(LinkListLayout):
             self.search_text = row_data.get("search")
         self.update_children()
         self.redraw()
+
+    def update_children(self, force=False):
+        result = super(SelectableList, self).update_children(force=force)
+        for compo in self.components:
+            if compo.id in self.selected_ids:
+                compo.active = True
+        return result
