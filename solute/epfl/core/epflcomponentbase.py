@@ -210,11 +210,7 @@ class UnboundComponent(object):
                 except KeyError:
                     pass
 
-            dynamic_class_id = generate_dynamic_class_id()
-            name = '{name}_auto_{dynamic_class_id}'.format(
-                name=self.__unbound_cls__.__name__,
-                dynamic_class_id=dynamic_class_id
-            )
+            name = self.__unbound_cls__.__name__ + '_auto_' + generate_dynamic_class_id()
             self.__dynamic_class_store__ = type(name, (self.__unbound_cls__, ), self.__unbound_config__)
 
             setattr(self.__dynamic_class_store__, '___unbound_component__', self)

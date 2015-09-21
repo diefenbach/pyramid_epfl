@@ -35,13 +35,13 @@ DYNAMIC_CLASS_COUNTER = itertools.count()
 def generate_cid():
     """Generates a CID using next(), which is an atomic operation on itertools.count() generators.
     """
-    return "{0}_{1}_{2:08x}".format(COMPONENT_COUNTER_PREFIX, getpid(), COMPONENT_COUNTER.next())
+    return COMPONENT_COUNTER_PREFIX + "_" + str(getpid()) + "_" + str(COMPONENT_COUNTER.next())
 
 
 def generate_dynamic_class_id():
     """Generates a dynamic class id using next(), which is an atomic operation on itertools.count() generators.
     """
-    return "{0:08x}".format(DYNAMIC_CLASS_COUNTER.next())
+    return str(DYNAMIC_CLASS_COUNTER.next())
 
 
 def log_timing(key, timing, server=None, port=None, request=None):
