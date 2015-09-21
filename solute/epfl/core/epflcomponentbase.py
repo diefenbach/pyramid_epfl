@@ -227,6 +227,8 @@ class UnboundComponent(object):
                 setattr(self.__dynamic_class_store__, param, self.__unbound_config__[param])
             setattr(self.__dynamic_class_store__, '___unbound_component__', self)
 
+            setattr(self.__dynamic_class_store__, '__epfl_do_not_track', not self.__use_global_store__)
+
             if self.__use_global_store__:
                 self.__global_dynamic_class_store__[(conf_hash, self.__unbound_cls__)] = self.__dynamic_class_store__
                 return self.__global_dynamic_class_store__[(conf_hash, self.__unbound_cls__)]

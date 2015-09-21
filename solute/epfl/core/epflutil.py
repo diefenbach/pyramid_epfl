@@ -418,8 +418,9 @@ class Discover(object):
     def discover_component(cls, input_class):
         if input_class in cls.discovered_components_set:
             return
-        cls.discovered_components.append(input_class)
-        cls.discovered_components_set.add(input_class)
+        if not getattr(input_class, '__epfl_do_not_track', False):
+            cls.discovered_components.append(input_class)
+            cls.discovered_components_set.add(input_class)
         input_class.discover()
 
     @classmethod
