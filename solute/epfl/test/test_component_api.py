@@ -114,7 +114,7 @@ def test_base_type(base_type, result):
     AssertCoherence(tested_node, compo_info, result)
 
     rendered_html = page.root_node.render()
-    rendered_js = page.root_node.render(target='js')
+    rendered_js = page.root_node.render(target='js_raw')
 
     AssertRendering(compo_info, rendered_html, rendered_js, result)
 
@@ -133,7 +133,7 @@ def test_container_type(container_type, result):
     AssertCoherence(tested_node, compo_info, result)
 
     rendered_html = page.root_node.render()
-    rendered_js = page.root_node.render(target='js')
+    rendered_js = page.root_node.render(target='js_raw')
 
     AssertRendering(compo_info, rendered_html, rendered_js, result)
 

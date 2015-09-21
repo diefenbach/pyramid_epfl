@@ -14,41 +14,18 @@ def test_basic_component_operations(pyramid_req):
 
     transaction = Transaction(pyramid_req)
 
-    result1 = OrderedDict([('root_node', {'cid': 'root_node'})])
-    result2 = OrderedDict([
-        ('root_node',
-         {'cid': 'root_node',
-          'compo_struct': OrderedDict([
-              ('child_node',
-               {'ccid': 'root_node',
-                'cid': 'child_node'})])})])
-    result3 = OrderedDict([
-        ('root_node',
-         {'cid': 'root_node',
-          'compo_struct': OrderedDict([
-              ('child_node',
-               {'ccid': 'root_node',
-                'cid': 'child_node',
-                'compo_struct': OrderedDict([
-                    ('child_node2',
-                     {'ccid': 'child_node',
-                      'cid': 'child_node2'})])})])})])
-
     # Set component information
     transaction.set_component('root_node', {})
     # compo_struct must match expected result1
-    assert transaction['compo_struct'] == result1
-    # compo_lookup is only needed for non root components.
-    assert 'compo_lookup' not in transaction
+    assert transaction['compo_struct'] == ['root_node']
 
     # Insert a child component.
     transaction.set_component('child_node',
                               {'ccid': 'root_node'})
 
     # compo_struct must match result2, compo_lookup must be present and point to the single child component existing.
-    assert transaction['compo_struct'] == result2
-    assert 'compo_lookup' in transaction
-    assert transaction['compo_lookup'] == {'child_node': 'root_node'}
+    assert transaction['compo_struct'] == ['root_node']
+    assert transaction['compo_store']['root_node']['compo_struct'] == ['child_node']
 
     # Get compo_info, check for correct data.
     compo = transaction.get_component('child_node')
@@ -58,12 +35,13 @@ def test_basic_component_operations(pyramid_req):
     # Add a child component to the first child, result3 must apply.
     transaction.set_component('child_node2',
                               {'ccid': 'child_node'})
-    assert transaction['compo_struct'] == result3
+    assert transaction['compo_struct'] == ['root_node']
+    assert transaction['compo_store']['root_node']['compo_struct'] == ['child_node']
+    assert transaction['compo_store']['child_node']['compo_struct'] == ['child_node2']
 
     # Delete a component.
     transaction.del_component('child_node')
-    assert transaction['compo_struct'] == OrderedDict([('root_node', {'cid': 'root_node',
-                                                                      'compo_struct': OrderedDict()})])
+    assert transaction['compo_store'].keys() == ['root_node']
 
 
 def test_component_mass_insert(pyramid_req):
@@ -80,8 +58,10 @@ def test_component_mass_insert(pyramid_req):
     assert transaction.has_component('sub_child_node_123')
 
     transaction.del_component('child_node')
-    assert transaction['compo_struct'] == OrderedDict([('root_node', {'cid': 'root_node',
-                                                                      'compo_struct': OrderedDict()})])
+    assert transaction['compo_struct'] == ['root_node']
+    assert transaction['compo_store']['root_node']['compo_struct'] == []
+    assert transaction['compo_store'].keys() == ['root_node']
+
     assert not transaction.has_component('child_node')
     assert not transaction.has_component('sub_child_node_123')
 

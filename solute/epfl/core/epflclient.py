@@ -101,7 +101,7 @@ class JSBlockContent(ExtraContent):
 
     def render(self):
         data = self.data.strip()
-        if data.startswith("<script"):
+        if data[:7] == "<script":
             data = data[data.index(">") + 1:]
         if data.endswith("</script>"):
             data = data[:-9]

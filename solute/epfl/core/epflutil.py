@@ -378,6 +378,7 @@ class Discover(object):
     instance = None
 
     discovered_modules = set()
+    discovered_components_set = set()
     discovered_components = []
     discovered_pages = []
 
@@ -415,9 +416,11 @@ class Discover(object):
 
     @classmethod
     def discover_component(cls, input_class):
-        if input_class in cls.discovered_components:
+        if input_class in cls.discovered_components_set:
             return
-        cls.discovered_components.append(input_class)
+        if not getattr(input_class, '__epfl_do_not_track', False):
+            cls.discovered_components.append(input_class)
+            cls.discovered_components_set.add(input_class)
         input_class.discover()
 
     @classmethod

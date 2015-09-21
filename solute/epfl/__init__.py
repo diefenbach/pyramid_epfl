@@ -19,7 +19,8 @@ from solute.epfl.core import (epfltransaction,
                               epfli18n,
                               epfll10n,
                               epflassets,
-                              epflacl)
+                              epflacl,
+                              epflcomponentbase)
 
 from webassets import Bundle
 from webassets import Environment
@@ -219,6 +220,8 @@ def includeme(config):
     """
     The main configuration of the EPFL
     """
+    epflcomponentbase.UnboundComponent.__use_global_store__ = config.get_settings().get('epfl.use_global_class_cache',
+                                                                                        'False') == 'True'
 
     config.include('pyramid_jinja2')
 

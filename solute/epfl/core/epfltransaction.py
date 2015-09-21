@@ -10,7 +10,6 @@ from redis import StrictRedis
 import cPickle as pickle
 from copy import deepcopy
 from collections2 import OrderedDict as odict
-
 import types, copy, string, uuid, time
 
 from collections import MutableMapping, defaultdict
@@ -116,7 +115,7 @@ class Transaction(MutableMapping):
         :returns: the number of containers the component with the given cid is part of.
         """
         try:
-            return self.get_component_depth(self['compo_lookup'][cid]) + 1
+            return self.get_component_depth(self['compo_store'][cid]['ccid']) + 1
         except KeyError:
             return 0
 
@@ -124,7 +123,7 @@ class Transaction(MutableMapping):
         """
         :returns: The combined list of all existing components ids.
         """
-        return self['compo_lookup'].keys() + self['compo_struct'].keys()
+        return self['compo_store'].keys()
 
     def get_component_instance(self, page, cid):
         """Initiates components on demand.
@@ -141,7 +140,7 @@ class Transaction(MutableMapping):
             self.instances[cid] = ubc(page,
                                       cid,
                                       __instantiate__=True,
-                                      **compo_info['config'])
+                                      config=compo_info['config'])
         return self.instances[cid]
 
     def get_active_components(self):
@@ -166,28 +165,16 @@ class Transaction(MutableMapping):
         :param ccid: component id of target container.
         :param position: (optional) position the component should hold after the switch.
         """
-        compo_info = self.pop_component(cid)
+        compo_info = self.get_component(cid)
+        old_parent = self.get_component(compo_info['ccid'])
+        old_parent['compo_struct'].remove(cid)
+
         compo_info['ccid'] = ccid
         if position is None:
             position = len(self.get_component(ccid)['compo_struct'])
-        self.set_component(cid, compo_info, position=position)
 
-    def pop_component(self, cid):
-        """Remove and return the components entry in this :class:`Transaction` instance.
-
-        :param cid: component id of target component.
-        :returns: dict
-        """
-        try:
-            return self['compo_struct'].pop(cid)
-        except KeyError:
-            pass
-
-        try:
-            return self.pop_child_component(self['compo_lookup'][cid],
-                                            cid)
-        except KeyError:
-            return None
+        new_parent = self.get_component(compo_info['ccid'])
+        new_parent['compo_struct'].insert(position, cid)
 
     def get_component(self, cid):
         """Return the components entry in this :class:`Transaction` instance.
@@ -195,45 +182,12 @@ class Transaction(MutableMapping):
         :param cid: component id of target component.
         :returns: dict
         """
-        try:
-            return self['compo_struct'][cid]
-        except KeyError:
-            pass
-
-        try:
-            return self.get_child_component(self['compo_lookup'][cid],
-                                            cid)
-        except KeyError:
-            return None
-
-    def get_child_component(self, ccid, cid):
-        """Return the child components entry in this :class:`Transaction` instance.
-
-        :param ccid: component id of targets container component.
-        :param cid: component id of target component.
-        :returns: dict
-        """
-        compo = self.get_component(ccid)
-        try:
-            return compo['compo_struct'][cid]
-        except (TypeError, KeyError):
-            return None
-
-    def pop_child_component(self, ccid, cid):
-        """Remove and return the child components entry in this :class:`Transaction` instance.
-
-        :param ccid: component id of targets container component.
-        :param cid: component id of target component.
-        :returns: dict
-        """
-        compo = self.get_component(ccid)
-        try:
-            return compo['compo_struct'].pop(cid)
-        except (TypeError, KeyError):
-            return None
+        return self['compo_store'].get(cid)
 
     def set_component(self, cid, compo_info, position=None, compo_obj=None):
-        """Set the components entry in this :class:`Transaction` instance.
+        """Set the components entry in this :class:`Transaction` instance. In some cases where the compo_info is not
+        available at the time of this call, a compo_obj may be provided and be used as a source for the compo_info
+        instead.
 
         :param cid: component id of target component.
         :param compo_info: info dict of the component giving its sub structure, container id, class and config.
@@ -248,16 +202,17 @@ class Transaction(MutableMapping):
 
         container = self
         if 'ccid' in compo_info:
-            self.setdefault('compo_lookup', {})[cid] = compo_info['ccid']
             container = self.get_component(compo_info['ccid'])
         if 'cid' not in compo_info:
             compo_info['cid'] = cid
 
-        compo_struct = container.setdefault('compo_struct', odict())
+        compo_struct = container.setdefault('compo_struct', list())
         if position is None:
-            compo_struct[cid] = compo_info
+            compo_struct.append(cid)
         else:
-            compo_struct.insert(cid, compo_info, position)
+            compo_struct.insert(position, cid)
+
+        self['compo_store'][cid] = compo_info
 
     def del_component(self, cid):
         """Remove the components entry in this :class:`Transaction` instance.
@@ -265,20 +220,21 @@ class Transaction(MutableMapping):
         :param cid: component id of target component.
         """
         compo = self.get_component(cid)
-        container = self
         if 'ccid' in compo:
             container = self.get_component(compo['ccid'])
+            container['compo_struct'].remove(cid)
+        else:
+            self['compo_struct'].remove(cid)
 
-        for child_cid in compo.get('compo_struct', {}).keys():
+        # List has to be copied, since del_component modifies it.
+        for child_cid in list(compo.get('compo_struct', [])):
             if self.has_component(child_cid):
                 self.del_component(child_cid)
 
-        if 'compo_lookup' in self and cid in self['compo_lookup']:
-            del self['compo_lookup'][cid]
         if cid in self.instances:
             del self.instances[cid]
-        if cid in container['compo_struct']:
-            del container['compo_struct'][cid]
+
+        self['compo_store'].pop(cid)
 
     def has_component(self, cid):
         """Check if the child component has an entry in this :class:`Transaction` instance.
@@ -286,10 +242,7 @@ class Transaction(MutableMapping):
         :param cid: component id of target component.
         :returns: True or False
         """
-        try:
-            return self.get_component(cid) is not None
-        except KeyError:
-            return False
+        return cid in self['compo_store']
 
     # MutableMapping requirements:
     def __getitem__(self, key):
@@ -352,6 +305,9 @@ class Transaction(MutableMapping):
         transaction_timeout = self.request.registry.settings.get('epfl.transaction.timeout', 1800)
         if store_type == 'redis':
             self.redis.setex('TA_%s' % self.tid, transaction_timeout, pickle.dumps(self._data))
+        elif store_type == 'redis_context':
+            with self.redis_context() as redis:
+                redis.setex('TA_%s' % self.tid, pickle.dumps(self._data, pickle.HIGHEST_PROTOCOL), transaction_timeout)
         elif store_type == 'memory':
             self.memory['TA_%s' % self.tid] = self._data
         else:
@@ -368,11 +324,16 @@ class Transaction(MutableMapping):
         if not self.tid:
             raise Exception('Transaction store was accessed before transaction id was set.')
 
-        default_data = {}
+        default_data = {'compo_store': {}, 'compo_struct': []}
 
         store_type = self.request.registry.settings.get('epfl.transaction.store')
-        if store_type == 'redis':
-            data = self.redis.get('TA_%s' % self.tid)
+        if store_type in ['redis', 'redis_context']:
+
+            if store_type == 'redis_context':
+                with self.redis_context() as redis:
+                    data = redis.get('TA_%s' % self.tid)
+            else:
+                data = self.redis.get('TA_%s' % self.tid)
             if data:
                 self._data = pickle.loads(data)
                 self._data_original = pickle.loads(data)
@@ -380,7 +341,7 @@ class Transaction(MutableMapping):
                 self._data = default_data
                 self._data_original = deepcopy(self._data)
             if not self.is_clean:
-                raise Exception("what the fuck? ")
+                raise Exception("There has been an error in the transaction system.")
             return self._data
         elif store_type == 'memory':
             self._data = deepcopy(self.memory.setdefault('TA_%s' % self.tid, default_data))
@@ -402,6 +363,9 @@ class Transaction(MutableMapping):
         store_type = self.request.registry.settings.get('epfl.transaction.store')
         if store_type == 'redis':
             self.redis.delete('TA_%s' % self.tid)
+        elif store_type == 'redis_context':
+            with self.redis_context() as redis:
+                redis.delete('TA_%s' % self.tid)
         elif store_type == 'memory':
             del self.memory['TA_%s' % self.tid]
         else:
@@ -435,3 +399,5 @@ class Transaction(MutableMapping):
         """
         return self._data == self._data_original
 
+    def redis_context(self):
+        raise NotImplementedError('You have to implement this method!')

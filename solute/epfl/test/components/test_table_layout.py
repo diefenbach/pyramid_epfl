@@ -262,3 +262,37 @@ def test_handle_show_hide_column(page, bool_hex):
     assert table.column_visibility == (True, True, False, True, )
     table.handle_show_column(2)
     assert table.column_visibility == (True, True, True, True, )
+
+
+def test_parsing_order(page):
+    page.model = ExampleModel
+    page.setup_model()
+
+    page.root_node = components.TableLayout(
+        get_data='entries',
+        data_interface={
+            'id': None,
+            'col1': None,
+            'col2': None,
+            'col3': None,
+        },
+        map_child_cls=[
+            ('col1', components.Text, {'value': 'col1'}),
+            ('col2', components.Text, {'value': 'col2'}),
+            ('col3', components.Text, {'value': 'col3'}),
+        ],
+    )
+
+    page.handle_transaction()
+    root_node = page.root_node
+
+    assert len(root_node.components) == 30 * 3  # 3 columns for 30 rows.
+
+    out = root_node.render()
+
+    old_data_id, old_sub_id = -1, -1
+    for compo in root_node.components:
+        data_id, sub_id = compo.id.split('_')
+        data_id, sub_id = int(data_id), int(sub_id)
+        assert (data_id >= old_data_id and sub_id > old_sub_id) or data_id > old_data_id
+        old_data_id, old_sub_id = data_id, sub_id
