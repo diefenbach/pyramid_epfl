@@ -60,7 +60,7 @@ epfl_module = function() {
     };
 
     epfl.dispatch_event = function (elm, type, data) {
-        alert('This software is using a deprecated method and will not work correctly with this EPFL Version!')
+        alert('This software is using a deprecated method and will not work correctly with this EPFL Version!');
     };
 
     epfl.set_component_info = function (cid, key, value, extra_value) {
