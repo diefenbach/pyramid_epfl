@@ -197,20 +197,6 @@ def test_component_rendering_ajax(pyramid_req):
     out = page.render()
     # print base_components, leaf_components, int((time.time() - start_time) * 1000000)
 
-    # Checking set_component_info calls required to tell EPFLs JS what the component is capable of.
-    for i in range(0, base_components):
-        assert ('epfl.set_component_info(\\"child_node_%s\\", \\"handle\\", [\'change\', \'reinitialize\', '
-                '\'set_row\']);' %
-                (i + 1)) in out, "Missing set component info for child_node_%s" % (i + 1)
-        out = out.replace('epfl.set_component_info("child_node_%s", "handle", [\'set_row\']);' % (i + 1), '')
-        for x in range(0, leaf_components):
-            assert ('epfl.set_component_info(\\"child_node_%s_%s\\", \\"handle\\", [\'change\', \'reinitialize\', '
-                    '\'set_row\']);' % (i + 1, x)) in out
-            out = out.replace('epfl.set_component_info("child_node_%s_%s", "handle", [\'change\', \'set_row\']);' %
-                              (i + 1, x), '')
-    assert 'epfl.set_component_info(\\"child_node_0\\", \\"handle\\", [\'change\', \'reinitialize\', \'set_row\']);' \
-           'epfl.set_component_info(\\"root_node\\", \\"handle\\", [\'change\', \'reinitialize\', \'set_row\']);' in out
-
 
 def test_component_deletion_and_recreation(pyramid_req):
     """Check if anything goes wrong when components are deleted and then created fresh.
