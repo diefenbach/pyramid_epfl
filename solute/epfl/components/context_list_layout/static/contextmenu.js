@@ -11,7 +11,7 @@ epfl.PluginContextMenu = function (selector,cid) {
         var liEvent = $(this).data("event");
         var liId = $(this).data("id");
         var liData = $(this).data("data");
-        epfl.dispatch_event(cid, liEvent, {entry_id: liId, data: liData});
+        epfl.components[cid].send_event(liEvent, {entry_id: liId, data: liData});
     });
 
     element.parent().find("button").click(function (event) {
@@ -32,4 +32,3 @@ epfl.PluginContextMenu = function (selector,cid) {
         $("ul.context-dropdown-menu").hide();
     });
 };
-
