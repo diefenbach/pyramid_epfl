@@ -60,35 +60,7 @@ epfl_module = function() {
     };
 
     epfl.dispatch_event = function (elm, type, data) {
-        setTimeout(function () {
-            if (typeof elm == 'string') {
-                elm = $('[epflid=' + elm + ']');
-            }
-            if (elm.length == 0) {
-                return;
-            }
-            var cid = elm.attr('epflid');
-            if (!cid || !epfl.component_data[cid]
-                || !epfl.component_data[cid]['handle']
-                || !epfl.component_data[cid]['handle'].indexOf
-                || epfl.component_data[cid]['handle'].indexOf(type) == -1) {
-                return epfl.dispatch_event(elm.parent(), type, data);
-            }
-            if (epfl.component_data[cid]['before_send_event']
-                && epfl.component_data[cid]['before_send_event'][type]) {
-                if (!epfl.component_data[cid]['before_send_event'][type](elm, type, data)) {
-                    return;
-                }
-            }
-
-            var callback;
-            if (epfl.component_data[cid]['callback_send_event']
-                && epfl.component_data[cid]['callback_send_event'][type]) {
-                callback = epfl.component_data[cid]['callback_send_event'][type];
-            }
-
-            epfl.send(epfl.make_component_event(cid, type, data), callback);
-        }, 0);
+        alert('This software is using a deprecated method and will not work correctly with this EPFL Version!')
     };
 
     epfl.set_component_info = function (cid, key, value, extra_value) {
