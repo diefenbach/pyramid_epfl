@@ -12,7 +12,7 @@ epfl.FormInputBase = function (cid, params) {
 };
 
 epfl.FormInputBase.event_submit_form_on_enter = function (cid) {
-    epfl.dispatch_event(cid, "submit", {});
+    epfl.components[cid].send_event("submit", {});
 };
 
 epfl.FormInputBase.event_change = function (cid, value, enqueue_event) {
@@ -34,7 +34,7 @@ epfl.FormInputBase.event_change = function (cid, value, enqueue_event) {
     if (enqueue_event) {
         epfl.repeat_enqueue(epfl.make_component_event(cid, 'change', {value: value}), cid + "_change");
     } else {
-        epfl.dispatch_event(cid, "change", {value: value});
+        epfl.components[cid].send_event("change", {value: value});
     }
 };
 

@@ -419,8 +419,8 @@ class ComponentBase(object):
 
         self = super(ComponentBase, cls).__new__(cls, **config)
 
+        self.page = args[0]
         self.cid = args[1]
-        self._set_page_obj(args[0])
 
         self.__config = config
 
@@ -457,6 +457,14 @@ class ComponentBase(object):
 
     def set_state_attr(self, key, value):
         self.compo_info.setdefault('compo_state', {})[key] = value
+
+    @property
+    def request(self):
+        return self.page.request
+
+    @property
+    def response(self):
+        return self.page.response
 
     @property
     def compo_info(self):
@@ -524,14 +532,6 @@ class ComponentBase(object):
             info['ccid'] = self.container_compo.cid
         return info
 
-    def _set_page_obj(self, page_obj):
-        """ Will be called by __new__. Multiple initialisation-routines are called from here, so a component is only
-        set up after being assigned its page.
-        """
-        self.page = page_obj
-        self.request = page_obj.request
-        self.response = page_obj.response
-
     def set_container_compo(self, compo_obj, slot, position=None):
         """
         Set the container_compo for this component and create any required structural information in the transaction.
@@ -570,7 +570,7 @@ class ComponentBase(object):
         Normally called by a condition in the jinja-template.
         """
         if self._access is None:
-            self._access = security.has_permission("access", self, self.request)
+            self._access = security.has_permission("access", self, self.page.request)
 
         return self._access
 
@@ -812,7 +812,7 @@ class ComponentBase(object):
         self.is_rendered = True
 
         # Prepare the environment and output of the render process.
-        env = self.request.get_epfl_jinja2_environment()
+        env = self.page.request.get_epfl_jinja2_environment()
 
         context = self.get_render_environment(env)
 
@@ -825,12 +825,6 @@ class ComponentBase(object):
         template = env.get_template(self.template_name)
         self.render_cache['main'] = jinja2.Markup(template.render(context))
 
-        handles = self.get_handles()
-        if handles:
-            set_component_info = 'epfl.set_component_info("' + self.cid + '", "handle", [\'' +\
-                                 '\', \''.join(handles) + '\']);'
-            js_raw.append(set_component_info)
-
         self.render_cache['js_raw'] = ''.join(js_raw)
 
         return self.render_cache[target]
@@ -839,7 +833,6 @@ class ComponentBase(object):
     def discover(cls):
         """Handles one time actions on this specific class. Should only be called once per individual class.
         """
-        cls.set_handles(force_update=True)
         cls.combined_compo_state = set(cls.compo_state + cls.base_compo_state)
 
         def getter(n):
@@ -850,42 +843,19 @@ class ComponentBase(object):
 
         for name in cls.combined_compo_state:
             original = getattr(cls, name, None)
-            if isinstance(original, property):
-                continue
+            if not isinstance(original, property):
+                setattr(cls, '__original_attribute_' + name, original)
 
-            setattr(cls, '__original_attribute_' + name, original)
-
-            setattr(cls, name, property(
-                fget=getter(name),
-                fset=setter(name),
-            ))
-
-        if hasattr(cls, 'request_handle_submit'):
-            raise Exception('Deprecated Feature: Submit requests are no longer supported by EPFL.')
+                setattr(cls, name, property(
+                    fget=getter(name),
+                    fset=setter(name),
+                ))
 
         if not cls.template_name:
             raise Exception("You did not setup the 'self.template_name' in " + repr(cls))
 
         if hasattr(cls, 'cid'):
             raise Exception("You illegally set a cid as a class attribute in " + repr(cls))
-
-    @classmethod
-    def set_handles(cls, force_update=True):
-        """Put the names of all handle functions this class provides into a list that can be supplied to the javascript.
-        This allows the client side epfl parts to be aware of which component actually handles which events.
-        Apparently this is the fastest of the options compared to either map/filter or list style comprehension.
-        Even though it should not be faster than the later and isn't if measured by itself. Something apparently slows
-        down if you do it the other way.
-
-        :param force_update: If True the handles will be set anew irregardless of whether they have been set before.
-        """
-        if cls._handles is not None and not force_update:
-            return
-        cls._handles = [name[7:] for name in dir(cls) if name[:7] == 'handle_' and name != 'handle_event']
-
-    def get_handles(self):
-        self.set_handles(False)
-        return self._handles
 
     def redraw(self, parts=None):
         """ This requests a redraw. All components that are requested to be redrawn are redrawn when
