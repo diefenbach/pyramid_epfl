@@ -7,6 +7,8 @@ class TypeAhead(GroupedLinkListLayout):
     use_headings = True  #: Sets GroupedLinkListLayout to show headings instead of submenus.
     open_on_hover = True  #: Open the result list if the mouse is hovered over the component.
 
+    event_name = 'select_option'  #: Default event name to be used for the form style value input.
+
     js_parts = []
     js_name = GroupedLinkListLayout.js_name + [('solute.epfl.components:typeahead/static', 'typeahead.js')]
     css_name = GroupedLinkListLayout.css_name + [('solute.epfl.components:typeahead/static', 'typeahead.css')]
@@ -69,3 +71,7 @@ class TypeAhead(GroupedLinkListLayout):
         """The list container is supposed to be hidden if no entries are available.
         """
         return len(self.components) == 0
+
+    def handle_select_option(self):
+        selected_option = self.page.components[self.epfl_event_trace[0]]
+        self.value = selected_option.text
