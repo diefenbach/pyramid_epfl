@@ -1,9 +1,8 @@
 from solute.epfl.components.grouped_link_list_layout.grouped_link_list_layout import GroupedLinkListLayout
 from solute.epfl.validators.text import TextValidator
-from solute.epfl.components.form.inputbase import FormInputBase
 
 
-class TypeAhead(FormInputBase, GroupedLinkListLayout):
+class TypeAhead(GroupedLinkListLayout):
     search_focus = True  #: Focus on the search input field on load.
     show_search = True  #: Show the search input field.
     use_headings = True  #: Sets GroupedLinkListLayout to show headings instead of submenus.
@@ -13,6 +12,25 @@ class TypeAhead(FormInputBase, GroupedLinkListLayout):
     validators=[TextValidator()]  #: Use TextValidator as default for mandatory function
 
     event_name = 'select_option'  #: Default event name to be used for the form style value input.
+
+
+    label = None  #: Optional label describing the input field.
+    default = None  #: Default value that may be pre-set or pre-selected
+    placeholder = None  #: Placeholder text that can be displayed if supported by the input.
+    readonly = False
+
+    submit_form_on_enter = False  #: If true, underlying form is submitted upon enter key in this input
+    input_focus = False  #: Set focus on this input when component is displayed
+
+    #: Set to true if input change events should be fired immediately to the server.
+    #: Otherwise, change events are fired upon the next immediate epfl event.
+    fire_change_immediately = False
+
+    compo_col = 12
+    label_col = 2
+    layout_vertical = False
+    label_style = None
+    input_style = None
 
     js_parts = []
     js_name = GroupedLinkListLayout.js_name + [('solute.epfl.components:typeahead/static', 'typeahead.js')]
@@ -73,7 +91,6 @@ class TypeAhead(FormInputBase, GroupedLinkListLayout):
 
 
     def init_transaction(self):
-        super(FormInputBase, self).init_transaction()
         super(GroupedLinkListLayout, self).init_transaction()
 
         if self.value is None and self.default is not None:
