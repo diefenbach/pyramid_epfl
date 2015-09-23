@@ -7,7 +7,6 @@ class TypeAhead(GroupedLinkListLayout):
     show_search = True  #: Show the search input field.
     use_headings = True  #: Sets GroupedLinkListLayout to show headings instead of submenus.
     open_on_hover = True  #: Open the result list if the mouse is hovered over the component.
-    show_open_button = True  #: Show the open button
 
     validators=[TextValidator()]  #: Use TextValidator as default for mandatory function
 
@@ -40,7 +39,7 @@ class TypeAhead(GroupedLinkListLayout):
     compo_js_name = 'TypeAhead'
     compo_js_params = GroupedLinkListLayout.compo_js_params + ['row_offset', 'row_limit', 'row_count', 'row_data',
                                                                'show_pagination', 'show_search', 'search_focus',
-                                                               'open_on_hover', 'show_open_button']
+                                                               'open_on_hover']
     compo_js_extras = ['handle_click']
 
     theme_path = GroupedLinkListLayout.theme_path.copy()
@@ -92,13 +91,6 @@ class TypeAhead(GroupedLinkListLayout):
 
     def init_transaction(self):
         super(GroupedLinkListLayout, self).init_transaction()
-
-        if self.value is None and self.default is not None:
-            self.value = self.default
-
-        if self.value:
-            self.row_data["search"] = self.value
-
         if self.placeholder:
             self.search_placeholder = self.placeholder
 
@@ -114,3 +106,12 @@ class TypeAhead(GroupedLinkListLayout):
         self.row_data["search"] = self.value
         self.redraw()
 
+    def set_state_attr(self, key, value):
+        super(GroupedLinkListLayout,self).set_state_attr(key=key,value=value)
+        if key == "value":
+            if value is not None:
+                self.row_data["search"] = value
+
+    def handle_set_row(self, row_offset, row_limit, row_data=None):
+        super(GroupedLinkListLayout,self).handle_set_row(row_offset=row_offset,row_limit=row_limit,row_data=row_data)
+        self.value = None # if something in search changed set the value to None
