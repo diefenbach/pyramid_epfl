@@ -18,6 +18,20 @@ import jinja2.runtime
 from jinja2.exceptions import TemplateNotFound
 
 
+class CompoStateAttribute(object):
+    def __init__(self, initial_value=None, name='var'):
+        self.initial_value = initial_value
+        self.name = name
+        self.type = CompoStateAttribute
+
+    def __get__(self, obj, objtype):
+        return obj.get_state_attr(self.name, self.initial_value)
+
+    def __set__(self, obj, value):
+        return obj.set_state_attr(self.name, value)
+
+
+
 class MissingContainerComponentException(Exception):
     pass
 
@@ -337,7 +351,7 @@ class ComponentBase(object):
     epfl_event_trace = None  #: Contains a list of CIDs an event bubbled through. Only available in handle\_ methods
 
     #: These are the compo_state-names for this ComponentBase-Class
-    base_compo_state = ['visible', 'name', 'value', 'mandatory', 'validation_error', 'validators']
+    base_compo_state = {'visible', 'name', 'value', 'mandatory', 'validation_error', 'validators'}
 
     is_template_element = True  #: Needed for template-reflection: this makes me a template-element (like a form-field)
 
@@ -419,8 +433,7 @@ class ComponentBase(object):
 
         self = super(ComponentBase, cls).__new__(cls, **config)
 
-        self.page = args[0]
-        self.cid = args[1]
+        self.page, self.cid = args[:2]
 
         self.__config = config
 
@@ -833,23 +846,11 @@ class ComponentBase(object):
     def discover(cls):
         """Handles one time actions on this specific class. Should only be called once per individual class.
         """
-        cls.combined_compo_state = set(cls.compo_state + cls.base_compo_state)
+        combined_compo_state = cls.base_compo_state.union(cls.compo_state)
 
-        def getter(n):
-            return lambda self: self.get_state_attr(n, getattr(self, '__original_attribute_' + n))
-
-        def setter(n):
-            return lambda self, value: self.set_state_attr(n, value)
-
-        for name in cls.combined_compo_state:
-            original = getattr(cls, name, None)
-            if not isinstance(original, property):
-                setattr(cls, '__original_attribute_' + name, original)
-
-                setattr(cls, name, property(
-                    fget=getter(name),
-                    fset=setter(name),
-                ))
+        for name in combined_compo_state.difference(cls.combined_compo_state):
+            setattr(cls, name, CompoStateAttribute(getattr(cls, name, None), name))
+        cls.combined_compo_state = combined_compo_state
 
         if not cls.template_name:
             raise Exception("You did not setup the 'self.template_name' in " + repr(cls))
