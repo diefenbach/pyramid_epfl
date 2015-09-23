@@ -4,7 +4,7 @@ from solute.epfl import components
 
 from component_asserts import AssertCoherence, AssertRendering, AssertStyle
 
-from solute.epfl.core.epflcomponentbase import ComponentBase, ComponentContainerBase
+from solute.epfl.core.epflcomponentbase import ComponentBase, ComponentContainerBase, CompoStateAttribute
 
 
 @pytest.fixture(params=['static', 'dynamic'])
@@ -55,8 +55,8 @@ def container_type(request, page, component_container_type_class):
         child_cls = ComponentBase
 
     default_args = getattr(component_container_type_class, 'data_interface', {})
-    if type(default_args) is property:
-        default_args = component_container_type_class.__original_attribute_data_interface
+    if isinstance(default_args, CompoStateAttribute):
+        default_args = default_args.initial_value
 
     # For dynamic tests the Component will be added dynamically to a ComponentContainerBase root_node.
     root_node = ComponentContainerBase

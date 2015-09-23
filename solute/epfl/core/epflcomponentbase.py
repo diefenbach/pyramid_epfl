@@ -24,12 +24,13 @@ class CompoStateAttribute(object):
         self.name = name
         self.type = CompoStateAttribute
 
-    def __get__(self, obj, objtype):
-        return obj.get_state_attr(self.name, self.initial_value)
+    def __get__(self, obj, cls):
+        if obj:
+            return obj.get_state_attr(self.name, self.initial_value)
+        return self
 
     def __set__(self, obj, value):
         return obj.set_state_attr(self.name, value)
-
 
 
 class MissingContainerComponentException(Exception):
@@ -846,11 +847,12 @@ class ComponentBase(object):
     def discover(cls):
         """Handles one time actions on this specific class. Should only be called once per individual class.
         """
-        combined_compo_state = cls.base_compo_state.union(cls.compo_state)
+        cls.combined_compo_state = cls.base_compo_state.union(cls.compo_state)
 
-        for name in combined_compo_state.difference(cls.combined_compo_state):
-            setattr(cls, name, CompoStateAttribute(getattr(cls, name, None), name))
-        cls.combined_compo_state = combined_compo_state
+        for name in cls.combined_compo_state:
+            original = getattr(cls, name, None)
+            if not isinstance(original, CompoStateAttribute) and not isinstance(original, types.MethodType):
+                setattr(cls, name, CompoStateAttribute(original, name))
 
         if not cls.template_name:
             raise Exception("You did not setup the 'self.template_name' in " + repr(cls))

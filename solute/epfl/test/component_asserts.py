@@ -3,6 +3,7 @@ import os
 import inspect
 import re
 from textwrap import wrap
+import types
 
 import solute.epfl.test
 
@@ -408,6 +409,8 @@ class AssertCoherence(AssertBase):
         # Coherence and writeability of object instance compo_state attributes into/to transaction compo_info.
         for name in self.component.combined_compo_state:
             attr_value = getattr(self.component, name)
+            if isinstance(attr_value, types.MethodType):
+                continue
             try:
                 setattr(self.component, name, attr_value)
             except:
