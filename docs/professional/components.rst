@@ -206,27 +206,12 @@ time. A more complete overview of what is happening here and its context can be 
 The only immediate consequence of this call is a possible call to
 :meth:`~solute.epfl.core.epflcomponentbase.ComponentBase.discover` which does several important jobs.
 
-Setting handles
-...............
-Handles are special functions that usually are supplied by the component developer or the app developer. They're used
-for javascript event handling and always prefixed with "handle\_".
-
-.. code-block:: python
-
-        cls.set_handles(force_update=True)
-
-.. automethod:: solute.epfl.core.epflcomponentbase.ComponentBase.set_handles
-    :noindex:
-
 Housekeeping
 ............
 Some functions are no longer available in the epfl core, and some errors are difficult to catch at runtimes. In order to
 avoid those a set of prohibitions is hardwired into the discover methods. Specifically:
 
 .. code-block:: python
-
-        if hasattr(cls, 'request_handle_submit'):
-            raise Exception('Deprecated Feature: Submit requests are no longer supported by EPFL.')
 
         if not cls.template_name:
             raise Exception("You did not setup the 'self.template_name' in " + repr(cls))
@@ -245,8 +230,9 @@ The attribute names listed in the :attr:`~solute.epfl.core.epflcomponentbase.Com
 however proved to be a major performance pitfall. Since using this process was no longer possible the recently
 implemented discovery mechanism was utilized to make the server side state work with very good performance.
 
-In a nutshell, the original attribute value is preserved in a specially prefixed attribute. The original attribute value
-is then replaced by a property with a getter and setter using
+In a nutshell, the original attribute value is preserved in a python descriptor instance
+(:class:`~solute.epfl.core.epflcomponentbase.CompoStateAttribute`). The original attribute value
+is then replaced by this instance which accesses the transaction using
 :meth:`~solute.epfl.core.epflcomponentbase.ComponentBase.get_state_attr` and
 :meth:`~solute.epfl.core.epflcomponentbase.ComponentBase.set_state_attr`.
 

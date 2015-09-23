@@ -19,7 +19,15 @@ from jinja2.exceptions import TemplateNotFound
 
 
 class CompoStateAttribute(object):
+    """Descriptor for component state attributes.
+    """
+
     def __init__(self, initial_value=None, name='var'):
+        """Wrapper to provide just in time access to the compo state in the transaction,
+
+        :param initial_value: The initial value of this compo state attribute.
+        :param name: The name of this compo state attribute.
+        """
         self.initial_value = initial_value
         self.name = name
         self.type = CompoStateAttribute
