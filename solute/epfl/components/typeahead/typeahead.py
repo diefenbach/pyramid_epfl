@@ -29,12 +29,6 @@ class TypeAhead(GroupedLinkListLayout):
         'text': None
     }
 
-    @property
-    def hide_list(self):
-        """The list container is supposed to be hidden if no entries are available.
-        """
-        return len(self.components) == 0
-
     def __init__(self, page, cid, links=None, use_headings=None, event_name=None, show_search=None, height=None,
                  open_on_hover=None, **kwargs):
         """TypeAhead component that offers grouping of entries under a common heading. Offers search bar above and
@@ -69,3 +63,9 @@ class TypeAhead(GroupedLinkListLayout):
         super(GroupedLinkListLayout, self).__init__(page, cid, links=None, use_headings=None, event_name=None,
                                                     show_search=None, height=None, open_on_hover=open_on_hover,
                                                     **kwargs)
+
+    @property
+    def hide_list(self):
+        """The list container is supposed to be hidden if no entries are available.
+        """
+        return len(self.components) == 0
