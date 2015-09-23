@@ -1,11 +1,16 @@
 from solute.epfl.components.grouped_link_list_layout.grouped_link_list_layout import GroupedLinkListLayout
+from solute.epfl.validators.text import TextValidator
+from solute.epfl.components.form.inputbase import FormInputBase
 
 
-class TypeAhead(GroupedLinkListLayout):
+class TypeAhead(FormInputBase, GroupedLinkListLayout):
     search_focus = True  #: Focus on the search input field on load.
     show_search = True  #: Show the search input field.
     use_headings = True  #: Sets GroupedLinkListLayout to show headings instead of submenus.
     open_on_hover = True  #: Open the result list if the mouse is hovered over the component.
+    show_open_button = True  #: Show the open button
+
+    validators=[TextValidator()]  #: Use TextValidator as default for mandatory function
 
     event_name = 'select_option'  #: Default event name to be used for the form style value input.
 
@@ -17,7 +22,7 @@ class TypeAhead(GroupedLinkListLayout):
     compo_js_name = 'TypeAhead'
     compo_js_params = GroupedLinkListLayout.compo_js_params + ['row_offset', 'row_limit', 'row_count', 'row_data',
                                                                'show_pagination', 'show_search', 'search_focus',
-                                                               'open_on_hover']
+                                                               'open_on_hover', 'show_open_button']
     compo_js_extras = ['handle_click']
 
     theme_path = GroupedLinkListLayout.theme_path.copy()
@@ -66,6 +71,20 @@ class TypeAhead(GroupedLinkListLayout):
                                                     show_search=None, height=None, open_on_hover=open_on_hover,
                                                     **kwargs)
 
+
+    def init_transaction(self):
+        super(FormInputBase, self).init_transaction()
+        super(GroupedLinkListLayout, self).init_transaction()
+
+        if self.value is None and self.default is not None:
+            self.value = self.default
+
+        if self.value:
+            self.row_data["search"] = self.value
+
+        if self.placeholder:
+            self.search_placeholder = self.placeholder
+
     @property
     def hide_list(self):
         """The list container is supposed to be hidden if no entries are available.
@@ -75,3 +94,6 @@ class TypeAhead(GroupedLinkListLayout):
     def handle_select_option(self):
         selected_option = self.page.components[self.epfl_event_trace[0]]
         self.value = selected_option.text
+        self.row_data["search"] = self.value
+        self.redraw()
+
