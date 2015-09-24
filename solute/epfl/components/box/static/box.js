@@ -12,15 +12,12 @@ Object.defineProperty(epfl.Box.prototype, 'close_icon', {
 epfl.Box.prototype.handle_local_click = function (event) {
     epfl.ComponentBase.prototype.handle_local_click.call(this, event);
 
-    if (!this.params.hover_box) {
-        return;
-    }
-    if ((this.elm.is(event.target)) || (this.close_icon.is(event.target))) {
+    if ((this.elm.is(event.target) && this.params.hover_box) || (this.close_icon.is(event.target))) {
         // click on close button or outside of box
-        if (this.params.hover_box_remove_on_close) {
-            this.send_event("removed", {});
-        } else {
+        if (!this.params.hover_box_remove_on_close && this.params.hover_box) {
             this.send_event("hide", {});
+        } else {
+            this.send_event("removed", {});
         }
         event.stopImmediatePropagation();
         event.preventDefault();
