@@ -18,9 +18,10 @@ class Download(Button):
 
    """
 
-    js_parts = ["download/download.js"]
+    #js_parts = ["download/download.js"]
     js_name = [("solute.epfl.components:download/static", "download.js"),
                ("solute.epfl.components:download/static", "FileSaver.min.js")]
+    compo_js_name = 'Download'
 
     def __init__(self, page, cid, label=None, value=None, event_name=None, event_target=None, is_submit=False,
                  **extra_params):
