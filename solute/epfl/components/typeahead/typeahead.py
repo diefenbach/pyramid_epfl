@@ -12,24 +12,12 @@ class TypeAhead(GroupedLinkListLayout):
 
     event_name = 'select_option'  #: Default event name to be used for the form style value input.
 
-
     label = None  #: Optional label describing the input field.
     default = None  #: Default value that may be pre-set or pre-selected
     placeholder = None  #: Placeholder text that can be displayed if supported by the input.
-    readonly = False
 
-    submit_form_on_enter = False  #: If true, underlying form is submitted upon enter key in this input
-    input_focus = False  #: Set focus on this input when component is displayed
-
-    #: Set to true if input change events should be fired immediately to the server.
-    #: Otherwise, change events are fired upon the next immediate epfl event.
-    fire_change_immediately = False
-
-    compo_col = 12
-    label_col = 2
-    layout_vertical = False
-    label_style = None
-    input_style = None
+    compo_col = 12  #: col width of the component
+    label_col = 2  #: label col width, input col is compo_col - label_col
 
     js_parts = []
     js_name = GroupedLinkListLayout.js_name + [('solute.epfl.components:typeahead/static', 'typeahead.js')]
@@ -54,7 +42,8 @@ class TypeAhead(GroupedLinkListLayout):
     }
 
     def __init__(self, page, cid, links=None, use_headings=None, event_name=None, show_search=None, height=None,
-                 open_on_hover=None, **kwargs):
+                 open_on_hover=None, label=None, default=None, placeholder=None, compo_col=None, label_col=None,
+                 **kwargs):
         """TypeAhead component that offers grouping of entries under a common heading. Offers search bar above and
         pagination below using the EPFL theming mechanism. Links given as parameters are checked against the existing
         routes automatically showing or hiding them based on the users permissions. Entries can be grouped below a
@@ -83,9 +72,16 @@ class TypeAhead(GroupedLinkListLayout):
         :param show_pagination: Toggle weather the pagination is shown or not.
         :param search_focus: Toggle weather the search field receives focus on load or not.
         :param open_on_hover: Open the result list if the mouse is hovered over the component.
+        :param label: Optional label describing the input field.
+        :param default: Default value that may be pre-set or pre-selected
+        :param placeholder: Placeholder text that can be displayed if supported by the input.
+        :param compo_col: col width of the component
+        :param label_col: label col width, input col is compo_col - label_col
         """
         super(GroupedLinkListLayout, self).__init__(page, cid, links=None, use_headings=None, event_name=None,
                                                     show_search=None, height=None, open_on_hover=open_on_hover,
+                                                    label=label, default=default, placeholder=placeholder,
+                                                    compo_col=compo_col, label_col=label_col,
                                                     **kwargs)
 
 
