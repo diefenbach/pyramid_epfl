@@ -9,7 +9,7 @@ class TypeAhead(GroupedLinkListLayout):
     open_on_hover = True  #: Open the result list if the mouse is hovered over the component.
     show_open_button = True  #: Show the open button
 
-    validators=[TextValidator()]  #: Use TextValidator as default for mandatory function
+    validators = [TextValidator()]  #: Use TextValidator as default for mandatory function
 
     event_name = 'select_option'  #: Default event name to be used for the form style value input.
 
@@ -78,6 +78,7 @@ class TypeAhead(GroupedLinkListLayout):
         :param placeholder: Placeholder text that can be displayed if supported by the input.
         :param compo_col: col width of the component
         :param label_col: label col width, input col is compo_col - label_col
+        :param show_open_button: Show the open button
         """
         super(GroupedLinkListLayout, self).__init__(page, cid, links=None, use_headings=None, event_name=None,
                                                     show_search=None, height=None, open_on_hover=open_on_hover,
