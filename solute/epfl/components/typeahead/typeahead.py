@@ -7,6 +7,7 @@ class TypeAhead(GroupedLinkListLayout):
     show_search = True  #: Show the search input field.
     use_headings = True  #: Sets GroupedLinkListLayout to show headings instead of submenus.
     open_on_hover = True  #: Open the result list if the mouse is hovered over the component.
+    show_open_button = True  #: Show the open button
 
     validators=[TextValidator()]  #: Use TextValidator as default for mandatory function
 
@@ -43,7 +44,7 @@ class TypeAhead(GroupedLinkListLayout):
 
     def __init__(self, page, cid, links=None, use_headings=None, event_name=None, show_search=None, height=None,
                  open_on_hover=None, label=None, default=None, placeholder=None, compo_col=None, label_col=None,
-                 **kwargs):
+                 show_open_button=None, **kwargs):
         """TypeAhead component that offers grouping of entries under a common heading. Offers search bar above and
         pagination below using the EPFL theming mechanism. Links given as parameters are checked against the existing
         routes automatically showing or hiding them based on the users permissions. Entries can be grouped below a
@@ -81,7 +82,7 @@ class TypeAhead(GroupedLinkListLayout):
         super(GroupedLinkListLayout, self).__init__(page, cid, links=None, use_headings=None, event_name=None,
                                                     show_search=None, height=None, open_on_hover=open_on_hover,
                                                     label=label, default=default, placeholder=placeholder,
-                                                    compo_col=compo_col, label_col=label_col,
+                                                    compo_col=compo_col, label_col=label_col,show_open_button=show_open_button,
                                                     **kwargs)
 
 
