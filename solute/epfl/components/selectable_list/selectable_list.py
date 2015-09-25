@@ -33,7 +33,16 @@ class SelectableList(LinkListLayout):
         kwargs["double_click_event_name"] = "double_click"
         return LinkListLayout.default_child_cls(*args, **kwargs)
 
-    def handle_select(self):
+    def handle_select(self, selected_id=None):
+        if selected_id:
+            for compo in self.components:
+                if compo.id == selected_id:
+                    compo.active = not compo.active
+                    if compo.active:
+                        self.selected_ids.add(compo.id)
+                    else:
+                        self.selected_ids.remove(compo.id)
+                    return
         cid = getattr(self.page, self.epfl_event_trace[0]).cid
         self.page.components[cid].active = not self.page.components[cid].active
         if self.page.components[cid].active:
