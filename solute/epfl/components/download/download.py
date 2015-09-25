@@ -18,7 +18,6 @@ class Download(Button):
 
    """
 
-    #js_parts = ["download/download.js"]
     js_name = [("solute.epfl.components:download/static", "download.js"),
                ("solute.epfl.components:download/static", "FileSaver.min.js")]
     compo_js_name = 'Download'

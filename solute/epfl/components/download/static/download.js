@@ -4,10 +4,15 @@ epfl.Download = function(cid, params) {
 
 epfl.Download.inherits_from(epfl.ComponentBase);
 
+Object.defineProperty(epfl.Download.prototype, 'button', {
+    get: function () {
+        return $('#' + this.cid);
+    }
+});
+
 epfl.Download.prototype.handle_click = function(event) {
     // No super since handle_local_click is not required here
-    var button_elm = $('#' + this.cid);
-    if (button_elm.hasClass("disabled")) {
+    if (this.button.hasClass("disabled")) {
         return;
     }
 
@@ -15,7 +20,7 @@ epfl.Download.prototype.handle_click = function(event) {
         return;
     }
     if (this.params["disable_on_click"]) {
-        button_elm.addClass("disabled");
+        this.button.addClass("disabled");
     }
 
     if(this.params["event_target"]) {
