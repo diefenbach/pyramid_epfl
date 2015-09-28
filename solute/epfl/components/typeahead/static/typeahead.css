@@ -2,17 +2,8 @@
     background: white;
 }
 
-.btn.btn-default.fa.fa-caret-down.typeahead-btn {
-    float: right;
-    border-top-left-radius: 0;
-    border-bottom-left-radius: 0;
-}
-
 .typeahead-search {
     overflow: hidden;
 }
 
-.typeahead-search .epfl-input-addon input.form-control.epfl-search-input {
-    border-bottom-right-radius: 0;
-    border-top-right-radius: 0;
-}
+
