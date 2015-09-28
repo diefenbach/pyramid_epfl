@@ -18,9 +18,8 @@
         {% if compo.validation_error %}
             {% if compo.label %}
                 <div class="row">
-                    <div class="col-sm-{{ compo_col }} col-sm-offset-{{ compo.label_col }}">
-                        <small class="help-block"
-                               style="position: absolute;top:-10px;">{{ compo.validation_error }}</small>
+                    <div class="col-sm-{{ compo_col }} col-sm-offset-{{ compo.label_col }} has-error">
+                        <small class="help-block">{{ compo.validation_error }}</small>
                     </div>
                 </div>
             {% else %}
