@@ -19,7 +19,7 @@
         <div class="row">
         <div class="col-sm-{{ compo_col }} col-sm-offset-{{ compo.label_col }}">
     {% endif %}
-    <div class="epfl-list"{{ add_attr }}>
+    <div class="epfl-list epfl-typeahead-list"{{ add_attr }}>
         {{ caller() }}
     </div>
     {% if compo.label %}
