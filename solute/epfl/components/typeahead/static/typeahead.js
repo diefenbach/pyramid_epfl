@@ -14,6 +14,7 @@ epfl.TypeAhead.prototype.handle_local_click = function (event) {
 
 Object.defineProperty(epfl.TypeAhead.prototype, 'list', {
     get: function () {
+        // Unless someone puts a TypeAhead in a TypeAhead this is just fine.
         return this.elm.find('.epfl-typeahead-list');
     }
 });
