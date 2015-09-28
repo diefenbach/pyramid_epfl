@@ -6,6 +6,11 @@ epfl.Button.inherits_from(epfl.ComponentBase);
 
 epfl.Button.prototype.handle_click = function(event) {
     // No super since handle_local_click is not required here
+
+    if (this.params.stop_propagration_on_click) {
+        event.stopPropagation();
+    }
+
     var button_elm = $('#' + this.cid);
     if (button_elm.hasClass("disabled")) {
         return;
