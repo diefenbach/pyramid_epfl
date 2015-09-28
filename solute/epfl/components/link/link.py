@@ -26,7 +26,7 @@ class Link(ComponentBase):
     btn_link = False  #: Set to true if link should be displayed as a button.
     new_window = False  #: Set to true if link should be opened in new window or tab
     active = False  #: Sets the active class in html
-    stop_propagration_on_click = False #: Set to true if click event should not be propagated to parent components
+    stop_propagration_on_click = False  #: Set to true if click event should not be propagated to parent components
 
     new_style_compo = True
     compo_js_params = ['event_name', 'double_click_event_name', 'stop_propagration_on_click']

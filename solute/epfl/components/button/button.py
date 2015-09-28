@@ -49,7 +49,7 @@ class Button(ComponentBase):
     #: disabled in order to avoid multiple clicks on the button. to set the component attribute to disabled as well,
     #: this has to be done in the event handling method.
     disable_on_click = False
-    stop_propagration_on_click = False #: Set to true if click event should not be propagated to parent components
+    stop_propagration_on_click = False  #: Set to true if click event should not be propagated to parent components
 
     new_style_compo = True
     compo_js_params = ['event_target', 'event_name', 'confirm_first', 'confirm_message',
