@@ -71,7 +71,9 @@ class LinkListLayout(PaginatedListLayout):
 
         return links
 
-    @staticmethod
-    def default_child_cls(*args, **kwargs):
+    @classmethod
+    def default_child_cls(cls, *args, **kwargs):
         kwargs['list_element'] = True
+        if cls.event_name:
+            kwargs['event_name'] = cls.event_name
         return Link(*args, **kwargs)
