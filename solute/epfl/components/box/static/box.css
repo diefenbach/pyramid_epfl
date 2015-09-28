@@ -18,6 +18,10 @@
 	margin-top: -8px;
 	margin-right: -6px;
 }
+.epfl_box_refresh_button {
+	float:right;
+	margin-top: -8px;
+}
 .epfl_box_remove_button.in_heading {
 	color: #9c9c9c;
 	float:right;
@@ -25,5 +29,14 @@
 	margin-right: -6px;
 }
 .epfl_box_remove_button.in_heading:hover {
+	color: #767676;
+}
+
+.epfl_box_refresh_button.in_heading {
+	color: #9c9c9c;
+	float:right;
+	margin-top: 0px;
+}
+.epfl_box_refresh_button.in_heading:hover {
 	color: #767676;
 }

@@ -9,6 +9,12 @@ Object.defineProperty(epfl.Box.prototype, 'close_icon', {
     }
 });
 
+Object.defineProperty(epfl.Box.prototype, 'refresh_icon', {
+    get: function () {
+        return this.elm.find('#refresh_' + this.cid);
+    }
+});
+
 epfl.Box.prototype.handle_local_click = function (event) {
     epfl.ComponentBase.prototype.handle_local_click.call(this, event);
 
@@ -19,6 +25,11 @@ epfl.Box.prototype.handle_local_click = function (event) {
         } else {
             this.send_event("removed", {});
         }
+        event.stopImmediatePropagation();
+        event.preventDefault();
+    }
+    else if (this.refresh_icon.is(event.target)) {
+        this.send_event("reinitialize", {});
         event.stopImmediatePropagation();
         event.preventDefault();
     }

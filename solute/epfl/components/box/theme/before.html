@@ -7,11 +7,21 @@
             <i id="close_{{ compo.cid }}" class="fa fa-lg fa-times"></i>
         </a>
     {% endif %}
+    {% if compo.is_refreshable %}
+        <a href="#" class="epfl_box_refresh_button in_heading">
+            <i id="refresh_{{ compo.cid }}" class="fa fa-lg fa-refresh"></i>
+        </a>
+    {% endif %}
     </div>
     {% else %}
     {% if compo.is_removable %}
         <a href="#" class="epfl_box_remove_button">
             <i id="close_{{ compo.cid }}" class="fa fa-lg fa-times"></i>
+        </a>
+    {% endif %}
+    {% if compo.is_refreshable %}
+        <a href="#" class="epfl_box_refresh_button">
+            <i id="refresh_{{ compo.cid }}" class="fa fa-lg fa-refresh"></i>
         </a>
     {% endif %}
     {% endif %}

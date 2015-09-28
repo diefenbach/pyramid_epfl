@@ -41,6 +41,8 @@ class Box(epflcomponentbase.ComponentContainerBase):
     show_title = True
     #: Indicates whether a box can be closed by clicking on a special 'close' button
     is_removable = False
+    #: Indicates whether a box can be closed and by clicking on a special 'refresh' button
+    is_refreshable = False
 
     new_style_compo = True
     compo_js_params = ['hover_box', 'hover_box_remove_on_close', 'hover_box_close_on_outside_click']
@@ -48,7 +50,8 @@ class Box(epflcomponentbase.ComponentContainerBase):
     compo_js_name = 'Box'
 
     def __init__(self, page, cid, title=None, auto_visibility=None, hover_box=None, hover_box_remove_on_close=None,
-                 hover_box_close_on_outside_click=None, box_shown=None, show_title=None, is_removable=None, **extra_params):
+                 hover_box_close_on_outside_click=None, box_shown=None, show_title=None, is_removable=None,
+                 is_refreshable=None, **extra_params):
         """A simple box with a heading that can contain other components. It can be set to hover and/or be closable with
         a cross on the top right.
 
@@ -64,6 +67,7 @@ class Box(epflcomponentbase.ComponentContainerBase):
         :param box_shown: Defaulting to true the border around the box will only be visible if this is true.
         :param show_title: Defaulting to true the title will only be shown if this is true.
         :param is_removable: Defaulting to false the box will only show its removal button if this is true.
+        :param is_refreshable: Defaulting to false the box will only show its refresh button if this is true.
         """
         super(Box, self).__init__()
 
