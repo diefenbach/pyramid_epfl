@@ -18,6 +18,7 @@ from number_input.number_input import NumberInput
 from checkbox.checkbox import Checkbox
 from textarea.textarea import Textarea
 from texteditor.texteditor import TextEditor
+from codeeditor.codeeditor import CodeEditor
 from select.select import Select
 from radio.radio import Radio
 from buttonradio.buttonradio import ButtonRadio
@@ -103,6 +104,7 @@ def add_routes(config):
     Button.add_pyramid_routes(config)
     TextInput.add_pyramid_routes(config)
     TextEditor.add_pyramid_routes(config)
+    CodeEditor.add_pyramid_routes(config)
     NumberInput.add_pyramid_routes(config)
     Textarea.add_pyramid_routes(config)
     Radio.add_pyramid_routes(config)
