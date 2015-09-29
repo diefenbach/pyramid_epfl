@@ -27,6 +27,10 @@ class Link(ComponentBase):
     new_window = False  #: Set to true if link should be opened in new window or tab
     active = False  #: Sets the active class in html
     stop_propagration_on_click = False  #: Set to true if click event should not be propagated to parent components
+    #: Set to context menu dict or to string
+    #: dict example: [{'name': u"Delete", 'event': "delete", 'type': "link"},{'name': "Rename", 'event': "rename", 'type': "link"}]
+    #: if string is set link component calls container compos context_menu function with context_menu as parameter
+    context_menu = None
 
     new_style_compo = True
     compo_js_params = ['event_name', 'double_click_event_name', 'stop_propagration_on_click']
@@ -35,7 +39,7 @@ class Link(ComponentBase):
 
     def __init__(self, page, cid, url=None, route=None, name=None, text=None, icon=None, breadcrumb=None, tile=None,
                  list_element=None, btn_link=None, new_window=None, event_name=None,double_click_event_name=None,
-                 selection=None, stop_propagration_on_click=None, **extra_params):
+                 selection=None, stop_propagration_on_click=None,context_menu=None, **extra_params):
         """Simple Link component.
 
         Usage:
@@ -60,13 +64,16 @@ class Link(ComponentBase):
         :param double_click_event_name: Name of an event to be triggered on double click, prevents url and route from taking effect.
         :param selection: Tuple of integers: (selection_start, selection_end). MARK-Tag will be applied there.
         :param stop_propagration_on_click: Set to true if click event should not be propagated to parent components
+        :param context_menu:  Set to context menu dict or to string
+        dict example: [{'name': u"Delete", 'event': "delete", 'type': "link"},{'name': "Rename", 'event': "rename", 'type': "link"}]
+        if string is set link component calls container compos context_menu function with context_menu as parameter
         """
         super(Link, self).__init__(page, cid, url=url, route=route, name=name, text=text, icon=icon,
                                    breadcrumb=breadcrumb, tile=tile, list_element=list_element,
                                    btn_link=btn_link, new_window=new_window, event_name=event_name,
                                    double_click_event_name=double_click_event_name,
                                    selection=selection,
-                                   stop_propagration_on_click=stop_propagration_on_click,
+                                   stop_propagration_on_click=stop_propagration_on_click,context_menu=context_menu,
                                    **extra_params)
 
     @property
@@ -99,6 +106,17 @@ class Link(ComponentBase):
             return self.url.format(**self.page.request.matchdict)
         except KeyError:
             return None
+
+    @property
+    def _context_menu(self):
+        """ returns a context menu dict, if context_menu is a string ask container compo for context menu dict
+        """
+        if self.context_menu is None:
+            return None
+        elif type(self.context_menu) == dict:
+            return self.context_menu
+        elif type(self.context_menu) == str:
+            return self.container_compo.context_menu(self.context_menu)
 
     def is_first(self):
         """Returns True if the Link is the first component in this slot.

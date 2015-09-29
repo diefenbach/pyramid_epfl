@@ -56,7 +56,7 @@ from paginated_list_layout.paginated_list_layout import PaginatedListLayout
 from link_list_layout.link_list_layout import LinkListLayout
 from grouped_link_list_layout.grouped_link_list_layout import GroupedLinkListLayout
 from hover_link_list_layout.hover_link_list_layout import HoverLinkListLayout
-from context_list_layout.context_list_layout import ContextListLayout, ContextListEntry
+from context_list_layout.context_list_layout import ContextListLayout
 from table_layout.table_layout import TableLayout
 from selectable_list.selectable_list import SelectableList
 from text_list.text_list import TextList

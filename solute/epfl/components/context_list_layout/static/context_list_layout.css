@@ -11,50 +11,9 @@ li.epfl-context-list-entry:hover {
     background-color: #F5F5F5;
 }
 
-li.epfl-context-list-entry:hover button {
+li:hover button.epfl-context-menu-btn {
     display: block;
     position: absolute;
     top:5px;
     right:10px;
-}
-
-li.epfl-context-list-entry button {
-    display: none;
-}
-
-
-ul.epfl-context-list-dropdown {
-    float: right;
-}
-
-ul.context-dropdown-menu{
-    display: none;
-    border: 1px solid black;
-    list-style-type: none;
-    background-clip: padding-box;
-    border-color: #DDDDDD;
-    border-radius: 4px;
-    box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
-    position: fixed;
-    z-index: 5000;
-    background-color: #FFFFFF;
-    padding-left: 0px;
-    font-size: 14px;
-    cursor:pointer;
-}
-
-ul.context-dropdown-menu li.entry:hover{
-    background-color:  #DDDDDD;
-}
-ul.context-dropdown-menu li.entry{
-    padding-top: 3px;
-    padding-left: 15px;
-    padding-right: 15px;
-
-}
-
-ul.context-dropdown-menu li.divider{
-    border-bottom: 1px solid #DDDDDD;
-    height: 1px;
-    padding-top: 3px;
 }

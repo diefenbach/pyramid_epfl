@@ -1,39 +1,34 @@
 # * encoding: utf-8
 from solute.epfl.core import epflcomponentbase
-from solute.epfl.components import ListLayout, PaginatedListLayout
-
-
-class ContextListEntry(epflcomponentbase.ComponentContainerBase):
-
-    """
-    Only for internal use as child compo of ContextListLayout
-
-    """
-    template_name = "context_list_layout/entry.html"
-    asset_spec = "solute.epfl.components:context_list_layout/static"
-    data = None
+from solute.epfl.components import ListLayout, PaginatedListLayout, Link
 
 
 class ContextListLayout(PaginatedListLayout):
-
     """
     A searchable list layout with a context menu in every row.
 
-    Its content and the context menu is configured using get_data()
-    example
+    Its content and the context menu type is configured using get_data() the menu type than can be defined as attribute
+    get_data example
 
     .. code-block:: python
 
-        menu = [{'name':"move up", 'event':"move_up", 'type':"link"},
-                {'name':"move down", 'event':"move_down", 'type'"link"},
-                {'type':"divider"},
-                {'name':u"delete", 'event':"delete", 'type':"link"},
-                {'name':"rename", 'event':"rename", 'type':"link"}]
-
         data = []
         for i in range(0, 100):
-            data.append({'id': i, "data": "test" + str(i), 'menu':menu})
+            data.append({'id': i, "data": "test" + str(i), 'context_menu':menu_type})
 
+    component example
+
+    .. code-block:: python
+
+         components.ContextListLayout(
+                            get_data=list_data,
+                            menu_one=[{'name': u"Menu 1", 'event': "delete", 'type': "link"},
+                                      {'name': "Rename", 'event': "rename", 'type': "link"}],
+                            menu_two=[{'name': u"Menu 2", 'event': "delete", 'type': "link"},
+                                      {'name': "Rename", 'event': "rename", 'type': "link"}],
+                            handle_delete=None,
+                            handle_rename=None
+                            )
 
 
     A click on a context menu entry emits an event which have to be handled
@@ -71,27 +66,30 @@ class ContextListLayout(PaginatedListLayout):
                   'inner_container': ['pretty_list_layout/theme', '>context_list_layout/theme']
                   }
 
-
     js_parts = PaginatedListLayout.js_parts + ['context_list_layout/context_list_layout.js']
-    default_child_cls = ContextListEntry
+    default_child_cls = Link
 
     show_pagination = False  #: see :attr:`PaginatedListLayout.show_pagination`
     show_search = True  #: see :attr:`PaginatedListLayout.show_search`
 
     auto_update_children = True
 
-    js_name = PaginatedListLayout.js_name + [("solute.epfl.components:context_list_layout/static", "context_list_layout.js"),
-                                             ("solute.epfl.components:context_list_layout/static", "contextmenu.js")]
-    css_name = PaginatedListLayout.css_name + [("solute.epfl.components:context_list_layout/static", "context_list_layout.css")]
+    js_name = PaginatedListLayout.js_name + [
+        ("solute.epfl.components:context_list_layout/static", "context_list_layout.js")]
+    css_name = PaginatedListLayout.css_name + [
+        ("solute.epfl.components:context_list_layout/static", "context_list_layout.css")]
 
-    data_interface = {'id': None, 'data': None, 'menu': None}
+    data_interface = {'id': None, 'text': None, 'context_menu': None}
 
     #: An exemplary default context menu.
-    default_menu = [{'name':u"Delete", 'event':"delete", 'type':"link"},
-                    {'name':"Rename", 'event':"rename", 'type':"link"}]
+    default_menu = [{'name': u"Delete", 'event': "delete", 'type': "link"},
+                    {'name': "Rename", 'event': "rename", 'type': "link"}]
 
     def handle_delete(self, entry_id, data):
         pass
 
     def handle_rename(self, entry_id, data):
         pass
+
+    def context_menu(self, context_menu_type):
+        return getattr(self, context_menu_type)
