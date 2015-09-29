@@ -3,45 +3,54 @@ epfl.Link = function (cid, params) {
 };
 epfl.Link.inherits_from(epfl.ComponentBase);
 
-epfl.Link.prototype.ContextMenu = function () {
-    var element = $("[epflid='" + this.cid + "'] ul.context-dropdown-menu");
-    var that = this;
+Object.defineProperty(epfl.Link.prototype, 'context_menu', {
+    get: function () {
+        return this.elm.children('ul.context-dropdown-menu');
+    }
+});
 
-    element.parent().mouseleave(function (event) {
-        element.hide();
+Object.defineProperty(epfl.Link.prototype, 'context_menu_button', {
+    get: function () {
+        return this.elm.children('button');
+    }
+});
+
+Object.defineProperty(epfl.Link.prototype, 'context_menu_entry', {
+    get: function () {
+        return this.context_menu.children('li.entry');
+    }
+});
+
+epfl.Link.prototype.after_response = function (data) {
+    epfl.ComponentBase.prototype.after_response.call(this, data);
+    var obj = this;
+
+    obj.elm.mouseleave(function (event) {
+        obj.context_menu.hide();
     });
 
-    element.children("li.entry").click(function (event) {
+    obj.context_menu_entry.click(function (event) {
         event.stopPropagation();
-        $(this).parent().hide();
-        var liEvent = $(this).data("event");
-        var liId = $(this).data("id");
-        var liData = $(this).data("data");
-        that.send_event(liEvent, {entry_id: liId, data: liData});
+        obj.context_menu.hide();
+        obj.send_event($(this).data("event"), {});
     });
 
-    element.parent().find("button").click(function (event) {
+    obj.context_menu_button.click(function (event) {
         event.stopPropagation();
-        var ul = $(this).parent().find("ul");
-        if (ul.is(":visible")) {
-            ul.hide();
+        if (obj.context_menu.is(":visible")) {
+            obj.context_menu.hide();
         } else {
-            ul.show();
-            ul.css({
+            obj.context_menu.show();
+            obj.context_menu.css({
                 top: ($(this).offset().top + $(this).height() + 3) - $(window).scrollTop(),
-                left: $(this).offset().left - (ul.width() - $(this).width() - 10)
+                left: $(this).offset().left - (obj.context_menu.width() - $(this).width() - 10)
             })
         }
     });
 
-    $(document).click(function(){
-        $("ul.context-dropdown-menu").hide();
+    $(document).click(function () {
+        obj.context_menu.hide();
     });
-};
-
-epfl.Link.prototype.after_response = function (data) {
-    epfl.ComponentBase.prototype.after_response.call(this, data);
-    this.ContextMenu();
 };
 
 epfl.Link.prototype.handle_local_click = function (event) {
