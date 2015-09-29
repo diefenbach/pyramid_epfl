@@ -107,8 +107,7 @@ class Link(ComponentBase):
         except KeyError:
             return None
 
-    @property
-    def _context_menu(self):
+    def get_context_menu(self):
         """ returns a context menu dict, if context_menu is a string ask container compo for context menu dict
         """
         if self.context_menu is None:

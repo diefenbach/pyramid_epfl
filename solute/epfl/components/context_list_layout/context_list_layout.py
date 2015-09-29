@@ -81,9 +81,6 @@ class ContextListLayout(PaginatedListLayout):
 
     data_interface = {'id': None, 'text': None, 'context_menu': None}
 
-    #: An exemplary default context menu.
-    default_menu = [{'name': u"Delete", 'event': "delete", 'type': "link"},
-                    {'name': "Rename", 'event': "rename", 'type': "link"}]
 
     def handle_delete(self, entry_id, data):
         pass
