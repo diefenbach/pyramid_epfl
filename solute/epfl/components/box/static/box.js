@@ -18,7 +18,8 @@ Object.defineProperty(epfl.Box.prototype, 'refresh_icon', {
 epfl.Box.prototype.handle_local_click = function (event) {
     epfl.ComponentBase.prototype.handle_local_click.call(this, event);
 
-    if ((this.elm.is(event.target) && this.params.hover_box) || (this.close_icon.is(event.target))) {
+    if ((this.params.is_removable && this.elm.is(event.target) && this.params.hover_box)
+        || (this.params.is_removable && this.close_icon.is(event.target))) {
         // click on close button or outside of box
         if (!this.params.hover_box_remove_on_close && this.params.hover_box) {
             this.send_event("hide", {});

@@ -45,7 +45,7 @@ class Box(epflcomponentbase.ComponentContainerBase):
     is_refreshable = False
 
     new_style_compo = True
-    compo_js_params = ['hover_box', 'hover_box_remove_on_close', 'hover_box_close_on_outside_click']
+    compo_js_params = ['hover_box', 'hover_box_remove_on_close', 'hover_box_close_on_outside_click', 'is_removable']
     compo_js_extras = ['handle_click']
     compo_js_name = 'Box'
 
