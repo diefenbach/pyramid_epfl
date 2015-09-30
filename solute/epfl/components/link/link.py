@@ -27,8 +27,8 @@ class Link(ComponentBase):
     new_window = False  #: Set to true if link should be opened in new window or tab
     active = False  #: Sets the active class in html
     stop_propagration_on_click = False  #: Set to true if click event should not be propagated to parent components
-    #: Set to context menu dict or to string
-    #: dict example: [{'name': u"Delete", 'event': "delete", 'type': "link"},{'name': "Rename", 'event': "rename", 'type': "link"}]
+    #: Set to context menu list of dicts or to string
+    #: list of dicts example: [{'name': u"Delete", 'event': "delete", 'type': "link"},{'name': "Rename", 'event': "rename", 'type': "link"}]
     #: if string is set link component calls container compos context_menu function with context_menu as parameter
     context_menu = None
 
@@ -64,8 +64,8 @@ class Link(ComponentBase):
         :param double_click_event_name: Name of an event to be triggered on double click, prevents url and route from taking effect.
         :param selection: Tuple of integers: (selection_start, selection_end). MARK-Tag will be applied there.
         :param stop_propagration_on_click: Set to true if click event should not be propagated to parent components
-        :param context_menu:  Set to context menu dict or to string
-        dict example: [{'name': u"Delete", 'event': "delete", 'type': "link"},{'name': "Rename", 'event': "rename", 'type': "link"}]
+        :param context_menu: Set to context menu list of dicts or to string
+        list of dicts example: [{'name': u"Delete", 'event': "delete", 'type': "link"},{'name': "Rename", 'event': "rename", 'type': "link"}]
         if string is set link component calls container compos context_menu function with context_menu as parameter
         """
         super(Link, self).__init__(page, cid, url=url, route=route, name=name, text=text, icon=icon,
@@ -112,7 +112,7 @@ class Link(ComponentBase):
         """
         if self.context_menu is None:
             return None
-        elif type(self.context_menu) == dict:
+        elif type(self.context_menu) == list:
             return self.context_menu
         elif type(self.context_menu) == str:
             return self.container_compo.context_menu(self.context_menu)

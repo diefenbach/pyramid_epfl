@@ -246,3 +246,16 @@ def test_new_window(page):
     compo = page.root_node
 
     assert 'target="_blank"' in compo.render(), 'new_window set to True but target="_blank" is missing or malformed in html.'
+
+def test_context_menu(page):
+    page.root_node = components.Link(
+        text='foobar',
+        context_menu=[{'name': u"Delete", 'event': "delete", 'type': "link"},
+                      {'name': "Rename", 'event': "rename", 'type': "link"}]
+    )
+
+    page.handle_transaction()
+
+    compo = page.root_node
+    assert 'epfl-context-menu-btn' and 'context-dropdown-menu' and 'data-event="delete"' and 'data-event="rename"' in compo.render()
+
