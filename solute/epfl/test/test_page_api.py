@@ -20,7 +20,7 @@ from page import PageWithJS, PageWithJSNoBundle, PageWithCSS, PageWithCSSNoBundl
 def test_basic_component_operations(pyramid_req):
     """Test the basic component operations of the page api.
     """
-    page = Page(pyramid_req)
+    page = Page(None, pyramid_req)
     t = page.transaction
 
     # A component set as root_node must appear in the transaction after handle_transaction.
@@ -40,7 +40,7 @@ def test_basic_component_regeneration(pyramid_req):
     """
 
     # Create a Transaction with assigned components.
-    page = Page(pyramid_req)
+    page = Page(None, pyramid_req)
     page.root_node = ComponentContainerBase
     t = page.transaction
     t['components_assigned'] = True
@@ -78,7 +78,7 @@ def test_basic_component_regeneration(pyramid_req):
         "Stored attribute wasn't stored properly in the transaction compo_state."
 
     # Generate a new Page instance and regenerate everything from the transaction again.
-    new_page = Page(pyramid_req, transaction=t)
+    new_page = Page(None, pyramid_req, transaction=t)
     new_page.handle_transaction()
 
     # If this seems familiar you have payed attention. Congratulations. For everyone else: Read two comments up.
@@ -91,7 +91,7 @@ def test_component_regeneration_performance(pyramid_req):
     """
 
     # Create a page, then create a transaction with a ton of components.
-    page = Page(pyramid_req)
+    page = Page(None, pyramid_req)
     transaction = page.transaction
     transaction['components_assigned'] = True
     transaction.set_component('root_node',
@@ -158,7 +158,7 @@ def test_component_rendering_ajax(pyramid_req):
     """
 
     # Create a Transaction with an assigned root_node.
-    page = Page(pyramid_req)
+    page = Page(None, pyramid_req)
     page.request.is_xhr = True
     page.page_request.params = {"q": []}
     transaction = page.transaction
@@ -202,7 +202,7 @@ def test_component_deletion_and_recreation(pyramid_req):
     """Check if anything goes wrong when components are deleted and then created fresh.
     """
 
-    page = Page(pyramid_req)
+    page = Page(None, pyramid_req)
     transaction = page.transaction
     transaction['components_assigned'] = True
     transaction.set_component('root_node',
@@ -259,7 +259,7 @@ def test_component_deletion(pyramid_req):
     """Check if anything goes wrong when components are deleted.
     """
 
-    page = Page(pyramid_req)
+    page = Page(None, pyramid_req)
     transaction = page.transaction
     transaction['components_assigned'] = True
     transaction.set_component('root_node',
@@ -302,7 +302,7 @@ def test_re_rendering_components(pyramid_req):
     """Check if components can be rendered correctly when regenerated from a Transaction.
     """
     # Generate a transaction with the appropriate components.
-    page = Page(pyramid_req)
+    page = Page(None, pyramid_req)
     page.request.is_xhr = True
     page.page_request.params = {"q": []}
     transaction = page.transaction
@@ -402,7 +402,7 @@ def test_container_assign(pyramid_req):
         ]
     )
 
-    page = Page(pyramid_req)
+    page = Page(None, pyramid_req)
 
     page.handle_transaction()
 
@@ -464,7 +464,7 @@ def test_unicode_ajax_response(pyramid_req):
     """
 
     # Create a Transaction with an assigned root_node.
-    page = Page(pyramid_req)
+    page = Page(None, pyramid_req)
     page.request.is_xhr = True
     page.page_request.params = {"q": []}
     transaction = page.transaction

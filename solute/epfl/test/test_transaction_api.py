@@ -12,7 +12,7 @@ def test_basic_component_operations(pyramid_req):
         * Deleting a component.
     """
 
-    transaction = Transaction(pyramid_req)
+    transaction = Transaction(pyramid_req, None)
 
     # Set component information
     transaction.set_component('root_node', {})
@@ -47,7 +47,7 @@ def test_basic_component_operations(pyramid_req):
 def test_component_mass_insert(pyramid_req):
     """Tests for mass inserting components.
     """
-    transaction = Transaction(pyramid_req)
+    transaction = Transaction(pyramid_req, None)
 
     transaction.set_component('root_node', {})
     transaction.set_component('child_node', {'ccid': 'root_node'})
@@ -69,7 +69,7 @@ def test_component_mass_insert(pyramid_req):
 def test_has_component(pyramid_req):
     """Test for proper functionality of has_component function.
     """
-    transaction = Transaction(pyramid_req)
+    transaction = Transaction(pyramid_req, None)
 
     assert not transaction.has_component('root_node')
 
@@ -84,7 +84,7 @@ def test_has_component(pyramid_req):
 def test_performance_has_and_set_component(pyramid_req):
     """Testing the performance of has_component and set_component.
     """
-    transaction = Transaction(pyramid_req)
+    transaction = Transaction(pyramid_req, None)
     transaction.set_component('child_node_0', {})
 
     compo_depth = 50

@@ -120,7 +120,7 @@ def page(pyramid_req):
 
     :param pyramid_req: Mocked pyramid request.
     """
-    return epflpage.Page(pyramid_req)
+    return epflpage.Page(None, pyramid_req)
 
 
 ignored_classes = [

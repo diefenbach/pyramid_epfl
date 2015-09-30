@@ -78,9 +78,9 @@ def test_recursive_generation(pyramid_req, bool_toggle):
     # For this example we need this as the default.
     components.RecursiveTree.show_children = True
 
-    page = ExamplePage(pyramid_req)
+    page = ExamplePage(None, pyramid_req)
     if bool_toggle:
-        page = ExamplePageComplex(pyramid_req)
+        page = ExamplePageComplex(None, pyramid_req)
 
     page()
 
