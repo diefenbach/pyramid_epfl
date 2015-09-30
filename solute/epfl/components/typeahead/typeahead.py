@@ -7,6 +7,7 @@ class TypeAhead(GroupedLinkListLayout):
     show_search = True  #: Show the search input field.
     use_headings = True  #: Sets GroupedLinkListLayout to show headings instead of submenus.
     open_on_hover = True  #: Open the result list if the mouse is hovered over the component.
+    force_hide_list = False  #: Force the dropdown list to hide
 
     mandatory = False  #: Set to true if value has to be provided for this element in order to yield a valid form
 
@@ -21,6 +22,8 @@ class TypeAhead(GroupedLinkListLayout):
     compo_col = 12  #: col width of the component
     label_col = 2  #: label col width, input col is compo_col - label_col
 
+    selected_id = None  #: Id param of selected option
+
     js_parts = []
     js_name = GroupedLinkListLayout.js_name + [('solute.epfl.components:typeahead/static', 'typeahead.js')]
     css_name = GroupedLinkListLayout.css_name + [('solute.epfl.components:typeahead/static', 'typeahead.css')]
@@ -29,7 +32,7 @@ class TypeAhead(GroupedLinkListLayout):
     compo_js_name = 'TypeAhead'
     compo_js_params = GroupedLinkListLayout.compo_js_params + ['row_offset', 'row_limit', 'row_count', 'row_data',
                                                                'show_pagination', 'show_search', 'search_focus',
-                                                               'open_on_hover']
+                                                               'open_on_hover','hide_list']
     compo_js_extras = ['handle_click']
 
     theme_path = GroupedLinkListLayout.theme_path.copy()
@@ -46,7 +49,7 @@ class TypeAhead(GroupedLinkListLayout):
 
     def __init__(self, page, cid, links=None, use_headings=None, event_name=None, show_search=None, height=None,
                  open_on_hover=None, label=None, default=None, placeholder=None, compo_col=None, label_col=None,
-                 mandatory=mandatory, **kwargs):
+                 mandatory=None, selected_id=None, force_hide_list=None, **kwargs):
         """TypeAhead component that offers grouping of entries under a common heading. Offers search bar above and
         pagination below using the EPFL theming mechanism. Links given as parameters are checked against the existing
         routes automatically showing or hiding them based on the users permissions. Entries can be grouped below a
@@ -81,11 +84,14 @@ class TypeAhead(GroupedLinkListLayout):
         :param compo_col: col width of the component
         :param label_col: label col width, input col is compo_col - label_col
         :param mandatory: Set to true if value has to be provided for this element in order to yield a valid form
+        :param selected_id: Id param of selected option
+        :param force_hide_list: Force the dropdown list to hide
         """
         super(GroupedLinkListLayout, self).__init__(page, cid, links=None, use_headings=None, event_name=None,
                                                     show_search=None, height=None, open_on_hover=open_on_hover,
                                                     label=label, default=default, placeholder=placeholder,
                                                     compo_col=compo_col, label_col=label_col,mandatory=mandatory,
+                                                    selected_id=selected_id, force_hide_list=force_hide_list,
                                                     **kwargs)
 
 
@@ -98,11 +104,12 @@ class TypeAhead(GroupedLinkListLayout):
     def hide_list(self):
         """The list container is supposed to be hidden if no entries are available.
         """
-        return len(self.components) == 0
+        return len(self.components) == 0 or self.force_hide_list
 
     def handle_select_option(self):
         selected_option = self.page.components[self.epfl_event_trace[0]]
         self.value = selected_option.text
+        self.selected_id = selected_option.id
         self.row_data["search"] = self.value
         self.redraw()
 
@@ -115,3 +122,4 @@ class TypeAhead(GroupedLinkListLayout):
     def handle_set_row(self, row_offset, row_limit, row_data=None):
         super(GroupedLinkListLayout,self).handle_set_row(row_offset=row_offset,row_limit=row_limit,row_data=row_data)
         self.value = None # if something in search changed set the value to None
+        self.selected_id = None

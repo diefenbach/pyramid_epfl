@@ -1,4 +1,4 @@
-epfl.TypeAhead = function(cid, params) {
+epfl.TypeAhead = function (cid, params) {
     epfl.LinkListLayout.call(this, cid, params);
 };
 epfl.TypeAhead.inherits_from(epfl.LinkListLayout);
@@ -31,15 +31,15 @@ Object.defineProperty(epfl.TypeAhead.prototype, 'dropdown_toggle', {
     }
 });
 
-epfl.TypeAhead.prototype.update_visibility = function (toggle) {
+epfl.TypeAhead.prototype.update_visibility = function () {
     var available_entries = this.elm.find('[data-parent-epflid=' + this.cid + ']');
     if (available_entries.length == 0 ||
         (!this.search_input.is(':focus') && this.elm.find(':hover').length == 0)) {
         this.list.hide();
-    } else if (toggle) {
-        this.list.toggle();
     } else {
-        this.list.show();
+        if (!this.params.hide_list) {
+            this.list.show();
+        }
     }
 };
 
@@ -86,7 +86,12 @@ epfl.TypeAhead.prototype.after_response = function (data) {
         switch (event.keyCode) {
             case 13: // enter
                 var active_compo = epfl.components[active_entry.attr('epflid')];
-                active_compo.handle_click({target: active_entry, originalEvent: {preventDefault: function () {}}});
+                active_compo.handle_click({
+                    target: active_entry, originalEvent: {
+                        preventDefault: function () {
+                        }
+                    }
+                });
                 break;
             case 38: // arrow up
                 position -= 1;
@@ -97,7 +102,9 @@ epfl.TypeAhead.prototype.after_response = function (data) {
             default:
                 return;
         }
-        if (position == -2) {position = -1;} // Only happens on key up with no selected entry.
+        if (position == -2) {
+            position = -1;
+        } // Only happens on key up with no selected entry.
 
         available_entries.removeClass('active');
 
@@ -105,7 +112,7 @@ epfl.TypeAhead.prototype.after_response = function (data) {
         available_entries.eq(position).addClass('active');
         setTimeout(function () {
             var current_entry = available_entries.eq(position);
-            if(current_entry.length !== 0) {
+            if (current_entry.length !== 0) {
                 obj.list.scrollTop(
                     current_entry.offset().top - obj.list.offset().top + obj.list.scrollTop() - current_entry.outerHeight()
                 );
@@ -119,6 +126,7 @@ epfl.TypeAhead.prototype.after_response = function (data) {
             obj.update_visibility();
         }, 0);
     }
+
     update_visibility();
 
 };
