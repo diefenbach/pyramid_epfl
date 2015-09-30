@@ -47,7 +47,7 @@ class Transaction(MutableMapping):
     #: The session of the request currently in progress.
     session = None
 
-    def __init__(self, request, tid=None):
+    def __init__(self, request, context, tid=None):
         """ Give tid = None to create a new one """
 
         self.instances = {}
@@ -62,7 +62,12 @@ class Transaction(MutableMapping):
             self.tid = uuid.uuid4().hex
             self.created = True
 
-        if self.setdefault('route', request.matched_route.name) != request.matched_route.name:
+        context_name = ''
+        if isinstance(context, Exception):
+            context_name = context.status
+        match_name = request.matched_route.name + context_name
+
+        if self.setdefault('route', match_name) != match_name:
             raise TransactionRouteViolation("Transaction loaded on route '{route}' expected '{expected_route}'".format(
                 route=request.matched_route.name,
                 expected_route=self['route']

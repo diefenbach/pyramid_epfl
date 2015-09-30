@@ -88,16 +88,18 @@ class Page(object):
     model = None
     redrawn_components = None
 
-    def __init__(self, request, transaction=None):
+    def __init__(self, context, request, transaction=None):
         """
         The optional parameter "transaction" is needed when creating page_objects manually. So the transaction is not
         the same as the requests one.
         The lazy_mode is setup here if the request is an ajax request and all events in it are requesting lazy_mode.
 
+        :param context: Pyramid context object.
         :param request: Pyramid Request object.
         :param transaction: EPFL Transaction object.
         """
         self.request = request
+        self.context = context
         self.request.page = self
         self.page_request = PageRequest(request, self)
         self.response = epflclient.EPFLResponse(self)
@@ -112,7 +114,7 @@ class Page(object):
             except epfltransaction.TransactionRouteViolation:
                 # This ensures that a transaction is only used for the route it was created on. A new transaction is
                 # created in case of a differing route.
-                self.transaction = epfltransaction.Transaction(request)
+                self.transaction = epfltransaction.Transaction(request, context)
                 self.transaction.set_page_obj(self)
 
     @Lifecycle(name=('page', 'main'), log_time=True)
@@ -327,7 +329,7 @@ class Page(object):
         """
 
         tid = self.page_request.get_tid()
-        transaction = epfltransaction.Transaction(self.request, tid)
+        transaction = epfltransaction.Transaction(self.request, self.context, tid)
 
         if transaction.created:
             transaction.set_page_obj(self)
