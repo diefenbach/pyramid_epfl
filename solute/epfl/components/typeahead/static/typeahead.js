@@ -32,7 +32,6 @@ Object.defineProperty(epfl.TypeAhead.prototype, 'dropdown_toggle', {
 });
 
 epfl.TypeAhead.prototype.update_visibility = function () {
-    console.log("update_visibility", this.params.hide_list);
     var available_entries = this.elm.find('[data-parent-epflid=' + this.cid + ']');
     if (available_entries.length == 0 ||
         (!this.search_input.is(':focus') && this.elm.find(':hover').length == 0)) {
