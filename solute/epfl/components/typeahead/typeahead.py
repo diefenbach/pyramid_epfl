@@ -7,6 +7,7 @@ class TypeAhead(GroupedLinkListLayout):
     show_search = True  #: Show the search input field.
     use_headings = True  #: Sets GroupedLinkListLayout to show headings instead of submenus.
     open_on_hover = True  #: Open the result list if the mouse is hovered over the component.
+    force_hide_list = False  #: Force the dropdown list to hide
 
     mandatory = False  #: Set to true if value has to be provided for this element in order to yield a valid form
 
@@ -29,7 +30,7 @@ class TypeAhead(GroupedLinkListLayout):
     compo_js_name = 'TypeAhead'
     compo_js_params = GroupedLinkListLayout.compo_js_params + ['row_offset', 'row_limit', 'row_count', 'row_data',
                                                                'show_pagination', 'show_search', 'search_focus',
-                                                               'open_on_hover']
+                                                               'open_on_hover','hide_list']
     compo_js_extras = ['handle_click']
 
     theme_path = GroupedLinkListLayout.theme_path.copy()
@@ -98,7 +99,7 @@ class TypeAhead(GroupedLinkListLayout):
     def hide_list(self):
         """The list container is supposed to be hidden if no entries are available.
         """
-        return len(self.components) == 0
+        return len(self.components) == 0 or self.force_hide_list
 
     def handle_select_option(self):
         selected_option = self.page.components[self.epfl_event_trace[0]]
