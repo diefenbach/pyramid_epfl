@@ -31,6 +31,7 @@ class PaginatedListLayout(PrettyListLayout):
     reset_row_offset_on_search_change = False
 
     search_focus = False  #: Set to true if the search field should receive focus on load.
+    search_focus_after_search = True  #: Focus the search input after a search
 
     theme_path = ['pretty_list_layout/theme', '<paginated_list_layout/theme']
 
@@ -45,7 +46,8 @@ class PaginatedListLayout(PrettyListLayout):
 
     def __init__(self, page, cid, show_search=None, show_pagination=None, search_placeholder=None,
                  search_focus=None, visible_pages_limit=None,
-                 reset_row_offset_on_search_change=None, height=None, **kwargs):
+                 reset_row_offset_on_search_change=None, height=None,search_focus_after_search=search_focus_after_search,
+                 **kwargs):
         """Paginated list using the PrettyListLayout based on bootstrap. Offers searchbar above and pagination below
         using the EPFL theming mechanism.
 
@@ -56,6 +58,7 @@ class PaginatedListLayout(PrettyListLayout):
         :param visible_pages_limit: Specify the number of pages that should be visible in the pagination bar.
         :param reset_row_offset_on_search_change: Reset row_offset once the user changes the search string.
         :param height: Set the list to the given height in pixels.
+        :param search_focus_after_search: Focus the search input after a search
         """
         super(PaginatedListLayout, self).__init__(page, cid, show_search=show_search,
                                                   show_pagination=show_pagination,
@@ -63,11 +66,15 @@ class PaginatedListLayout(PrettyListLayout):
                                                   search_focus=search_focus,
                                                   visible_pages_limit=visible_pages_limit,
                                                   reset_row_offset_on_search_change=reset_row_offset_on_search_change,
+                                                  search_focus_after_search=search_focus_after_search,
                                                   height=height, **kwargs)
 
     def handle_set_row(self, row_offset, row_limit, row_data=None):
-        if self.reset_row_offset_on_search_change and self.row_data and row_data:
+        if self.row_data is not None and row_data is not None:
             if self.row_data.get("search", None) != row_data.get("search", None):
-                # search parameter has been changed, move to the first page.
-                row_offset = 0
+                if self.search_focus_after_search:
+                    self.search_focus = True
+                if self.reset_row_offset_on_search_change:
+                    row_offset = 0
+
         super(PaginatedListLayout, self).handle_set_row(row_offset, row_limit, row_data)
