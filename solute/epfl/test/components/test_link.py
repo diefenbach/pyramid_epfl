@@ -4,6 +4,9 @@ from solute.epfl.core.epflcomponentbase import ComponentContainerBase
 
 from link_asserts import assert_href_is, assert_with_a_twist, assert_breadcrumb, assert_list_element
 
+@pytest.fixture(params=[True, False])
+def bool_toggle(request):
+    return request.param
 
 @pytest.fixture(params=[
     # event_name, route, url
@@ -247,22 +250,30 @@ def test_new_window(page):
 
     assert 'target="_blank"' in compo.render(), 'new_window set to True but target="_blank" is missing or malformed in html.'
 
-def test_context_menu(page):
-    page.root_node = components.Link(
-        text='foobar',
-        context_menu=[{'name': u"Delete", 'event': "delete", 'type': "link"},
-                      {'name': "Rename", 'event': "rename", 'type': "link"}]
-    )
 
-    context_menu_html = ['epfl-context-menu-btn', 'context-dropdown-menu', 'data-event="delete"', 'data-event="rename"']
+def test_context_menu(page, bool_toggle):
+    page.root_node = components.Link(
+        text='foobar'
+    )
 
     page.handle_transaction()
     compo = page.root_node
 
-    assert all(
-        str in compo.render() for str in context_menu_html), "Could not find context menu or context menu is invalid"
+    if bool_toggle:
+        compo.context_menu = [{'name': u"Delete", 'event': "delete", 'type': "link"},
+                              {'name': "Rename", 'event': "rename", 'type': "link"}]
+    else:
+        compo.context_menu = None
 
-    compo.render_cache = None
-    compo.context_menu = None
+    rendered_html = compo.render()
 
-    assert not any(str in compo.render() for str in context_menu_html), "Found context menu where no menu was expected"
+    if bool_toggle:
+        assert 'epfl-context-menu-btn' in rendered_html, "Could not find context menu button"
+        assert 'context-dropdown-menu' in rendered_html, "Could not find context menu"
+        assert 'data-event="delete"' in rendered_html, "Could not find context menu entry delete"
+        assert 'data-event="rename"' in rendered_html, "Could not find context menu entry rename"
+    else:
+        assert 'epfl-context-menu-btn' not in rendered_html, "Find context menu button where no was expected"
+        assert 'context-dropdown-menu' not in rendered_html, "Find context menu where no was expected"
+        assert 'data-event="delete"' not in rendered_html, "Find context menu entry delete where no was expected"
+        assert 'data-event="rename"' not in rendered_html, "Fnd context menu entry rename where no was expected"
