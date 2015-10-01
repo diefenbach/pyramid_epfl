@@ -4,6 +4,9 @@ from solute.epfl.core.epflcomponentbase import ComponentContainerBase
 
 from link_asserts import assert_href_is, assert_with_a_twist, assert_breadcrumb, assert_list_element
 
+@pytest.fixture(params=[True, False])
+def bool_toggle(request):
+    return request.param
 
 @pytest.fixture(params=[
     # event_name, route, url
@@ -246,3 +249,29 @@ def test_new_window(page):
     compo = page.root_node
 
     assert 'target="_blank"' in compo.render(), 'new_window set to True but target="_blank" is missing or malformed in html.'
+
+
+def test_context_menu(page, bool_toggle):
+    page.root_node = components.Link(
+        text='foobar'
+    )
+
+    page.handle_transaction()
+    compo = page.root_node
+
+    if bool_toggle:
+        compo.context_menu = [{'name': u"Delete", 'event': "delete", 'type': "link"},
+                              {'name': "Rename", 'event': "rename", 'type': "link"}]
+    else:
+        compo.context_menu = None
+
+    if bool_toggle:
+        assert 'epfl-context-menu-btn' in compo.render(), "Could not find context menu button"
+        assert 'context-dropdown-menu' in compo.render(), "Could not find context menu"
+        assert 'data-event="delete"' in compo.render(), "Could not find context menu entry delete"
+        assert 'data-event="rename"' in compo.render(), "Could not find context menu entry rename"
+    else:
+        assert 'epfl-context-menu-btn' not in compo.render(), "Find context menu button where no was expected"
+        assert 'context-dropdown-menu' not in compo.render(), "Find context menu where no was expected"
+        assert 'data-event="delete"' not in compo.render(), "Find context menu entry delete where no was expected"
+        assert 'data-event="rename"' not in compo.render(), "Fnd context menu entry rename where no was expected"
