@@ -10,7 +10,7 @@ class Link(ComponentBase):
     js_name = ["link.js"]
     css_name = ["link.css"]
 
-    compo_state = ["url", "route", "text", "icon", "name", "active"]
+    compo_state = ["url", "route", "text", "icon", "name", "active", "context_menu"]
 
     url = None  #: The url this link points to. Used for the src attribute of the A-Tag.
     route = None  #: The route this link points to. Used to look up the url for the src attribute of the A-Tag.
