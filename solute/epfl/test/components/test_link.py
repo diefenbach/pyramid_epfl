@@ -265,15 +265,13 @@ def test_context_menu(page, bool_toggle):
     else:
         compo.context_menu = None
 
-    rendered_html = compo.render()
-
     if bool_toggle:
-        assert 'epfl-context-menu-btn' in rendered_html, "Could not find context menu button"
-        assert 'context-dropdown-menu' in rendered_html, "Could not find context menu"
-        assert 'data-event="delete"' in rendered_html, "Could not find context menu entry delete"
-        assert 'data-event="rename"' in rendered_html, "Could not find context menu entry rename"
+        assert 'epfl-context-menu-btn' in compo.render(), "Could not find context menu button"
+        assert 'context-dropdown-menu' in compo.render(), "Could not find context menu"
+        assert 'data-event="delete"' in compo.render(), "Could not find context menu entry delete"
+        assert 'data-event="rename"' in compo.render(), "Could not find context menu entry rename"
     else:
-        assert 'epfl-context-menu-btn' not in rendered_html, "Find context menu button where no was expected"
-        assert 'context-dropdown-menu' not in rendered_html, "Find context menu where no was expected"
-        assert 'data-event="delete"' not in rendered_html, "Find context menu entry delete where no was expected"
-        assert 'data-event="rename"' not in rendered_html, "Fnd context menu entry rename where no was expected"
+        assert 'epfl-context-menu-btn' not in compo.render(), "Find context menu button where no was expected"
+        assert 'context-dropdown-menu' not in compo.render(), "Find context menu where no was expected"
+        assert 'data-event="delete"' not in compo.render(), "Find context menu entry delete where no was expected"
+        assert 'data-event="rename"' not in compo.render(), "Fnd context menu entry rename where no was expected"

@@ -31,15 +31,13 @@ def test_context_menu_from_parent(page, bool_toggle):
         compo.menu_one = None
         compo.menu_two = None
 
-    rendered_html = compo.render()
-
     if bool_toggle:
-        assert 'epfl-context-menu-btn' in rendered_html, "Could not find context menu button"
-        assert 'context-dropdown-menu' in rendered_html, "Could not find context menu"
-        assert 'data-event="menu_one"' in rendered_html, "Could not find context menu entry menu_one"
-        assert 'data-event="menu_two"' in rendered_html, "Could not find context menu entry menu_two"
+        assert 'epfl-context-menu-btn' in compo.render(), "Could not find context menu button"
+        assert 'context-dropdown-menu' in compo.render(), "Could not find context menu"
+        assert 'data-event="menu_one"' in compo.render(), "Could not find context menu entry menu_one"
+        assert 'data-event="menu_two"' in compo.render(), "Could not find context menu entry menu_two"
     else:
-        assert 'epfl-context-menu-btn' not in rendered_html, "Find context menu button where no was expected"
-        assert 'context-dropdown-menu' not in rendered_html, "Find context menu where no was expected"
-        assert 'data-event="menu_one"' not in rendered_html, "Find context menu entry menu_one where no was expected"
-        assert 'data-event="menu_two"' not in rendered_html, "Fnd context menu entry menu_two where no was expected"
+        assert 'epfl-context-menu-btn' not in compo.render(), "Find context menu button where no was expected"
+        assert 'context-dropdown-menu' not in compo.render(), "Find context menu where no was expected"
+        assert 'data-event="menu_one"' not in compo.render(), "Find context menu entry menu_one where no was expected"
+        assert 'data-event="menu_two"' not in compo.render(), "Fnd context menu entry menu_two where no was expected"
