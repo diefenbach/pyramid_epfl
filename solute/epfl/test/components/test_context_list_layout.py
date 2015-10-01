@@ -12,8 +12,21 @@ def test_context_menu_from_parent(page):
         menu_two=[{'name': u"menu_two", 'event': "menu_two", 'type': "link"}],
         get_data=list_data
     )
+
+    context_menu_html = ['epfl-context-menu-btn', 'context-dropdown-menu', 'data-event="menu_one"',
+                         'data-event="menu_two"']
+
     page.handle_transaction()
 
-    root = page.root_node
+    compo = page.root_node
+    assert all(
+        str in compo.render() for str in context_menu_html), "Could not find context menu or context menu is invalid"
 
-    assert 'data-event="menu_one"' and 'data-event="menu_two"' in root.render()
+    compo.render_cache = None
+    for child in compo.components:
+        child.render_cache = None
+
+    compo.menu_one = None
+    compo.menu_two = None
+
+    assert not any(str in compo.render() for str in context_menu_html),  "Found context menu where no menu was expected"

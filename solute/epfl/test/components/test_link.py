@@ -254,8 +254,15 @@ def test_context_menu(page):
                       {'name': "Rename", 'event': "rename", 'type': "link"}]
     )
 
+    context_menu_html = ['epfl-context-menu-btn', 'context-dropdown-menu', 'data-event="delete"', 'data-event="rename"']
+
     page.handle_transaction()
-
     compo = page.root_node
-    assert 'epfl-context-menu-btn' and 'context-dropdown-menu' and 'data-event="delete"' and 'data-event="rename"' in compo.render()
 
+    assert all(
+        str in compo.render() for str in context_menu_html), "Could not find context menu or context menu is invalid"
+
+    compo.render_cache = None
+    compo.context_menu = None
+
+    assert not any(str in compo.render() for str in context_menu_html), "Found context menu where no menu was expected"
