@@ -49,11 +49,11 @@ class Button(ComponentBase):
     #: disabled in order to avoid multiple clicks on the button. to set the component attribute to disabled as well,
     #: this has to be done in the event handling method.
     disable_on_click = False
-    stop_propagration_on_click = False  #: Set to true if click event should not be propagated to parent components
+    stop_propagation_on_click = False  #: Set to true if click event should not be propagated to parent components
 
     new_style_compo = True
     compo_js_params = ['event_target', 'event_name', 'confirm_first', 'confirm_message',
-                       'stop_propagration_on_click', 'disable_on_click']
+                       'stop_propagation_on_click', 'disable_on_click']
     compo_js_name = 'Button'
     compo_js_extras = ['handle_click']
 
@@ -72,7 +72,7 @@ class Button(ComponentBase):
                  confirm_message="Do you want to proceed?",
                  button_size=None,
                  disable_on_click=None,
-                 stop_propagration_on_click=None,
+                 stop_propagation_on_click=None,
                  **extra_params):
         """
         Button Component
@@ -92,7 +92,7 @@ class Button(ComponentBase):
         :param confirm_message: Adapt this text for a custom confirmation dialog message
         :param button_size: Optional button size. Possible values: 'btn-lg', 'btn-sm', 'btn-xs'
         :param disable_on_click: If set to true, the html button (not the component!) is set to disabled on a click
-        :param stop_propagration_on_click: Set to true if click event should not be propagated to parent components
+        :param stop_propagation_on_click: Set to true if click event should not be propagated to parent components
         """
         super(Button, self).__init__(page=page, cid=cid,
                                      label=label,
@@ -109,7 +109,7 @@ class Button(ComponentBase):
                                      confirm_message=confirm_message,
                                      button_size=button_size,
                                      disable_on_click=disable_on_click,
-                                     stop_propagration_on_click=stop_propagration_on_click,
+                                     stop_propagation_on_click=stop_propagation_on_click,
                                      **extra_params)
         if not self.event_target:
             self.event_target = self.cid

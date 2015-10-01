@@ -43,7 +43,7 @@ epfl.Link.prototype.handle_local_click = function (event) {
         this.send_event(this.params.event_name);
         event.originalEvent.preventDefault();
     }
-    if (this.params.stop_propagration_on_click) {
+    if (this.params.stop_propagation_on_click) {
         event.stopPropagation();
     }
 
@@ -69,7 +69,7 @@ epfl.Link.prototype.handle_double_click = function (event) {
         this.send_event(this.params.double_click_event_name);
         event.originalEvent.preventDefault();
     }
-    if (this.params.stop_propagration_on_click) {
+    if (this.params.stop_propagation_on_click) {
         event.stopPropagation();
     }
 };

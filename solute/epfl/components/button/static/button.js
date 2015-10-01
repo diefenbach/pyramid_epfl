@@ -7,7 +7,7 @@ epfl.Button.inherits_from(epfl.ComponentBase);
 epfl.Button.prototype.handle_click = function(event) {
     // No super since handle_local_click is not required here
 
-    if (this.params.stop_propagration_on_click) {
+    if (this.params.stop_propagation_on_click) {
         event.stopPropagation();
     }
 
