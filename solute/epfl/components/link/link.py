@@ -110,6 +110,10 @@ class Link(ComponentBase):
     def get_context_menu(self):
         """ returns a context menu dict, if context_menu is a string ask container compo for context menu dict
         """
+        # check for legacy menu
+        if hasattr(self, "menu"):
+            if self.menu:
+                return self.menu
         if self.context_menu is None:
             return None
         elif type(self.context_menu) == list:
