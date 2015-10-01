@@ -15,6 +15,12 @@ Object.defineProperty(epfl.Link.prototype, 'context_menu_button', {
     }
 });
 
+Object.defineProperty(epfl.Link.prototype, 'context_menu_button_icon', {
+    get: function () {
+        return this.context_menu_button.children("i");
+    }
+});
+
 Object.defineProperty(epfl.Link.prototype, 'context_menu_entry', {
     get: function () {
         return this.context_menu.children('li.entry');
@@ -28,39 +34,32 @@ epfl.Link.prototype.after_response = function (data) {
     obj.elm.mouseleave(function (event) {
         obj.context_menu.hide();
     });
-
-    obj.context_menu_entry.click(function (event) {
-        event.stopPropagation();
-        obj.context_menu.hide();
-        obj.send_event($(this).data("event"), {});
-    });
-
-    obj.context_menu_button.click(function (event) {
-        event.stopPropagation();
-        if (obj.context_menu.is(":visible")) {
-            obj.context_menu.hide();
-        } else {
-            obj.context_menu.show();
-            obj.context_menu.css({
-                top: ($(this).offset().top + $(this).height() + 3) - $(window).scrollTop(),
-                left: $(this).offset().left - (obj.context_menu.width() - $(this).width() - 10)
-            })
-        }
-    });
-
-    $(document).click(function () {
-        obj.context_menu.hide();
-    });
 };
 
 epfl.Link.prototype.handle_local_click = function (event) {
     epfl.ComponentBase.prototype.handle_local_click.call(this, event);
+
     if (this.params.event_name) {
         this.send_event(this.params.event_name);
         event.originalEvent.preventDefault();
     }
     if (this.params.stop_propagration_on_click) {
         event.stopPropagation();
+    }
+
+    if (this.context_menu_button.is(event.target) || this.context_menu_button_icon.is(event.target)) {
+        if (this.context_menu.is(":visible")) {
+            this.context_menu.hide();
+        } else {
+            this.context_menu.show();
+            this.context_menu.css({
+                top: (this.context_menu_button.offset().top + this.context_menu_button.height() + 3) - $(window).scrollTop(),
+                left: this.context_menu_button.offset().left - (this.context_menu.width() - this.context_menu_button.width() - 10)
+            });
+        }
+    } else if (this.context_menu_entry.is(event.target)) {
+        this.context_menu.hide();
+        this.send_event($(event.target).data("event"), {});
     }
 };
 
