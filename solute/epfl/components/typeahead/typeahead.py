@@ -24,7 +24,7 @@ class TypeAhead(GroupedLinkListLayout):
 
     selected_id = None  #: Id param of selected option
 
-    compo_state = GroupedLinkListLayout.compo_state + ["selected_id", "value"]
+    compo_state = GroupedLinkListLayout.compo_state + ["selected_id", "label"]
 
     js_parts = []
     js_name = GroupedLinkListLayout.js_name + [('solute.epfl.components:typeahead/static', 'typeahead.js')]
