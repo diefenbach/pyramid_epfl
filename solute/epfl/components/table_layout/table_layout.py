@@ -159,16 +159,28 @@ class TableLayout(PaginatedListLayout):
         self.redraw()
 
     def export_csv(self):
-        csv_string = ''
-        result = super(TableLayout, self)._get_data(0, self.row_count, self.row_data, {})
-        for key in result[0].keys():
-            csv_string = '%s%s;' % (csv_string, key)
-        csv_string = '%s\n' % csv_string
+        csv = []
+        result = self._get_data(0, max(self.row_count, self.row_limit), self.row_data, {})
+        if getattr(self, 'headings', None):
+            headings = []
+            csv.append(headings)
+            for heading in self.headings:
+                headings.append(heading.get('title', ''))
+        else:
+            headings = []
+            csv.append(headings)
+            for child_map in self.map_child_cls:
+                headings.append(child_map[0])
+        row_id = None
+        csv_row = None
         for row in result:
-            for value in row.values():
-                csv_string = '%s%s;' % (csv_string, value)
-            csv_string = '%s\n' % csv_string
-        return csv_string
+            if row_id != row['row']['id']:
+                row_id = row['row']['id']
+                csv_row = []
+                csv.append(csv_row)
+            csv_row.append(row['value'])
+
+        return '\n'.join([';'.join([unicode(entry) for entry in row]) for row in csv])
 
     def handle_export_csv(self):
         csv = self.export_csv()

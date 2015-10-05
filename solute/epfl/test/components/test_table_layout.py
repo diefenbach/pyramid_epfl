@@ -296,3 +296,45 @@ def test_parsing_order(page):
         data_id, sub_id = int(data_id), int(sub_id)
         assert (data_id >= old_data_id and sub_id > old_sub_id) or data_id > old_data_id
         old_data_id, old_sub_id = data_id, sub_id
+
+
+class CSVExampleModel(epflassets.ModelBase):
+    data = [
+        {'id': i, 'col1': 'col1 %s' % i, 'col2': 'col2 %s' % i, 'col3': 'col3 %s' % i, 'value': 'value %s' % i, }
+        for i in range(0, 5)
+    ]
+
+    def load_entries(self, *args, **kwargs):
+        return self.data
+
+
+def test_csv_export_with_headings(page):
+    page.model = CSVExampleModel
+    page.setup_model()
+
+    page.root_node = components.TableLayout(
+        headings=[
+            {'title': 'field 1', 'name': 'col1'},
+            {'title': 'field 2', 'name': 'value', 'sortable': True},
+            {'title': 'field 3', 'toggle_visibility_supported': True},
+            {'title': 'field 4', 'toggle_visibility_supported': True},
+        ],
+        get_data='entries',
+        data_interface={
+            'id': None,
+            'col1': None,
+            'col2': None,
+            'col3': None,
+        },
+        map_child_cls=[
+            ('col1', components.Text, {'value': 'col1'}),
+            ('col2', components.Text, {'value': 'col2'}),
+            ('col3', components.Text, {'value': 'col3'}),
+        ],
+    )
+
+    page.handle_transaction()
+    root_node = page.root_node
+    csv = 'field 1;field 2;field 3;field 4\ncol1 0;col2 0;col3 0\ncol1 1;col2 1;col3 1\ncol1 2;col2 2;col3 2\n' \
+          'col1 3;col2 3;col3 3\ncol1 4;col2 4;col3 4'
+    assert csv == root_node.export_csv()
