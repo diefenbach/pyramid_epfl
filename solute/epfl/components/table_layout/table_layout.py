@@ -7,7 +7,9 @@ class TableLayout(PaginatedListLayout):
     js_name = PaginatedListLayout.js_name + [('solute.epfl.components:table_layout/static',
                                               'table_layout.js'),
                                              ('solute.epfl.components:table_layout/static',
-                                              'jquery.fixedheadertable.min.js')]
+                                              'jquery.fixedheadertable.min.js'),
+                                             ('solute.epfl.components:table_layout/static',
+                                              'FileSaver.min.js')]
     css_name = PaginatedListLayout.css_name + \
         [("solute.epfl.components:table_layout/static", "css/table_layout.css")]
 
@@ -20,6 +22,8 @@ class TableLayout(PaginatedListLayout):
     fixed_header = True  #: Set to False if header should not be fixed.
     #: Can be set to a tuple where each entry contains True/False denoting the visibility of the corresponding column
     column_visibility = None
+    #: Set to true to show a export-button which will automatically export the tables data as .csv-file.
+    show_export = False
 
     orderby = None  #: An optional string denoting which column should be initially used for sorting.
     ordertype = None  #: An optional string denoting the initial sort order.
@@ -40,7 +44,7 @@ class TableLayout(PaginatedListLayout):
     compo_js_extras = ['handle_click']
 
     def __init__(self, page, cid, show_search=None, height=None, column_visibility=None, orderby=None, ordertype=None,
-                 row_colors=None, **kwargs):
+                 row_colors=None, show_export=None, **kwargs):
         """Table based on a paginated list. Offers searchbar above and pagination below using the EPFL theming
         mechanism.
 
@@ -74,10 +78,11 @@ class TableLayout(PaginatedListLayout):
         :param orderby: An optional string denoting which column should be initially used for sorting.
         :param ordertype: An optional string denoting the initial sort order.
         :param row_colors: This is a simple row_id to row color mapping example: {1:ROW_DANGER,2:ROW_SUCCESS}
+        :param show_export: Set to true to show a export-button which will export the table data as .csv-file.
         """
         super(PaginatedListLayout, self).__init__(
             page, cid, show_search=None, height=height, column_visibility=column_visibility, row_colors=row_colors,
-            orderby=orderby, ordertype=ordertype, **kwargs)
+            orderby=orderby, ordertype=ordertype, show_export=show_export, **kwargs)
 
     def setup_component(self):
         PaginatedListLayout.setup_component(self)
