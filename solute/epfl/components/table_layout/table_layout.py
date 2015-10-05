@@ -152,3 +152,19 @@ class TableLayout(PaginatedListLayout):
         self.row_data.update({'orderby': self.orderby})
         self.row_data.update({'ordertype': self.ordertype})
         self.redraw()
+
+    def export_csv(self):
+        csv_string = ''
+        result = super(TableLayout, self)._get_data(0, self.row_count, self.row_data, {})
+        for key in result[0].keys():
+            csv_string = '%s%s;' % (csv_string, key)
+        csv_string = '%s\n' % csv_string
+        for row in result:
+            for value in row.values():
+                csv_string = '%s%s;' % (csv_string, value)
+            csv_string = '%s\n' % csv_string
+        return csv_string
+
+    def handle_export_csv(self):
+        csv = self.export_csv()
+        self.return_ajax_response([csv, 'table_data.csv'])
