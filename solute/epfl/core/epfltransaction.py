@@ -249,6 +249,27 @@ class Transaction(MutableMapping):
         """
         return cid in self['compo_store']
 
+    def hibernate_component_id(self, cid):
+        """Sets the given component to be temporarily inactive. The component will not be listed or accessible unless
+        reactivated using :func:`wake_component_id` on it.
+
+        :param cid: The component to be put to sleep.
+        """
+        compo = self.get_component(cid)
+        parent = self.get_component(compo.get('ccid'))
+
+        parent['compo_struct'].remove(cid)
+        parent.setdefault('sleeping_compo_struct', {})[compo['config']['id']] = cid
+
+    def wake_component_id(self, cid, data_id):
+        """Sets the child component identified by the data_id to be active again.
+
+        :param data_id: The data id of the component to be woken.
+        """
+        parent = self.get_component(cid)
+
+        parent['compo_struct'].append(parent.get('sleeping_compo_struct').pop(data_id))
+
     # MutableMapping requirements:
     def __getitem__(self, key):
         return self.data.__getitem__(key)
