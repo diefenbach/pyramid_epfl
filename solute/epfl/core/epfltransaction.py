@@ -225,6 +225,12 @@ class Transaction(MutableMapping):
         :param cid: component id of target component.
         """
         compo = self.get_component(cid)
+
+        # Wake components that have been put to sleep in order to correctly delete them.
+        if 'sleeping_compo_struct' in compo:
+            for sid in compo['sleeping_compo_struct']:
+                self.wake_component_id(cid, sid)
+
         if 'ccid' in compo:
             container = self.get_component(compo['ccid'])
             container['compo_struct'].remove(cid)
