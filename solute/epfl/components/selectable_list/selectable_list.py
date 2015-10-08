@@ -68,7 +68,7 @@ class SelectableList(LinkListLayout):
         pass
 
     def handle_shift_click(self):
-        if not self.last_selected_index:
+        if self.last_selected_index is None:
             return self.handle_select()
         compo = self.page.components[self.epfl_event_trace[0]]
         current_index = compo.position + self.row_offset
