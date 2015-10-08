@@ -63,9 +63,13 @@ epfl.ComponentBase.prototype.after_response = function (data) {
      * during an ajax request this will be called after the response javascript has been executed or sent to the
      * callback. */
     var obj = this;
-    if (this.params && this.params.extras_handle_click) {
+    if (this.params && (this.params.extras_handle_click || this.params.extras_handle_shift_click)) {
         obj.elm.click(function (event) {
-            obj.handle_click(event);
+            if (obj.params.extras_handle_shift_click && event.shiftKey) {
+                obj.handle_shift_click(event);
+            } else if (obj.params.extras_handle_click) {
+                obj.handle_click(event);
+            }
         });
     }
     if (this.params && this.params.extras_handle_mouse_in) {
@@ -167,6 +171,10 @@ epfl.ComponentBase.prototype.handle_click = function (event) {
     if (this.is_closest(event.target)) {
         this.handle_local_click(event);
     }
+};
+
+epfl.ComponentBase.prototype.handle_shift_click = function (event) {
+    /* Executed on click events if extras_handle_shift_click is set to true and shift is pressed during clicking. */
 };
 
 epfl.ComponentBase.prototype.handle_mouse_in = function (event) {

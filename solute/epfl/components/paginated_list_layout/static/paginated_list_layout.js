@@ -192,6 +192,7 @@ epfl.PaginatedListLayout.prototype.after_response = function () {
                 epfl.scroll_memory[obj.cid] = obj.list.scrollTop();
 
                 if (visible_children.length <= 1) {
+                    firstChild = obj.list.children().first();
                     var scroll_position = parseInt(epfl.scroll_memory[obj.cid] / firstChild.outerHeight());
                     obj.list.unbind('scroll', listener);
                     send_row_update({row_offset: Math.max(0, scroll_position - shift)});

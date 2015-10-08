@@ -73,3 +73,14 @@ epfl.Link.prototype.handle_double_click = function (event) {
         event.stopPropagation();
     }
 };
+
+epfl.Link.prototype.handle_shift_click = function (event) {
+    epfl.ComponentBase.prototype.handle_shift_click.call(this, event);
+    if (this.params.shift_click_event_name) {
+        this.send_event(this.params.shift_click_event_name);
+        event.originalEvent.preventDefault();
+    }
+    if (this.params.stop_propagation_on_click) {
+        event.stopPropagation();
+    }
+};

@@ -266,6 +266,8 @@ class Transaction(MutableMapping):
 
         parent['compo_struct'].remove(cid)
         parent.setdefault('sleeping_compo_struct', {})[compo['config']['id']] = cid
+        if cid in self.instances:
+            del self.instances[cid]
 
     def wake_component_id(self, cid, data_id):
         """Sets the child component identified by the data_id to be active again.
