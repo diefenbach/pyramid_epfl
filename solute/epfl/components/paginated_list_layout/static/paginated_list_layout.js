@@ -173,7 +173,7 @@ epfl.PaginatedListLayout.prototype.after_response = function () {
 
         window.setTimeout(function () {
 
-            var listener = obj.list.scroll($.debounce(250, function (event) {
+            var listener = obj.list.scroll($.debounce(100, function (event) {
                 var visible_children = [];
                 var height = obj.list.outerHeight();
                 var total_children = 0;
