@@ -1068,6 +1068,16 @@ class ComponentBase(object):
 
         return out
 
+    def set_value(self, name, value):
+        """Recursive lookup to find this components child with the correct name and set its value.
+        """
+        if self.name is not None and self.name == name:
+            self.handle_change(value)
+
+        if self.components:
+            for compo in self.components:
+                compo.set_value(name, value)
+
     def get_value(self):
         """
         Return the field value without conversions.
