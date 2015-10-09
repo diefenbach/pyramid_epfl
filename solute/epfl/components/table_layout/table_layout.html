@@ -4,6 +4,14 @@
     {% if compo.title is defined %}
         <div class="panel-heading">{{ compo.title }}</div>
     {% endif %}
+    {% if compo.show_export %}
+        <div class="epfl-table-layout-export">
+
+            <button class="btn form-control epfl-button" type="button" id="{{ compo.cid }}_export_button">
+                <i class="fa fa-download"></i> Export
+            </button>
+        </div>
+    {%  endif %}
     <div id="{{ compo.cid }}_container" class="epfl-table-layout-container{{ " fixed-header" if compo.fixed_header else "" }}"
     {% if compo.height %}
         {% if compo.row_count > compo.row_limit and compo.show_pagination %}
