@@ -371,9 +371,9 @@ def test_export_button(page, bool_toggle):
 
     rendered_html = root_node.render()
 
+    test_string = '<button class="btn form-control epfl-button" type="button" id="%s_export_button">' % root_node.cid
+
     if not bool_toggle:
-        assert '<div class="epfl-table-layout-export">' not in rendered_html
-        assert '<i class="fa fa-download"></i> Export' not in rendered_html
+        assert test_string not in rendered_html
     elif bool_toggle:
-        assert '<div class="epfl-table-layout-export">' in rendered_html
-        assert '<i class="fa fa-download"></i> Export' in rendered_html
+        assert test_string in rendered_html
