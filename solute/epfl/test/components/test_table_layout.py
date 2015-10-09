@@ -338,3 +338,42 @@ def test_csv_export_with_headings(page):
     csv = 'field 1;field 2;field 3;field 4\ncol1 0;col2 0;col3 0\ncol1 1;col2 1;col3 1\ncol1 2;col2 2;col3 2\n' \
           'col1 3;col2 3;col3 3\ncol1 4;col2 4;col3 4'
     assert csv == root_node.export_csv()
+
+
+def test_export_button(page, bool_toggle):
+    page.model = CSVExampleModel
+    page.setup_model()
+
+    page.root_node = components.TableLayout(
+        headings=[
+            {'title': 'field 1', 'name': 'col1'},
+            {'title': 'field 2', 'name': 'value', 'sortable': True},
+            {'title': 'field 3', 'toggle_visibility_supported': True},
+            {'title': 'field 4', 'toggle_visibility_supported': True},
+        ],
+        get_data='entries',
+        data_interface={
+            'id': None,
+            'col1': None,
+            'col2': None,
+            'col3': None,
+        },
+        map_child_cls=[
+            ('col1', components.Text, {'value': 'col1'}),
+            ('col2', components.Text, {'value': 'col2'}),
+            ('col3', components.Text, {'value': 'col3'}),
+        ],
+    )
+
+    page.handle_transaction()
+    root_node = page.root_node
+    root_node.show_export = bool_toggle
+
+    rendered_html = root_node.render()
+
+    if not bool_toggle:
+        assert '<div class="epfl-table-layout-export">' not in rendered_html
+        assert '<i class="fa fa-download"></i> Export' not in rendered_html
+    elif bool_toggle:
+        assert '<div class="epfl-table-layout-export">' in rendered_html
+        assert '<i class="fa fa-download"></i> Export' in rendered_html
