@@ -88,6 +88,8 @@ class Page(object):
     model = None
     redrawn_components = None
 
+    keyboard_bindings = None  #: Can be set to a dict of keybindings.
+
     def __init__(self, context, request, transaction=None):
         """
         The optional parameter "transaction" is needed when creating page_objects manually. So the transaction is not
@@ -351,8 +353,13 @@ class Page(object):
     def get_page_init_js(self):
         """ returns a js-snipped which initializes the page. called only once per page """
 
+        if self.keyboard_bindings:
+            for k in self.keyboard_bindings:
+                self.keyboard_bindings[k]['which'] = epflutil.KEYMAP[k]
+
         opts = {"tid": self.transaction.get_id(),
                 "ptid": self.transaction.get_pid(),
+                "keyboard_bindings": self.keyboard_bindings,
                 "log_time": self.request.registry.settings.get('epfl.performance_log.enabled') == 'True'}
 
         return "epfl.init_page(" + json.encode(opts) + ")"

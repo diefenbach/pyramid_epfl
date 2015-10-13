@@ -37,19 +37,22 @@ epfl_module = function() {
 
         $("#loader").remove(); // remove the std-mcp2 ajax-loader image
 
-/*        var scroll_pos = $(".epfl_scroll_pos").val(); // Restoring Scroll-Pos
-        if (scroll_pos) {
-            var tmp = scroll_pos.split("x");
-            $(document).scrollLeft(parseInt(tmp[0]));
-            $(document).scrollTop(parseInt(tmp[1]));
-        };
-
-
-        $(window).scroll(function() { // Capturing Scroll-Pos
-            var scroll_pos = $(document).scrollLeft() + "x" + $(document).scrollTop();
-            $(".epfl_scroll_pos").val(scroll_pos)
-        });
-*/
+        epfl.keyboard_bindings = opts["keyboard_bindings"];
+        if (epfl.keyboard_bindings) {
+            $(document).keydown(function (event) {
+                for (var k in epfl.keyboard_bindings) {
+                    var v = epfl.keyboard_bindings[k];
+                    if ((v.ctrlKey != undefined && event.ctrlKey != v.ctrlKey)
+                        || (v.altKey != undefined && event.altKey != v.altKey)
+                        || (v.shiftKey != undefined && event.shiftKey != v.shiftKey)
+                        || (v.which != undefined && event.which != v.which)) {
+                        continue;
+                    }
+                    var evt = epfl.make_component_event(v.target[0], v.target[1]);
+                    epfl.send(evt);
+                }
+            });
+        }
 
         epfl.new_tid(opts["tid"], true);
         epfl.ptid = opts["ptid"];
