@@ -12,7 +12,7 @@ Object.defineProperty(epfl.Download.prototype, 'button', {
 
 epfl.Download.prototype.handle_click = function(event) {
     // No super since handle_local_click is not required here
-    if (this.is_async_downloading) {
+    if (this.is_direct_downloading) {
         return;
     }
     if (this.button.hasClass("disabled")) {
@@ -27,8 +27,8 @@ epfl.Download.prototype.handle_click = function(event) {
     }
 
     if(this.params["event_target"]) {
-        if(this.params['download_async']){
-            this.download_files_async()
+        if(this.params['download_direct']){
+            this.download_files_direct()
         }
         else {
             var request = epfl.make_component_event(this.params["event_target"], this.params["event_name"]);
@@ -53,15 +53,15 @@ epfl.Download.prototype.handle_click = function(event) {
     }
 };
 
-epfl.Download.prototype.download_files_async = function() {
+epfl.Download.prototype.download_files_direct = function() {
     var obj = this;
-    obj.is_async_downloading = true;
-    obj.send_event('async_download', {'cid': obj.params['event_target']});
+    obj.is_direct_downloading = true;
+    obj.send_event('direct_download', {'cid': obj.params['event_target']});
 };
 
 epfl.Download.prototype.do_download = function(data) {
     var blob = new Blob([data['data']], {type:data['type']});
     saveAs(blob, data['name']);
-    this.is_async_downloading = false;
+    this.is_direct_downloading = false;
     this.send_event('after_download', {});
 };
