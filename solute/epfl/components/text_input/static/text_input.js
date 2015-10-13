@@ -36,6 +36,7 @@ epfl.TextInput = function (cid, params) {
     if(date){
         $(selector).jqDatetimepicker({
             format:'d.m.Y H:i',
+            step: 15,
             closeOnTimeSelect: true,
             lang: 'de'
         });
