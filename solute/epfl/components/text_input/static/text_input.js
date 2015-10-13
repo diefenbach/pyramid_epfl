@@ -53,15 +53,17 @@ epfl.TextInput = function (cid, params) {
         }
     };
 
+    var elm = $(selector);
+
     window.setTimeout(function () {
-        if (compo.elm.val() != compo.elm.attr('data-initial-value')) {
+        if (elm.val() != elm.attr('data-initial-value')) {
             change();
         }
     }, 0);
 
-    compo.elm.blur(change).change(change);
+    elm.blur(change).change(change);
     if(show_count || submit_form_on_enter){
-        compo.elm.keydown(keydown);
+        elm.keydown(keydown);
     }
 };
 
