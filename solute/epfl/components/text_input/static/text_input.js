@@ -56,9 +56,11 @@ epfl.TextInput = function (cid, params) {
 
     var elm = $(selector);
 
-    if (elm.val() != elm.attr('data-initial-value')) {
-        change();
-    }
+    window.setTimeout(function () {
+        if (elm.val() != elm.attr('data-initial-value')) {
+            change();
+        }
+    }, 0);
 
     elm.blur(change).change(change);
     if(show_count || submit_form_on_enter){
