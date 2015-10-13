@@ -228,7 +228,7 @@ class Transaction(MutableMapping):
 
         # Wake components that have been put to sleep in order to correctly delete them.
         if 'sleeping_compo_struct' in compo:
-            for sid in compo['sleeping_compo_struct']:
+            for sid in compo['sleeping_compo_struct'].keys():
                 self.wake_component_id(cid, sid)
 
         if 'ccid' in compo:
