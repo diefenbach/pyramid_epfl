@@ -7,9 +7,10 @@ class SelectableList(LinkListLayout):
     """
     Selectable List is a MultiSelect Component, multiple values can be selected
     """
+    js_name = LinkListLayout.js_name + [('solute.epfl.components:selectable_list/static', 'selectable_list.js')]
     data_interface = {'id': None, 'text': None}
 
-    compo_state = LinkListLayout.compo_state + ["search_text", "selected_ids"]
+    compo_state = LinkListLayout.compo_state + ["search_text", "selected_ids", "last_selected_index"]
 
     #: List type extension, see :attr:`ListLayout.list_type` for details.
     list_type = LinkListLayout.list_type + ['selectable']
@@ -17,8 +18,11 @@ class SelectableList(LinkListLayout):
     search_text = None  #: search text for custom search text handling
 
     scroll_pos = None  #: Scrollbar position this is used to jump back to the last scroll pos after redraw
+    last_selected_index = None  #: The index of the element last selected.
 
     selected_ids = set()  #: a set with selected component ids
+
+    compo_js_name = 'SelectableList'
 
     def __init__(self, page, cid, data_interface=None, *args, **extra_params):
         """
@@ -31,32 +35,57 @@ class SelectableList(LinkListLayout):
     def default_child_cls(*args, **kwargs):
         kwargs["event_name"] = "select"
         kwargs["double_click_event_name"] = "double_click"
+        kwargs["shift_click_event_name"] = "shift_click"
         return LinkListLayout.default_child_cls(*args, **kwargs)
 
-    def handle_select(self, selected_id=None):
+    def handle_select(self, selected_id=None, cid=None):
         if selected_id:
             for compo in self.components:
                 if compo.id == selected_id:
                     compo.active = not compo.active
                     if compo.active:
                         self.selected_ids.add(compo.id)
+                        self.last_selected_index = compo.position + self.row_offset
                     else:
                         self.selected_ids.remove(compo.id)
                     return
-        cid = getattr(self.page, self.epfl_event_trace[0]).cid
-        self.page.components[cid].active = not self.page.components[cid].active
-        if self.page.components[cid].active:
-            self.selected_ids.add(self.page.components[cid].id)
+        if cid is None:
+            cid = self.epfl_event_trace[0]
+        compo = self.page.components[cid]
+        compo.active = not compo.active
+        if compo.active:
+            self.selected_ids.add(compo.id)
+            self.last_selected_index = compo.position + self.row_offset
         else:
             try:
-                self.selected_ids.remove(self.page.components[cid].id)
+                self.selected_ids.remove(compo.id)
             except KeyError:
                 pass
-        self.page.components[cid].redraw()
+        compo.redraw()
 
     def handle_double_click(self):
         # Overwrite me for doubleclick handling
         pass
+
+    def handle_shift_click(self):
+        if self.last_selected_index is None:
+            return self.handle_select()
+        compo = self.page.components[self.epfl_event_trace[0]]
+        current_index = compo.position + self.row_offset
+        min_index = min(current_index, self.last_selected_index)
+        max_index = max(current_index + 1, self.last_selected_index)
+        old_row_settings = self.row_limit, self.row_offset
+
+        self.row_offset = min_index
+        self.row_limit = max_index - min_index
+        self.update_children()
+
+        for compo in self.components:
+            if not compo.active:
+                self.handle_select(cid=compo.cid)
+
+        self.row_limit, self.row_offset = old_row_settings
+        self.update_children(force=True)
 
     def get_selected(self):
         """

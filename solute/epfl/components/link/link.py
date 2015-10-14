@@ -23,6 +23,7 @@ class Link(ComponentBase):
     selection = None  #: Tuple of integers: (selection_start, selection_end). MARK-Tag will be applied there.
     event_name = None  #: Name of an event to be triggered on click, prevents url and route from taking effect.
     double_click_event_name = None  #: Name of an event to be triggered on double click, prevents url and route from taking effect.
+    shift_click_event_name = None  #: Name of an event to be triggered on shift click, prevents url and route from taking effect.
     btn_link = False  #: Set to true if link should be displayed as a button.
     new_window = False  #: Set to true if link should be opened in new window or tab
     active = False  #: Sets the active class in html
@@ -33,9 +34,9 @@ class Link(ComponentBase):
     context_menu = None
 
     new_style_compo = True
-    compo_js_params = ['event_name', 'double_click_event_name', 'stop_propagation_on_click']
+    compo_js_params = ['event_name', 'double_click_event_name', 'shift_click_event_name', 'stop_propagation_on_click']
     compo_js_name = 'Link'
-    compo_js_extras = ['handle_click', 'handle_double_click']
+    compo_js_extras = ['handle_click', 'handle_double_click', 'handle_shift_click']
 
     def __init__(self, page, cid, url=None, route=None, name=None, text=None, icon=None, breadcrumb=None, tile=None,
                  list_element=None, btn_link=None, new_window=None, event_name=None,double_click_event_name=None,

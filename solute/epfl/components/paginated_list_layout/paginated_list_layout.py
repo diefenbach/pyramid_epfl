@@ -21,6 +21,7 @@ class PaginatedListLayout(PrettyListLayout):
     """
 
     show_pagination = True  #: Set to true to show the pagination bar.
+    infinite_scrolling = False  #: Set to true to use infinite scrolling pagination.
     show_search = True  #: Set to true to enable the search field.
     search_placeholder = "Search..."  #: Placeholder text for the search input.
     #: Specify the number of pages that should be visible in the pagination bar.
@@ -39,6 +40,9 @@ class PaginatedListLayout(PrettyListLayout):
     js_name = PrettyListLayout.js_name + [(
         'solute.epfl.components:paginated_list_layout/static',
         'paginated_list_layout.js'
+    ), (
+        'solute.epfl.components:paginated_list_layout/static',
+        'jquery.ba-throttle-debounce.min.js'
     )]
 
     #: Add the specific list type for the paginated list layout. see :attr:`ListLayout.list_type`
