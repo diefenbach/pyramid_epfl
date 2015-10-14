@@ -60,7 +60,10 @@ epfl.Link.prototype.handle_local_click = function (event) {
     } else if (this.context_menu_entry.is(event.target)) {
         this.context_menu.hide();
         this.send_event($(event.target).data("event"), {});
+    } else if (this.params.popover_text) {
+        this.elm.popover('toggle');
     }
+
 };
 
 epfl.Link.prototype.handle_double_click = function (event) {

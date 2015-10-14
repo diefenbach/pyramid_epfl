@@ -275,3 +275,15 @@ def test_context_menu(page, bool_toggle):
         assert 'context-dropdown-menu' not in compo.render(), "Find context menu where no was expected"
         assert 'data-event="delete"' not in compo.render(), "Find context menu entry delete where no was expected"
         assert 'data-event="rename"' not in compo.render(), "Fnd context menu entry rename where no was expected"
+
+
+def test_popover_text(page):
+    page.root_node = components.Link(
+        text='foobar',
+        popover_text='component popover text'
+    )
+    page.handle_transaction()
+
+    compo = page.root_node
+
+    assert 'data-toggle="popover" data-content="component popover text" data-trigger="focus" data-placement="top"' in compo.render(), 'popover_text set but popover text is missing or malformed in html.'
