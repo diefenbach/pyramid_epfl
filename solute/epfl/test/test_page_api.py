@@ -412,7 +412,7 @@ def test_container_assign(pyramid_req):
 
 
 @pytest.mark.xfail
-def test_documentation(pyramid_req):
+def test_documentation():
     """Some general checks for documentation completion in the epflpage.py
     """
 
@@ -521,3 +521,19 @@ def test_css_js_combination():
     assert css_name[4] == PageWithCSSandJS.css_name
     assert css_name[5] != PageWithCSSandJSNoBundle.css_name
     assert css_name[5] + PageWithCSSandJSNoBundle.css_name_no_bundle == PageWithCSSandJSNoBundle.css_name
+
+
+def test_keyboard_bindings(pyramid_req):
+    """Check if keyboard_bindings are rendered into the sites javascript correctly.
+    """
+
+    Page.root_node = ComponentContainerBase()
+    Page.keyboard_bindings = {'f1': {'some': 'dict'}}
+
+    page = Page(None, pyramid_req)
+
+    page.handle_transaction()
+    out = page.render()
+
+    # Using a key from epflutil.KEYMAP will lead to a translated which entry in the resulting dict. For f1 this is 112.
+    assert '{"f1":{"some":"dict","which":112}}' in out
