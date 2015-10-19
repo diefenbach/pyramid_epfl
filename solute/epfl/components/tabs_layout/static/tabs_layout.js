@@ -18,6 +18,9 @@ epfl.TabsLayout.prototype.after_response = function () {
         if ($(this).parent().hasClass("active")) {
             return;
         }
+        if ($(this).hasClass("disabled")) {
+            return;
+        }
         var selected_compo_cid = $(this).data('tab-compo-cid');
         obj.send_event("toggle_tab", {"selected_compo_cid": selected_compo_cid});
     });
