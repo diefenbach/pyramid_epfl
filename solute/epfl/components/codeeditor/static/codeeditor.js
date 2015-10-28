@@ -19,6 +19,7 @@ epfl.CodeEditor.prototype.after_response = function () {
     this.code_mirror.on('changes', function (e, changes) {
         obj.handle_changes(e, changes);
     });
+    this.code_mirror.setSize('100%', '100%');
 };
 
 
