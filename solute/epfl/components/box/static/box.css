@@ -4,39 +4,55 @@
 
 .epfl_box_border {
 }
+
 .epfl_box {
-	border: 0 black solid;
-	box-shadow: None;
-	margin-bottom: 0px;
+    border: 0 black solid;
+    box-shadow: None;
+    margin-bottom: 0px;
 }
+
 .epfl_box > .panel-body {
-	padding-top: 0px;
-	padding-bottom: 0px;
+    padding-top: 0px;
+    padding-bottom: 0px;
 }
+
 .epfl_box_remove_button {
-	float:right;
-	margin-top: -8px;
-	margin-right: -6px;
+    float: right;
+    margin-top: -8px;
+    margin-right: -6px;
 }
+
 .epfl_box_refresh_button {
-	float:right;
-	margin-top: -8px;
+    float: right;
+    margin-top: -8px;
 }
+
 .epfl_box_remove_button.in_heading {
-	color: #9c9c9c;
-	float:right;
-	margin-top: 0px;
-	margin-right: -6px;
+    color: #9c9c9c;
+    float: right;
+    margin-top: 0px;
+    margin-right: -6px;
 }
+
 .epfl_box_remove_button.in_heading:hover {
-	color: #767676;
+    color: #767676;
 }
 
 .epfl_box_refresh_button.in_heading {
-	color: #9c9c9c;
-	float:right;
-	margin-top: 0px;
+    color: #9c9c9c;
+    float: right;
+    margin-top: 0px;
 }
+
 .epfl_box_refresh_button.in_heading:hover {
-	color: #767676;
+    color: #767676;
+}
+
+.epfl-box-readonly-overlay {
+    background-color: #DDD;
+    z-index: 1;
+    opacity: 0.4;
+    position:absolute;
+    margin-left:-15px;
+    margin-top: -15px;
 }
