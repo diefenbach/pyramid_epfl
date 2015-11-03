@@ -26,6 +26,8 @@ epfl.Box.prototype.after_response = function (data) {
     if(this.params.read_only){
         this.read_only_overlay.width(this.elm.width());
         this.read_only_overlay.height(this.elm.height());
+        this.elm.find("*").unbind();
+        this.elm.find("*").prop("disabled", true);
     }
 };
 
