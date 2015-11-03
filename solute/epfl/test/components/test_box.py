@@ -170,3 +170,4 @@ def test_read_only_overlay(root_node, bool_toggle):
         assert 'class="epfl-box-readonly-overlay"' in rendered_html
     else:
         assert 'class="epfl-box-readonly-overlay"' not in rendered_html
+
