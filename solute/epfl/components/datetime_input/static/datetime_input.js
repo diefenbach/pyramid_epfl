@@ -82,7 +82,9 @@ epfl.DatetimeInput.prototype.after_response = function (data) {
     }).blur(this.change.bind(this)).change(this.change.bind(this));
 
     if (this.params["value"] != null) {
-        this.input.data("DateTimePicker").date(moment(this.params["value"]).locale("de"));
+        if(this.input.data("DateTimePicker")){
+            this.input.data("DateTimePicker").date(moment(this.params["value"]).locale("de"));
+        }
     }
 
 };
