@@ -159,3 +159,14 @@ def test_auto_visibility(page):
     # The auto visibility box should now be invisible, the other one not.
     assert not page.empty_box.is_visible()
     assert page.empty_box_no_auto_visibility.is_visible()
+
+
+def test_read_only_overlay(root_node, bool_toggle):
+    root_node.read_only = bool_toggle
+
+    rendered_html = root_node.render()
+
+    if bool_toggle:
+        assert 'class="epfl-box-readonly-overlay"' in rendered_html
+    else:
+        assert 'class="epfl-box-readonly-overlay"' not in rendered_html
