@@ -1,0 +1,23 @@
+<div epflid="{{ compo.cid }}" id="{{ compo.cid }}" class="carousel slide" data-ride="carousel"
+     style="{{ 'height:'+compo.height|string+'px;' if compo.height else '' }}{{ 'width:'+compo.width|string+'px;' if compo.width else '' }}">
+    <ol class="carousel-indicators">
+        {% for entry in compo.entries %}
+            <li data-target="#{{ compo.cid }}"
+                data-slide-to="{{ loop.index - 1 }}" {{ 'class="active"'|safe if loop.index - 1 == 0 else '' }}></li>
+        {% endfor %}
+    </ol>
+
+    <div class="carousel-inner" role="listbox">
+        {% for entry in compo.entries %}
+            <div class="item {{ 'active' if loop.index - 1 == 0 else '' }}">
+                <img src="{{ entry }}" style="{{ 'max-height:'+compo.height|string+'px;' if compo.height else '' }}">
+            </div>
+        {% endfor %}
+    </div>
+    <a class="left carousel-control" href="#{{ compo.cid }}" role="button" data-slide="prev">
+            <i class="fa fa-angle-left fa-5x epfl-carousel-control-left"></i>
+    </a>
+    <a class="right carousel-control" href="#{{ compo.cid }}" role="button" data-slide="next">
+            <i class="fa fa-angle-right fa-5x epfl-carousel-control-right"></i>
+    </a>
+</div>
