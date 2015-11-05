@@ -23,7 +23,7 @@
     display: none;
 }
 
-.grouped-entry:focus .list-group, .grouped-entry:hover .list-group {
+.grouped-entry:focus > .list-group, .grouped-entry:hover > .list-group {
     display: block;
 }
 

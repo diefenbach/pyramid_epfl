@@ -46,14 +46,32 @@ class GroupedLinkListLayout(LinkListLayout):
 
         for compo in self.components:
             if getattr(compo, 'menu_group', None):
-                groups.setdefault(compo.menu_group, {}).setdefault('components', []).append(compo)
-                groups[compo.menu_group]['icon'] = getattr(compo, 'icon', None)
-                groups[compo.menu_group]['type'] = 'group'
-                group_name = compo.menu_group
-                if type(compo.menu_group) is tuple:
-                    group_name, groups[compo.menu_group]['selection'] = group_name
+                group = groups
 
-                groups[compo.menu_group]['name'] = group_name
+                menu_group = compo.menu_group
+                if type(menu_group) is tuple and all([type(e) is str for e in menu_group]) and len(menu_group) > 1:
+                    group_name = menu_group[0]
+                    group = group.setdefault(group_name, {
+                        'name': group_name,
+                        'type': 'group',
+                    })
+                    for group_name in menu_group[1:]:
+                        group.setdefault('components', []).append({
+                            'name': group_name,
+                            'type': 'group',
+                        })
+                        group = group['components'][-1]
+                    menu_group = group_name
+                else:
+                    group = group.setdefault(menu_group, {})
+                group.setdefault('components', []).append(compo)
+                group['icon'] = getattr(compo, 'icon', None)
+                group['type'] = 'group'
+
+                if type(menu_group) is tuple:
+                    menu_group, groups[compo.menu_group]['selection'] = menu_group
+
+                group['name'] = menu_group
             else:
                 groups.setdefault(compo.cid, {}).setdefault('components', []).append(compo)
                 groups[compo.cid]['type'] = 'entry'
