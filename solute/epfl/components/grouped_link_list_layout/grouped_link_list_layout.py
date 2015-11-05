@@ -57,10 +57,12 @@ class GroupedLinkListLayout(LinkListLayout):
                         'type': 'group',
                     })
                     for group_name in menu_group[1:]:
-                        group.setdefault('components', []).append({
-                            'name': group_name,
-                            'type': 'group',
-                        })
+                        if group_name not in [c.get('name') for c in group.setdefault('components', [])
+                                              if type(c) is dict]:
+                            group['components'].append({
+                                'name': group_name,
+                                'type': 'group',
+                            })
                         group = group['components'][-1]
                     menu_group = group_name
                 else:
