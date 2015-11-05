@@ -17,8 +17,7 @@
                         {% set pre_marked = group['name'][0:group['selection'][0]] %}
                         {% set marked = group['name'][group['selection'][0]:group['selection'][1]] %}
                         {% set post_marked = group['name'][group['selection'][1]:] %}
-                        {{ pre_marked }}
-                        <mark>{{ marked }}</mark>{{ post_marked }}
+                        {{ pre_marked }}<mark>{{ marked }}</mark>{{ post_marked }}
                     {% else %}
                         {{ group['name'] }}
                     {% endif %}
