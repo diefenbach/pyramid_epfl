@@ -6,5 +6,6 @@ epfl.Carousel.inherits_from(epfl.ComponentBase);
 
 epfl.Carousel.prototype.after_response = function (data) {
     epfl.ComponentBase.prototype.after_response.call(this, data);
-    $("#" + this.cid).carousel();
+    this.elm.carousel();
 };
+

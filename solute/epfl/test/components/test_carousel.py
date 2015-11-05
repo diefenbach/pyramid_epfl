@@ -46,3 +46,4 @@ def test_render_carousel_without_size(page):
     assert 'src="image1.png"' in compo.render(), "image1 not found"
     assert 'src="image2.png"' in compo.render(), "image2 not found"
     assert 'src="image3.png"' in compo.render(), "image3 not found"
+

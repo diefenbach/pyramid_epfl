@@ -43,3 +43,4 @@ class Carousel(ComponentBase):
         super(Carousel, self).__init__(page=page,
                                        cid=cid,
                                        **extra_params)
+
