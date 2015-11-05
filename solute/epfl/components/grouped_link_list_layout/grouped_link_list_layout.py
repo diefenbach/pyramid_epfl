@@ -49,7 +49,8 @@ class GroupedLinkListLayout(LinkListLayout):
                 group = groups
 
                 menu_group = compo.menu_group
-                if type(menu_group) is tuple and all([type(e) is str for e in menu_group]) and len(menu_group) > 1:
+                if type(menu_group) is tuple and all([type(e) in [str, unicode]
+                                                      for e in menu_group]) and len(menu_group) > 1:
                     group_name = menu_group[0]
                     group = group.setdefault(group_name, {
                         'name': group_name,
