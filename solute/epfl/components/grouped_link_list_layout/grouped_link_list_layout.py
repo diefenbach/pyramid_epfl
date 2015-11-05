@@ -63,7 +63,10 @@ class GroupedLinkListLayout(LinkListLayout):
                                 'name': group_name,
                                 'type': 'group',
                             })
-                        group = group['components'][-1]
+                            group = [c for c in group.setdefault('components', [])
+                                     if type(c) is dict and c.get('name') == group_name][0]
+                        else:
+                            group = group['components'][-1]
                     menu_group = group_name
                 else:
                     group = group.setdefault(menu_group, {})
