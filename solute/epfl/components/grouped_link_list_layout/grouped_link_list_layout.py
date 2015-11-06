@@ -42,44 +42,57 @@ class GroupedLinkListLayout(LinkListLayout):
 
     @property
     def groups(self):
-        groups = OrderedDict()
+        groups = []
+
+        def is_selection_group(target):
+            return type(target) is tuple and len(target) == 2 and type(target[1]) is tuple and len(target[1]) == 2 \
+                and type(target[1][0]) is int and type(target[1][1]) is int
 
         for compo in self.components:
             if getattr(compo, 'menu_group', None):
-                group = groups
-
                 menu_group = compo.menu_group
-                if type(menu_group) is tuple and all([type(e) in [str, unicode]
-                                                      for e in menu_group]) and len(menu_group) > 1:
-                    group_name = menu_group[0]
-                    group = group.setdefault(group_name, {
-                        'name': group_name,
-                        'type': 'group',
-                    })
-                    for group_name in menu_group[1:]:
-                        if group_name not in [c.get('name') for c in group.setdefault('components', [])
-                                              if type(c) is dict]:
-                            group['components'].append({
-                                'name': group_name,
-                                'type': 'group',
-                            })
-                            group = [c for c in group.setdefault('components', [])
-                                     if type(c) is dict and c.get('name') == group_name][0]
-                        else:
-                            group = group['components'][-1]
-                    menu_group = group_name
-                else:
-                    group = group.setdefault(menu_group, {})
-                group.setdefault('components', []).append(compo)
-                group['icon'] = getattr(compo, 'icon', None)
-                group['type'] = 'group'
 
-                if type(menu_group) is tuple:
-                    menu_group, groups[compo.menu_group]['selection'] = menu_group
+                # Special handling for selection groups or str/unicode menu_groups.
+                if is_selection_group(menu_group) or type(menu_group) in [str, unicode]:
+                    menu_group = (menu_group, )
 
-                group['name'] = menu_group
+                # Local shadow variable in order to recursively overwrite it without losing reference.
+                _groups = groups
+
+                # Detect best candidate for positioning the current compo.
+                for name in menu_group:
+                    selection = None
+                    if type(name) is tuple and is_selection_group(name):
+                        name, selection = name
+
+                    for group in _groups:
+                        if group.get('name') == name:
+                            _groups = group.setdefault('components', [])
+                            group.setdefault('icon', getattr(compo, 'icon', None))
+                            break
+                    else:
+                        group = None
+
+                    # If no group has been found or if it doesn't match the target name we need to create it.
+                    if not group or group.get('name') != name:
+                        _groups.append({
+                            'type': 'group',
+                            'name': name,
+                            'icon': getattr(compo, 'icon', None),
+                            'components': [],
+                        })
+                        if selection:
+                            _groups[-1]['selection'] = selection
+                        _groups = _groups[-1]['components']
+
+                _groups.append({
+                    'type': 'entry',
+                    'component': compo,
+                })
             else:
-                groups.setdefault(compo.cid, {}).setdefault('components', []).append(compo)
-                groups[compo.cid]['type'] = 'entry'
+                groups.append({
+                    'component': compo,
+                    'type': 'entry',
+                })
 
-        return groups.values()
+        return groups

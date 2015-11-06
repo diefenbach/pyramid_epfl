@@ -1,6 +1,6 @@
 {% macro create_entry(compo, group) %}
     {% if group['type'] is defined and group['type'] == 'entry' %}
-        {% set compo_obj = group['components'][0] %}
+        {% set compo_obj = group['component'] %}
         {% if compo_obj.is_visible() %}
             {% call row(compo_obj=compo_obj) %}
                 {{ compo_obj.render() }}
@@ -32,19 +32,9 @@
             {% endif %}
 
             <div class="list-group">
-                {% if group['components'] is defined and group['components'] %}
-                    {% for compo_obj in group['components'] %}
-                        {% if compo_obj.is_visible is not defined %}
-                            {{ create_entry(compo, compo_obj) }}
-                        {% elif compo_obj.is_visible() %}
-                            {% call row(compo_obj=compo_obj) %}
-                                {{ compo_obj.render() }}
-                            {% endcall %}
-                        {% endif %}
-                    {% endfor %}
-                {% else %}
-                    oops
-                {% endif %}
+                {% for compo_obj in group['components'] %}
+                    {{ create_entry(compo, compo_obj) }}
+                {% endfor %}
             </div>
         </div>
     {% endif %}
