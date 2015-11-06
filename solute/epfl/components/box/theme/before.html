@@ -26,4 +26,5 @@
     {% endif %}
     {% endif %}
     <div class="panel-body">
+    {% if compo.read_only %}<div class="epfl-box-readonly-overlay"></div>{% endif %}
 {% endmacro %}

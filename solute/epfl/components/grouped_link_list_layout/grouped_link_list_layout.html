@@ -1,51 +1,51 @@
+{% macro create_entry(compo, group) %}
+    {% if group['type'] is defined and group['type'] == 'entry' %}
+        {% set compo_obj = group['component'] %}
+        {% if compo_obj.is_visible() %}
+            {% call row(compo_obj=compo_obj) %}
+                {{ compo_obj.render() }}
+            {% endcall %}
+        {% endif %}
+    {% else %}
+        <div class="{{ "grouped-entry" if not compo.use_headings else "headed-entry" }} col-sm-12">
+            {% if compo.use_headings %}
+                <div class="list-group-item col-sm-12 list-group-item-info">
+                    {% if group['icon'] is defined and group['icon'] %}
+                        <i class="fa fa-{{ group['icon'] }}"></i>
+                    {% endif %}
+                    {% if group['selection'] is defined %}
+                        {% set pre_marked = group['name'][0:group['selection'][0]] %}
+                        {% set marked = group['name'][group['selection'][0]:group['selection'][1]] %}
+                        {% set post_marked = group['name'][group['selection'][1]:] %}
+                        {{ pre_marked }}<mark>{{ marked }}</mark>{{ post_marked }}
+                    {% else %}
+                        {{ group['name'] }}
+                    {% endif %}
+                </div>
+            {% else %}
+                <a class="list-group-item col-sm-12">
+                    {% if group['icon'] is defined and group['icon'] %}
+                        <i class="fa fa-{{ group['icon'] }}"></i>
+                    {% endif %}
+                    {{ group['name'] }}
+                </a>
+            {% endif %}
+
+            <div class="list-group">
+                {% for compo_obj in group['components'] %}
+                    {{ create_entry(compo, compo_obj) }}
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+{% endmacro %}
+
 {% call container() %}
     {% call before() %}
     {% endcall %}
     {% call inner_container() %}
         {% for group in compo.groups %}
-            {% if group['type'] == 'entry' %}
-                {% set compo_obj = group['components'][0] %}
-                {% if compo_obj.is_visible() %}
-                    {% call row(compo_obj=compo_obj) %}
-                        {{ compo_obj.render() }}
-                    {% endcall %}
-                {% endif %}
-            {% else %}
-                <div class="{{ "grouped-entry" if not compo.use_headings else "headed-entry" }} col-sm-12">
-                    {% if compo.use_headings %}
-                    <div class="list-group-item col-sm-12 list-group-item-info">
-                        {% if group['icon'] is defined and group['icon'] %}
-                            <i class="fa fa-{{ group['icon'] }}"></i>
-                        {% endif %}
-                        {% if group['selection'] is defined %}
-                            {% set pre_marked = group['name'][0:group['selection'][0]] %}
-                            {% set marked = group['name'][group['selection'][0]:group['selection'][1]] %}
-                            {% set post_marked = group['name'][group['selection'][1]:] %}
-                            {{ pre_marked }}<mark>{{ marked }}</mark>{{ post_marked }}
-                        {% else %}
-                            {{ group['name'] }}
-                        {% endif %}
-                    </div>
-                    {% else %}
-                    <a class="list-group-item col-sm-12">
-                        {% if group['icon'] is defined and group['icon'] %}
-                            <i class="fa fa-{{ group['icon'] }}"></i>
-                        {% endif %}
-                        {{ group['name'] }}
-                    </a>
-                    {% endif %}
-
-                    <div class="list-group">
-                    {% for compo_obj in group['components'] %}
-                        {% if compo_obj.is_visible() %}
-                            {% call row(compo_obj=compo_obj) %}
-                                {{ compo_obj.render() }}
-                            {% endcall %}
-                        {% endif %}
-                    {% endfor %}
-                    </div>
-                </div>
-            {% endif %}
+            {{ create_entry(compo, group) }}
         {% endfor %}
     {% endcall %}
     {% call after() %}

@@ -16,6 +16,14 @@ from solute.epfl.core import epflclient, epflutil, epflacl
 from solute.epfl.core.epflutil import Lifecycle
 
 
+class MissingEventTargetException(Exception):
+    def __init__(self, cid, event_name, event_params):
+        super(MissingEventTargetException, self).__init__(
+            "Target element with CID '%s' for event '%s' not found. Using parameters %r."
+            % (cid, event_name, event_params)
+        )
+
+
 class LazyProperty(object):
     """
     Wrapper function used for just in time initialization of components by calling the registered callback.
@@ -456,6 +464,8 @@ class Page(object):
                 event_name = event["e"]
                 event_params = event["p"]
 
+                if not self.transaction.has_component(cid):
+                    raise MissingEventTargetException(cid, event_name, event_params)
                 component_obj = self.components[cid]
                 component_obj.handle_event(event_name, event_params)
 

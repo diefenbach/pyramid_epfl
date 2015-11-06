@@ -59,10 +59,6 @@ epfl.DatetimeInput.prototype.to_utc = function(date){
     return moment(date).locale("de").format();
 };
 
-epfl.DatetimeInput.prototype.from_utc = function(date){
-    return moment(date).locale("de").format(this.params["date_format"]);
-};
-
 
 epfl.DatetimeInput.prototype.after_response = function (data) {
     epfl.FormInputBase.prototype.after_response.call(this, data);
@@ -86,7 +82,9 @@ epfl.DatetimeInput.prototype.after_response = function (data) {
     }).blur(this.change.bind(this)).change(this.change.bind(this));
 
     if (this.params["value"] != null) {
-        this.input.val(this.from_utc(this.params["value"]));
+        if(this.input.data("DateTimePicker")){
+            this.input.data("DateTimePicker").date(moment(this.params["value"]).locale("de"));
+        }
     }
 
 };

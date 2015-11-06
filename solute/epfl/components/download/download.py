@@ -25,10 +25,10 @@ class Download(Button):
 
     compo_js_params = Button.compo_js_params + ['download_direct']
 
-    # Download the file(s) direct
+    #: Download the file(s) direct.
     download_direct = False
 
-    # The type of the downloaded file
+    #: The type of the downloaded file.
     file_type = 'text/csv'
 
     def __init__(self, page, cid, label=None, value=None, event_name=None, event_target=None, is_submit=False,

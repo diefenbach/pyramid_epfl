@@ -1,0 +1,22 @@
+ol.carousel-indicators > li {
+    background-color:black;
+}
+
+ol.carousel-indicators > li.active {
+    background-color:black;
+}
+.carousel-inner > .item > img {
+    margin: 0 auto;
+}
+
+i.epfl-carousel-control-right {
+    position:absolute;
+    top:25%;
+}
+
+i.epfl-carousel-control-left {
+    position:absolute;
+    top:25%;
+    left:10%;
+}
+

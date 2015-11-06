@@ -15,6 +15,22 @@ Object.defineProperty(epfl.Box.prototype, 'refresh_icon', {
     }
 });
 
+Object.defineProperty(epfl.Box.prototype, 'read_only_overlay', {
+    get: function () {
+        return this.elm.find('div.epfl-box-readonly-overlay');
+    }
+});
+
+epfl.Box.prototype.after_response = function (data) {
+    epfl.ComponentBase.prototype.after_response.call(this, data);
+    if(this.params.read_only){
+        this.read_only_overlay.width(this.elm.width());
+        this.read_only_overlay.height(this.elm.height());
+        this.elm.find("*").unbind();
+        this.elm.find("*").prop("disabled", true);
+    }
+};
+
 epfl.Box.prototype.handle_local_click = function (event) {
     epfl.ComponentBase.prototype.handle_local_click.call(this, event);
 
@@ -34,5 +50,4 @@ epfl.Box.prototype.handle_local_click = function (event) {
         event.stopImmediatePropagation();
         event.preventDefault();
     }
-
 };

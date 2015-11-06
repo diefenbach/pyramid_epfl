@@ -4,14 +4,16 @@
 	<label for="{{ compo.cid }}" class="col-sm-2 control-label">{{ compo.label }}</label>
 	{% endif %}
     <div class="{{ 'col-sm-10' if (compo.label is defined and not compo.label is none) else 'col-sm-12' }}{{ ' has-error' if compo.validation_error else '' }}">
-        <textarea class="form-control"
+        <div class="form-control" style="{{ compo.style if compo.style is defined else '' }}">
+            <textarea
                   id="{{compo.cid}}_texteditor"
                   name="{{ compo.name }}"
-                  style="{{ compo.style if compo.style is defined else '' }}"
                   placeholder="{{ compo.placeholder if compo.placeholder is not none else '' }}"
                 >{{ compo.value if compo.value is not none else '' }}</textarea>
+        </div>
 	    {% if compo.validation_error %}
 	        <small class="help-block">{{ compo.validation_error }}</small>
 	    {% endif %}
+
     </div>
 </div>

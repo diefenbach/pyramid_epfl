@@ -1191,6 +1191,10 @@ class ComponentContainerBase(ComponentBase):
         """Returns true if component uses get_data scheme."""
         return self.default_child_cls is not None
 
+    @property
+    def sleeping_children(self):
+        return self.compo_info.get('sleeping_compo_struct', {})
+
     def update_children(self, force=False):
         """If a default_child_cls has been set this updates all child components to reflect the current state from
         get_data(). Will raise an exception if called twice without the force parameter present."""
@@ -1213,20 +1217,25 @@ class ComponentContainerBase(ComponentBase):
         data_cid_dict = {}
         data_order_dict = {}
 
+        for i, d in enumerate(data):
+            new_order.append(d['id'])
+            data_order_dict[d['id']] = i
+            data_dict[d['id']] = d
+
+        # IDs of components once represented in data and now active again. They are reactivated.
+        for data_id in set(self.sleeping_children.keys()).intersection(new_order):
+            self.page.transaction.wake_component_id(self.cid, data_id)
+            self.redraw()
+
         for v in self.components:
             if getattr(v, 'id', None) is None:
                 continue
             current_order.append(v.id)
             data_cid_dict[v.id] = v.cid
 
-        for i, d in enumerate(data):
-            new_order.append(d['id'])
-            data_order_dict[d['id']] = i
-            data_dict[d['id']] = d
-
         # IDs of components no longer present in data. Their matching components are deleted.
         for data_id in set(current_order).difference(new_order):
-            self.del_component(data_cid_dict.pop(data_id))
+            self.page.transaction.hibernate_component_id(data_cid_dict.pop(data_id))
             self.redraw()
 
         # IDs of data represented by a component. Matching components are updated.

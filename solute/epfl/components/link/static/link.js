@@ -60,13 +60,28 @@ epfl.Link.prototype.handle_local_click = function (event) {
     } else if (this.context_menu_entry.is(event.target)) {
         this.context_menu.hide();
         this.send_event($(event.target).data("event"), {});
+    } else if (this.params.popover_text) {
+        this.elm.popover('toggle');
     }
+
 };
 
 epfl.Link.prototype.handle_double_click = function (event) {
     epfl.ComponentBase.prototype.handle_double_click.call(this, event);
     if (this.params.double_click_event_name) {
         this.send_event(this.params.double_click_event_name);
+        event.originalEvent.preventDefault();
+    }
+    if (this.params.stop_propagation_on_click) {
+        event.stopPropagation();
+    }
+};
+
+epfl.Link.prototype.handle_shift_click = function (event) {
+    epfl.ComponentBase.prototype.handle_shift_click.call(this, event);
+    if (this.params.shift_click_event_name) {
+        this.send_event(this.params.shift_click_event_name);
+        event.preventDefault();
         event.originalEvent.preventDefault();
     }
     if (this.params.stop_propagation_on_click) {

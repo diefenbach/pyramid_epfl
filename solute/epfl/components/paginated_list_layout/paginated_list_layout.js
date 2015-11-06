@@ -5,5 +5,6 @@ epfl.init_component("{{ compo.cid }}", "PaginatedListLayout", {
     'row_data': {{ compo.row_data|tojson }},
     'show_pagination': {{ compo.show_pagination|format_bool }},
     'show_search': {{ compo.show_search|format_bool }},
-    'search_focus': {{ compo.search_focus|format_bool }}
+    'search_focus': {{ compo.search_focus|format_bool }},
+    'infinite_scrolling': {{ compo.infinite_scrolling|format_bool }}
 });

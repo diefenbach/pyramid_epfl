@@ -42,20 +42,57 @@ class GroupedLinkListLayout(LinkListLayout):
 
     @property
     def groups(self):
-        groups = OrderedDict()
+        groups = []
+
+        def is_selection_group(target):
+            return type(target) is tuple and len(target) == 2 and type(target[1]) is tuple and len(target[1]) == 2 \
+                and type(target[1][0]) is int and type(target[1][1]) is int
 
         for compo in self.components:
             if getattr(compo, 'menu_group', None):
-                groups.setdefault(compo.menu_group, {}).setdefault('components', []).append(compo)
-                groups[compo.menu_group]['icon'] = getattr(compo, 'icon', None)
-                groups[compo.menu_group]['type'] = 'group'
-                group_name = compo.menu_group
-                if type(compo.menu_group) is tuple:
-                    group_name, groups[compo.menu_group]['selection'] = group_name
+                menu_group = compo.menu_group
 
-                groups[compo.menu_group]['name'] = group_name
+                # Special handling for selection groups or str/unicode menu_groups.
+                if is_selection_group(menu_group) or type(menu_group) in [str, unicode]:
+                    menu_group = (menu_group, )
+
+                # Local shadow variable in order to recursively overwrite it without losing reference.
+                _groups = groups
+
+                # Detect best candidate for positioning the current compo.
+                for name in menu_group:
+                    selection = None
+                    if type(name) is tuple and is_selection_group(name):
+                        name, selection = name
+
+                    for group in _groups:
+                        if group.get('name') == name:
+                            _groups = group.setdefault('components', [])
+                            group.setdefault('icon', getattr(compo, 'icon', None))
+                            break
+                    else:
+                        group = None
+
+                    # If no group has been found or if it doesn't match the target name we need to create it.
+                    if not group or group.get('name') != name:
+                        _groups.append({
+                            'type': 'group',
+                            'name': name,
+                            'icon': getattr(compo, 'icon', None),
+                            'components': [],
+                        })
+                        if selection:
+                            _groups[-1]['selection'] = selection
+                        _groups = _groups[-1]['components']
+
+                _groups.append({
+                    'type': 'entry',
+                    'component': compo,
+                })
             else:
-                groups.setdefault(compo.cid, {}).setdefault('components', []).append(compo)
-                groups[compo.cid]['type'] = 'entry'
+                groups.append({
+                    'component': compo,
+                    'type': 'entry',
+                })
 
-        return groups.values()
+        return groups
