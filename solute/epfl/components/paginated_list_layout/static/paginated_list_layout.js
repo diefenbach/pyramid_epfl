@@ -33,55 +33,58 @@ Object.defineProperty(epfl.PaginatedListLayout.prototype, 'list', {
     }
 });
 
+
+epfl.PaginatedListLayout.prototype.send_row_update = function (data, callback) {
+    var obj = this;
+    var _data = {
+        row_data: obj.params.row_data,
+        row_limit: obj.params.row_limit,
+        row_offset: obj.params.row_offset
+    };
+    for (var key in data) {
+        _data[key] = data[key];
+    }
+    obj.send_event('set_row', _data, callback);
+};
+
+epfl.PaginatedListLayout.prototype.submit = function () {
+    var obj = this;
+    try {
+        if (obj.search.val() == obj.params.row_data['search']) {
+            return;
+        }
+    } catch (e) {
+    }
+
+    if (obj.search.prev().prop("tagName") != "SPAN") {
+        obj.search
+            .before($("<span></span>")
+                .addClass("fa fa-spinner fa-spin")
+                .css("margin-right", "25px")
+            );
+    }
+    var row_data = obj.params.row_data;
+    if (!row_data) {
+        row_data = {};
+    }
+
+    if (obj.orderby.length && obj.ordertype.length) {
+        row_data.orderby = obj.orderby.find("option:selected").val();
+        row_data.ordertype = obj.ordertype.find("option:selected").val();
+    }
+
+    row_data.search = obj.search.val();
+    obj.send_row_update({row_data: row_data}, function () {
+        if (obj.search && obj.search.prev().prop("tagName") == "SPAN") {
+            obj.search.prev().remove();
+            obj.search.parent().removeClass("has-feedback");
+        }
+    });
+};
+
 epfl.PaginatedListLayout.prototype.after_response = function () {
     epfl.ComponentBase.prototype.after_response.call(this);
     var obj = this;
-
-    function send_row_update(data, callback) {
-        var _data = {
-            row_data: obj.params.row_data,
-            row_limit: obj.params.row_limit,
-            row_offset: obj.params.row_offset
-        };
-        for (var key in data) {
-            _data[key] = data[key];
-        }
-        obj.send_event('set_row', _data, callback);
-    }
-
-    function submit() {
-        try {
-            if (obj.search.val() == obj.params.row_data['search']) {
-                return;
-            }
-        } catch (e) {
-        }
-
-        if (obj.search.prev().prop("tagName") != "SPAN") {
-            obj.search
-                .before($("<span></span>")
-                    .addClass("fa fa-spinner fa-spin")
-                    .css("margin-right", "25px")
-            );
-        }
-        var row_data = obj.params.row_data;
-        if (!row_data) {
-            row_data = {};
-        }
-
-        if (obj.orderby.length && obj.ordertype.length) {
-            row_data.orderby = obj.orderby.find("option:selected").val();
-            row_data.ordertype = obj.ordertype.find("option:selected").val();
-        }
-
-        row_data.search = obj.search.val();
-        send_row_update({row_data: row_data}, function () {
-            if (obj.search && obj.search.prev().prop("tagName") == "SPAN") {
-                obj.search.prev().remove();
-                obj.search.parent().removeClass("has-feedback");
-            }
-        });
-    }
 
     if (obj.params.show_search) {
         var search_timeout;
@@ -96,10 +99,10 @@ epfl.PaginatedListLayout.prototype.after_response = function () {
                 clearTimeout(search_timeout);
             }
             if (event.key == 'Enter') {
-                submit();
+                obj.submit();
                 return preventSubmit(event);
             } else {
-                search_timeout = setTimeout(submit, obj.params.search_timeout);
+                search_timeout = setTimeout(obj.submit.bind(obj), obj.params.search_timeout);
             }
         });
 
@@ -136,7 +139,7 @@ epfl.PaginatedListLayout.prototype.after_response = function () {
                     selected_offset = parseInt(target_string) - 1;
             }
             if (selected_offset * obj.params.row_limit != obj.params.row_offset) {
-                send_row_update({row_offset: selected_offset * obj.params.row_limit})
+                obj.send_row_update({row_offset: selected_offset * obj.params.row_limit})
             }
         });
     }
@@ -195,7 +198,7 @@ epfl.PaginatedListLayout.prototype.after_response = function () {
                     firstChild = obj.list.children().first();
                     var scroll_position = parseInt(epfl.scroll_memory[obj.cid] / firstChild.outerHeight());
                     obj.list.unbind('scroll', listener);
-                    send_row_update({row_offset: Math.max(0, scroll_position - shift)});
+                    obj.send_row_update({row_offset: Math.max(0, scroll_position - shift)});
                     return;
                 }
 
@@ -207,14 +210,14 @@ epfl.PaginatedListLayout.prototype.after_response = function () {
                 // First visible child has index < 5 and row_offset is greater than 0.
                 if (first_visible_child_index < trigger_range && obj.params.row_offset > 0) {
                     obj.list.unbind('scroll', listener);
-                    send_row_update({row_offset: Math.max(0, obj.params.row_offset - shift)});
+                    obj.send_row_update({row_offset: Math.max(0, obj.params.row_offset - shift)});
                 }
 
                 // Last visible child has index > total_children - 5 and row_offset is lesser than row_count.
                 else if (last_visible_child_index > total_children - trigger_range
                     && obj.params.row_offset + obj.params.row_limit < obj.params.row_count) {
                     obj.list.unbind('scroll', listener);
-                    send_row_update({row_offset: Math.max(0, obj.params.row_offset + shift)});
+                    obj.send_row_update({row_offset: Math.max(0, obj.params.row_offset + shift)});
                 }
             }));
         }, 0);
