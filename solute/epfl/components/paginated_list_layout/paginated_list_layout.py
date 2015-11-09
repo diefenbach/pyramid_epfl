@@ -23,6 +23,7 @@ class PaginatedListLayout(PrettyListLayout):
     show_pagination = True  #: Set to true to show the pagination bar.
     infinite_scrolling = False  #: Set to true to use infinite scrolling pagination.
     show_search = True  #: Set to true to enable the search field.
+    search_timeout = 500  #: The timeout in ms until the search event fires
     search_placeholder = "Search..."  #: Placeholder text for the search input.
     #: Specify the number of pages that should be visible in the pagination bar.
     visible_pages_limit = 5
@@ -51,6 +52,7 @@ class PaginatedListLayout(PrettyListLayout):
     def __init__(self, page, cid, show_search=None, show_pagination=None, search_placeholder=None,
                  search_focus=None, visible_pages_limit=None,
                  reset_row_offset_on_search_change=None, height=None,search_focus_after_search=search_focus_after_search,
+                 search_timeout=None,
                  **kwargs):
         """Paginated list using the PrettyListLayout based on bootstrap. Offers searchbar above and pagination below
         using the EPFL theming mechanism.
@@ -63,6 +65,7 @@ class PaginatedListLayout(PrettyListLayout):
         :param reset_row_offset_on_search_change: Reset row_offset once the user changes the search string.
         :param height: Set the list to the given height in pixels.
         :param search_focus_after_search: Focus the search input after a search
+        :param search_timeout: The timeout in ms until the search event fires
         """
         super(PaginatedListLayout, self).__init__(page, cid, show_search=show_search,
                                                   show_pagination=show_pagination,
@@ -71,7 +74,7 @@ class PaginatedListLayout(PrettyListLayout):
                                                   visible_pages_limit=visible_pages_limit,
                                                   reset_row_offset_on_search_change=reset_row_offset_on_search_change,
                                                   search_focus_after_search=search_focus_after_search,
-                                                  height=height, **kwargs)
+                                                  height=height,search_timeout=search_timeout, **kwargs)
 
     def handle_set_row(self, row_offset, row_limit, row_data=None):
         if self.row_data is not None and row_data is not None:

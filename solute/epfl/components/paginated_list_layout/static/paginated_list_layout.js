@@ -99,7 +99,7 @@ epfl.PaginatedListLayout.prototype.after_response = function () {
                 submit();
                 return preventSubmit(event);
             } else {
-                search_timeout = setTimeout(submit, 500);
+                search_timeout = setTimeout(submit, obj.params.search_timeout);
             }
         });
 

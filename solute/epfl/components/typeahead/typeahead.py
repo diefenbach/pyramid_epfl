@@ -34,7 +34,7 @@ class TypeAhead(GroupedLinkListLayout):
     compo_js_name = 'TypeAhead'
     compo_js_params = GroupedLinkListLayout.compo_js_params + ['row_offset', 'row_limit', 'row_count', 'row_data',
                                                                'show_pagination', 'show_search', 'search_focus',
-                                                               'open_on_hover','hide_list']
+                                                               'open_on_hover','hide_list', 'search_timeout']
     compo_js_extras = ['handle_click']
 
     theme_path = GroupedLinkListLayout.theme_path.copy()
