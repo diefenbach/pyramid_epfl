@@ -85,13 +85,17 @@ epfl.TypeAhead.prototype.after_response = function (data) {
         });
         switch (event.keyCode) {
             case 13: // enter
-                var active_compo = epfl.components[active_entry.attr('epflid')];
-                active_compo.handle_click({
-                    target: active_entry, originalEvent: {
-                        preventDefault: function () {
+                if (position === -1) {
+                    obj.submit();
+                } else {
+                    var active_compo = epfl.components[active_entry.attr('epflid')];
+                    active_compo.handle_click({
+                        target: active_entry, originalEvent: {
+                            preventDefault: function () {
+                            }
                         }
-                    }
-                });
+                    });
+                }
                 break;
             case 38: // arrow up
                 position -= 1;
