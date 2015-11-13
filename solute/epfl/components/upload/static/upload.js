@@ -95,7 +95,7 @@ epfl.Upload.prototype.validate_files = function (data) {
             if (obj.params.allowed_file_types) {
                 var type_is_allowed = false;
                 for (var j = 0; j < obj.params.allowed_file_types.length; j++) {
-                    if (data[i].name.endsWith(obj.params.allowed_file_types[j])) {
+                    if (data[i].name.toLowerCase().endsWith(obj.params.allowed_file_types[j].toLowerCase())) {
                         type_is_allowed = true;
                     }
                 }
