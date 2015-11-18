@@ -102,7 +102,7 @@ epfl.PaginatedListLayout.prototype.after_response = function () {
                 obj.submit();
                 return preventSubmit(event);
             } else {
-                search_timeout = setTimeout(obj.submit.bind(obj), obj.params.search_timeout);
+                search_timeout = setTimeout(obj.submit.bind(obj), obj.params.search_timeout || 500);
             }
         });
 
