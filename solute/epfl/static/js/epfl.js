@@ -22,7 +22,7 @@ if (window.epfl_flush_again === undefined) {
 
 var epfl = {};
 
-(function () {
+epfl_module = function () {
     epfl.queue = [];
     epfl.event_id = 0;
     epfl.components = {};
@@ -557,6 +557,7 @@ var epfl = {};
             "left": ((($(parent).width() - element.outerWidth()) / 2) + $(parent).scrollLeft() + "px")
         });
     }
-})();
+};
+epfl_module();
 
 $(window).bind("beforeunload", epfl.unload_page);
