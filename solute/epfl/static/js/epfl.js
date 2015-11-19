@@ -411,7 +411,7 @@ epfl_module = function () {
         epfl_submit_form.submit();
         epfl_submit_form.remove();
     };
-    
+
     epfl.setLocation = function (action, tid) {
         var newLocation = action;
         if (tid) {
@@ -537,8 +537,21 @@ epfl_module = function () {
             "top": ((($(parent).height() - element.outerHeight()) / 2) + $(parent).scrollTop() + "px"),
             "left": ((($(parent).width() - element.outerWidth()) / 2) + $(parent).scrollLeft() + "px")
         });
-    }
+    };
+
+    epfl.prevent_page_leave = function (prevent_leave, message) {
+        if (prevent_leave) {
+            window.onbeforeunload = function (event) {
+                var confirmationMessage = message || "";
+                event.returnValue = confirmationMessage;
+                return confirmationMessage;
+            }
+        }else{
+            window.onbeforeunload = null;
+        }
+    };
 };
+
 epfl_module();
 
 $(window).bind("beforeunload", epfl.unload_page);

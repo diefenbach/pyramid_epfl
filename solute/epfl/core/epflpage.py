@@ -655,6 +655,16 @@ class Page(object):
 
         return self.request.route_url(route, **kwargs)
 
+    def prevent_page_leave(self, prevent_leave=True, message=None):
+        """
+        Show the a browser "are you sure to leave page" warning when the user want to leave or reload the page
+        :param prevent_leave: set this to true to activate the warning set it to false to deactivate it
+        :param message: optional message which should be shown in the warning
+        """
+        message = '"%s"' % message if message else 'null'
+        prevent_leave = "true" if prevent_leave else "false"
+        self.add_js_response("epfl.prevent_page_leave(%s,%s);" % (prevent_leave, message))
+
 
 class PageRequest(object):
     """
