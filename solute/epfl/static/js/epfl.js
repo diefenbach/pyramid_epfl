@@ -249,7 +249,7 @@ epfl_module = function () {
             }
         });
     };
-    
+
     epfl.send = function (epflevent, callback_func) {
         epfl.enqueue(epflevent);
         epfl.flush(callback_func);
@@ -401,6 +401,7 @@ epfl_module = function () {
     };
 
     epfl.make_submit_form = function (action, tid) {
+        alert("epfl.make_submit_form is deprecated and will be removed in future epfl releases");
         var frm = $('<form id="__epfl_submit_form__" method="POST" action="' + action + '"></form>');
         if (tid) {
             frm.append('<input type="hidden" name="tid" value="' + tid + '">');
@@ -410,17 +411,25 @@ epfl_module = function () {
         epfl_submit_form.submit();
         epfl_submit_form.remove();
     };
+    
+    epfl.setLocation = function (action, tid) {
+        var newLocation = action;
+        if (tid) {
+            action += "?tid=" + tid;
+        }
+        window.location = newLocation;
+    };
 
     epfl.reload_page = function () {
-        epfl.make_submit_form("#", epfl.tid);
+        epfl.setLocation("#", epfl.tid);
     };
 
     epfl.go_next = function (target_url) {
-        epfl.make_submit_form(encodeURI(target_url), epfl.tid);
+        epfl.setLocation(encodeURI(target_url), epfl.tid);
     };
 
     epfl.jump = function (target_url) {
-        epfl.make_submit_form(encodeURI(target_url));
+        epfl.setLocation(encodeURI(target_url));
     };
 
     epfl.jump_extern = function (target_url, target) {
