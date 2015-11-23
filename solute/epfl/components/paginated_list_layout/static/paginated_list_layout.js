@@ -153,8 +153,6 @@ epfl.PaginatedListLayout.prototype.after_response = function () {
 };
 
 epfl.PaginatedListLayout.prototype.setup_infinite_scrolling = function () {
-    var start = Date.now();
-    var predictDebounce = 100;
     var obj = this;
 
     function relativeOffset(elm) {
@@ -174,14 +172,18 @@ epfl.PaginatedListLayout.prototype.setup_infinite_scrolling = function () {
 
     var scrollTarget = obj.list;
 
-    if (firstChild.get(0).tagName == 'TR') {
+    if (firstChild.get(0).tagName == 'TR') { //check if tag is tr to see if the compo is a table
         var table = firstChild.parentsUntil('table').parent();
         scrollTarget = table.parent();
         var correction = 0;
-        if (obj.params.fixed_header) {
+        if (obj.params.fixed_header) { //if the fixed header plugin is activated
             correction = table.children('thead').outerHeight();
 
+            //hide the thead of the normal table and show the thead of the overlay table
             var thead = table.children('thead').css('visibility', 'hidden').clone().css('visibility', 'visible');
+
+            //the fth plugin adds a second table with only a thead and sets the position absolute
+            //so the header seems to be fixed
             var new_table = $('<table class="epfl-table-layout-fixed-header">')
                 .append(thead).prependTo(table.parent().parent());
             new_table.children('thead').children('tr').children().each(function (i, c) {
@@ -201,6 +203,7 @@ epfl.PaginatedListLayout.prototype.setup_infinite_scrolling = function () {
 
     scrollTarget.scrollTop(firstChild.outerHeight() * obj.params.row_offset);
 
+    //keep a scroll memory for redraws
     if (epfl.scroll_memory && epfl.scroll_memory[obj.cid]) {
         scrollTarget.scrollTop(epfl.scroll_memory[obj.cid]);
     } else {
@@ -214,11 +217,10 @@ epfl.PaginatedListLayout.prototype.setup_infinite_scrolling = function () {
     var shift = obj.params.row_limit / 2;
 
     window.setTimeout(function () {
-        var debounceDelay = obj.params.infinite_scroll_debounce_delay || 100;
-        if(predictDebounce > debounceDelay){
-            debounceDelay = predictDebounce;
-        }
-        var listener = scrollTarget.scroll($.debounce(debounceDelay, function (event) {
+        //debounce ensures that the scroll function only get called once in the given delay
+        //so we prevent the page from sending to many set row which results in a multiple reloads of the compo
+        //this timeout must be higher if the client computers hardware is worse
+        var listener = scrollTarget.scroll($.debounce(obj.params.infinite_scroll_debounce_delay || 100, function (event) {
             var visible_children = [];
             var height = scrollTarget.outerHeight();
             var total_children = 0;
@@ -269,5 +271,4 @@ epfl.PaginatedListLayout.prototype.setup_infinite_scrolling = function () {
             }
         }));
     }, 0);
-    predictDebounce = Date.now() - start;
 };
