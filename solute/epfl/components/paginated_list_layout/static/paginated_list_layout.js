@@ -178,6 +178,7 @@ epfl.PaginatedListLayout.prototype.setup_infinite_scrolling = function () {
         var correction = 0;
         if (obj.params.fixed_header) {
             correction = table.children('thead').outerHeight();
+
             var thead = table.children('thead').css('visibility', 'hidden').clone().css('visibility', 'visible');
             var new_table = $('<table class="epfl-table-layout-fixed-header">')
                 .append(thead).prependTo(table.parent().parent());
@@ -185,6 +186,8 @@ epfl.PaginatedListLayout.prototype.setup_infinite_scrolling = function () {
                 var outerWidth = firstChild.children(':nth-child(' + (i + 1).toString() + ')').outerWidth();
                 $(this).css('width', outerWidth).css('height', '30px');
             });
+
+            scrollTarget.css('height', parseInt(scrollTarget.css('height')) - correction);
         }
         table
             .css('margin-top', offset_top + parseInt(table.css('margin-top')) - correction)
