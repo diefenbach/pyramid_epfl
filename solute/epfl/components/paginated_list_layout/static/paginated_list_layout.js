@@ -65,7 +65,7 @@ epfl.PaginatedListLayout.prototype.submit = function () {
             .before($("<span></span>")
                 .addClass("fa fa-spinner fa-spin")
                 .css("margin-right", "25px")
-        );
+            );
     }
     var row_data = obj.params.row_data;
     if (!row_data) {
@@ -175,7 +175,6 @@ epfl.PaginatedListLayout.prototype.setup_infinite_scrolling = function () {
     if (firstChild.get(0).tagName == 'TR') {
         var table = firstChild.parentsUntil('table').parent();
         scrollTarget = table.parent();
-
         var correction = 0;
         if (obj.params.fixed_header) {
             correction = table.children('thead').outerHeight();
@@ -183,10 +182,10 @@ epfl.PaginatedListLayout.prototype.setup_infinite_scrolling = function () {
             var new_table = $('<table class="epfl-table-layout-fixed-header">')
                 .append(thead).prependTo(table.parent().parent());
             new_table.children('thead').children('tr').children().each(function (i, c) {
-                $(this).css('width', firstChild.children(':nth-child(' + i.toString() + ')').outerWidth());
+                var outerWidth = firstChild.children(':nth-child(' + (i + 1).toString() + ')').outerWidth();
+                $(this).css('width', outerWidth).css('height', '30px');
             });
         }
-
         table
             .css('margin-top', offset_top + parseInt(table.css('margin-top')) - correction)
             .css('margin-bottom', offset_bottom + parseInt(table.css('margin-bottom')));
@@ -222,7 +221,7 @@ epfl.PaginatedListLayout.prototype.setup_infinite_scrolling = function () {
                 if (c.get(0).tagName == 'TR') {
                     var table = c.parentsUntil('table').parent();
                     absolute_offset = relativeOffset(table) + parseInt(table.css('margin-top'))
-                                        + table.children('thead').outerHeight();
+                        + table.children('thead').outerHeight();
                 }
                 var pos = relativeOffset(c) + absolute_offset;
 
@@ -231,7 +230,6 @@ epfl.PaginatedListLayout.prototype.setup_infinite_scrolling = function () {
                 }
                 visible_children.push(c)
             });
-            epfl.console_log(visible_children);
 
             epfl.scroll_memory[obj.cid] = scrollTarget.scrollTop();
 
@@ -239,7 +237,6 @@ epfl.PaginatedListLayout.prototype.setup_infinite_scrolling = function () {
                 firstChild = obj.list.children().first();
                 var scroll_position = parseInt(epfl.scroll_memory[obj.cid] / firstChild.outerHeight());
                 scrollTarget.unbind('scroll', listener);
-                epfl.console_log('hard update', Math.max(0, scroll_position - shift), scroll_position, shift);
                 obj.send_row_update({row_offset: Math.max(0, scroll_position - shift)});
                 return;
             }
@@ -252,7 +249,6 @@ epfl.PaginatedListLayout.prototype.setup_infinite_scrolling = function () {
             // First visible child has index < 5 and row_offset is greater than 0.
             if (first_visible_child_index < trigger_range && obj.params.row_offset > 0) {
                 scrollTarget.unbind('scroll', listener);
-                epfl.console_log('soft up', Math.max(0, obj.params.row_offset - shift), obj.params.row_offset, shift);
                 obj.send_row_update({row_offset: Math.max(0, obj.params.row_offset - shift)});
             }
 
@@ -260,7 +256,6 @@ epfl.PaginatedListLayout.prototype.setup_infinite_scrolling = function () {
             else if (last_visible_child_index > total_children - trigger_range
                 && obj.params.row_offset + obj.params.row_limit < obj.params.row_count) {
                 scrollTarget.unbind('scroll', listener);
-                epfl.console_log('soft down', Math.max(0, obj.params.row_offset + shift), obj.params.row_offset, shift);
                 obj.send_row_update({row_offset: Math.max(0, obj.params.row_offset + shift)});
             }
         }));
