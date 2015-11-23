@@ -212,7 +212,7 @@ epfl.PaginatedListLayout.prototype.setup_infinite_scrolling = function () {
     var shift = obj.params.row_limit / 2;
 
     window.setTimeout(function () {
-        var listener = scrollTarget.scroll($.debounce(100, function (event) {
+        var listener = scrollTarget.scroll($.debounce(obj.params.infinite_scroll_debounce_delay || 100, function (event) {
             var visible_children = [];
             var height = scrollTarget.outerHeight();
             var total_children = 0;
