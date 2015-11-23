@@ -153,6 +153,8 @@ epfl.PaginatedListLayout.prototype.after_response = function () {
 };
 
 epfl.PaginatedListLayout.prototype.setup_infinite_scrolling = function () {
+    var start = Date.now();
+    var predictDebounce = 100;
     var obj = this;
 
     function relativeOffset(elm) {
@@ -212,7 +214,11 @@ epfl.PaginatedListLayout.prototype.setup_infinite_scrolling = function () {
     var shift = obj.params.row_limit / 2;
 
     window.setTimeout(function () {
-        var listener = scrollTarget.scroll($.debounce(obj.params.infinite_scroll_debounce_delay || 100, function (event) {
+        var debounceDelay = obj.params.infinite_scroll_debounce_delay || 100;
+        if(predictDebounce > debounceDelay){
+            debounceDelay = predictDebounce;
+        }
+        var listener = scrollTarget.scroll($.debounce(debounceDelay, function (event) {
             var visible_children = [];
             var height = scrollTarget.outerHeight();
             var total_children = 0;
@@ -263,4 +269,5 @@ epfl.PaginatedListLayout.prototype.setup_infinite_scrolling = function () {
             }
         }));
     }, 0);
+    predictDebounce = Date.now() - start;
 };
