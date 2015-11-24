@@ -165,6 +165,9 @@ epfl.PaginatedListLayout.prototype.setup_infinite_scrolling = function () {
     }
 
     var firstChild = obj.list.children().first();
+    if(firstChild.length === 0){
+        return;
+    }
     var lastChild = obj.list.children().last();
 
     var offset_top = firstChild.outerHeight() * obj.params.row_offset;
