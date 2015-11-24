@@ -39,8 +39,8 @@ class TableLayout(PaginatedListLayout):
 
     new_style_compo = True
     compo_js_name = 'TableLayout'
-    compo_js_params = ['row_offset', 'row_limit', 'row_count', 'row_data',
-                       'show_pagination', 'show_search', 'search_focus', 'fixed_header']
+    compo_js_params = ['row_offset', 'row_limit', 'row_count', 'row_data', 'show_pagination', 'show_search',
+                       'search_focus', 'fixed_header', 'infinite_scrolling', 'infinite_scroll_debounce_delay']
     compo_js_extras = ['handle_click']
 
     def __init__(self, page, cid, show_search=None, height=None, column_visibility=None, orderby=None, ordertype=None,

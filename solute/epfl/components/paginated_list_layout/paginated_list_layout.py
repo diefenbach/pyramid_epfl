@@ -31,6 +31,7 @@ class PaginatedListLayout(PrettyListLayout):
     #: search string. This may be useful to avoid scenarios where the components renders page 5,
     #: but the search only returned 2 pages.
     reset_row_offset_on_search_change = False
+    infinite_scroll_debounce_delay = 100  #: The delay for scroll debounce in infinite scrolling lists
 
     search_focus = False  #: Set to true if the search field should receive focus on load.
     search_focus_after_search = True  #: Focus the search input after a search
@@ -52,8 +53,7 @@ class PaginatedListLayout(PrettyListLayout):
     def __init__(self, page, cid, show_search=None, show_pagination=None, search_placeholder=None,
                  search_focus=None, visible_pages_limit=None,
                  reset_row_offset_on_search_change=None, height=None,search_focus_after_search=search_focus_after_search,
-                 search_timeout=None,
-                 **kwargs):
+                 search_timeout=None, infinite_scroll_debounce_delay=None, **kwargs):
         """Paginated list using the PrettyListLayout based on bootstrap. Offers searchbar above and pagination below
         using the EPFL theming mechanism.
 
@@ -66,6 +66,7 @@ class PaginatedListLayout(PrettyListLayout):
         :param height: Set the list to the given height in pixels.
         :param search_focus_after_search: Focus the search input after a search
         :param search_timeout: The timeout in ms until the search event fires
+        :param infinite_scroll_debounce_delay: The delay for scroll debounce in infinite scrolling lists
         """
         super(PaginatedListLayout, self).__init__(page, cid, show_search=show_search,
                                                   show_pagination=show_pagination,
@@ -74,7 +75,8 @@ class PaginatedListLayout(PrettyListLayout):
                                                   visible_pages_limit=visible_pages_limit,
                                                   reset_row_offset_on_search_change=reset_row_offset_on_search_change,
                                                   search_focus_after_search=search_focus_after_search,
-                                                  height=height,search_timeout=search_timeout, **kwargs)
+                                                  height=height,search_timeout=search_timeout,
+                                                  infinite_scroll_debounce_delay=infinite_scroll_debounce_delay,**kwargs)
 
     def handle_set_row(self, row_offset, row_limit, row_data=None):
         if self.row_data is not None and row_data is not None:

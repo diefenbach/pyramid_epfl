@@ -7,5 +7,6 @@ epfl.init_component("{{ compo.cid }}", "PaginatedListLayout", {
     'show_search': {{ compo.show_search|format_bool }},
     'search_focus': {{ compo.search_focus|format_bool }},
     'infinite_scrolling': {{ compo.infinite_scrolling|format_bool }},
-    'search_timeout': {{ compo.search_timeout }}
+    'search_timeout': {{ compo.search_timeout }},
+    'infinite_scroll_debounce_delay': {{ compo.infinite_scroll_debounce_delay }}
 });

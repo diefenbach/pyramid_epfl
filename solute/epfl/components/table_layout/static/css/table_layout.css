@@ -19,9 +19,6 @@ table.fht-table, .fht-table {
     overflow-x: hidden;
     overflow-y: auto;
 }
-.epfl-table-layout-container.fixed-header {
-    overflow-y: hidden;
-}
 tr.epfl-table-layout.row-default {
 }
 
