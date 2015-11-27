@@ -32,9 +32,6 @@ def test_name_generation(page):
     page.handle_transaction()
     compo = page.root_node
 
-    assert 'None' in compo.render(), 'text and name are not set, but "None" is missing in the rendered html.'
-    compo.render_cache = None
-
     compo.text = test_text
     assert test_text in compo.render(), 'text set to "{text}" but is missing in the rendered html.'.format(
         text=test_text
@@ -300,4 +297,5 @@ def test_popover_trigger(page):
     compo = page.root_node
 
     assert 'data-toggle="popover" data-content="component popover text" data-trigger="hover click" data-placement="top"' in compo.render(), 'popover_text set but popover text is missing or malformed in html.'
+
 
