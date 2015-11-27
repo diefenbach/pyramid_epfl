@@ -287,3 +287,17 @@ def test_popover_text(page):
     compo = page.root_node
 
     assert 'data-toggle="popover" data-content="component popover text" data-trigger="focus" data-placement="top"' in compo.render(), 'popover_text set but popover text is missing or malformed in html.'
+
+
+def test_popover_trigger(page):
+    page.root_node = components.Link(
+        text='foobar',
+        popover_text='component popover text',
+        popover_trigger = "hover click"
+    )
+    page.handle_transaction()
+
+    compo = page.root_node
+
+    assert 'data-toggle="popover" data-content="component popover text" data-trigger="hover click" data-placement="top"' in compo.render(), 'popover_text set but popover text is missing or malformed in html.'
+
