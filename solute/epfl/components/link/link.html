@@ -34,7 +34,7 @@
         {% set post_marked = name[compo.selection[1]:] %}
         <span class="marked_link">{{ pre_marked }}<mark>{{ marked }}</mark>{{ post_marked }}</span>
     {% else %}
-        <span>{{ name }}</span>
+        <span>{{ name if name else ''}}</span>
     {% endif %}
     {% if compo.get_context_menu() %}
         <button class='btn btn-default btn-xs epfl-context-menu-btn' type='button'><i class='fa fa-bars'></i></button>

@@ -1,7 +1,7 @@
 from solute.epfl.core import epflcomponentbase
+from solute.epfl.components.link.link import Link
 
-
-class Popover(epflcomponentbase.ComponentBase):
+class Popover(Link):
 
     """
     Popover dialog (a click triggered tooltip) using bootstrap popover.
@@ -10,27 +10,11 @@ class Popover(epflcomponentbase.ComponentBase):
     Example: http://getbootstrap.com/javascript/#popovers
 
     """
+    compo_state = Link.compo_state + ["disabled", "title", "position", "label", "color"]
 
-    template_name = "popover/popover.html"
-
-    js_parts = epflcomponentbase.ComponentBase.js_parts + ["popover/popover.js"]
-    asset_spec = "solute.epfl.components:popover/static"
-
-    css_name = ["popover.css"]
-    js_name = ["popover.js"]
-
-    compo_config = []
-    compo_state = ["disabled", "text", "title", "position", "label", "icon", "color"]
-
-    #: Text to be displayed in the popover. Can be either a string or a list of strings.
     #: In the latter case, the strings are displayed in separate paragraphs.
-    text = ""
     title = None  #: title to be displayed in the popover. If set to None, no title is displayed.
     position = "top"  #: possible positions are top, left, right, bottom
-    #: An optional font-awesome icon that should be displayed on the button.
-    #: Either the :attr:`icon` or the :attr:`label` have to be defined in order
-    #: to yield a reasonable button.
-    icon = None
     #: An optional label that should be displayed on the button.
     #: Either the :attr:`icon` or the :attr:`label` have to be defined in order
     #: to yield a reasonable button.
@@ -39,7 +23,6 @@ class Popover(epflcomponentbase.ComponentBase):
     #: The color class to be used for the button. Possible values are: default, primary, warning, danger, success.
     color = "default"
     small_button = False  #: Set to true if a small button should be rendered.
-    trigger = "focus"  #: Set how the popover is triggerd. possible values: click (default), hover, focus
 
     def __init__(self, page, cid,
                  label=None,
@@ -76,4 +59,10 @@ class Popover(epflcomponentbase.ComponentBase):
                                       disabled=disabled,
                                       small_button=small_button,
                                       trigger=trigger)
+
+    def init_transaction(self):
+        super(Popover,self).init_transaction()
+        if self.icon is not None:
+            if self.icon.startswith("fa-"):
+                raise DeprecationWarning("icon starting with fa- is deprecated")
 
