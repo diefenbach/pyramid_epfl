@@ -360,7 +360,7 @@ class ComponentBase(object):
     epfl_event_trace = None  #: Contains a list of CIDs an event bubbled through. Only available in handle\_ methods
 
     #: These are the compo_state-names for this ComponentBase-Class
-    base_compo_state = {'visible', 'name', 'value', 'mandatory', 'validation_error', 'validators'}
+    base_compo_state = {'visible', 'name', 'value', 'mandatory', 'validation_error', 'validators', 'strip_value'}
 
     is_template_element = True  #: Needed for template-reflection: this makes me a template-element (like a form-field)
 
@@ -389,6 +389,7 @@ class ComponentBase(object):
 
     # Input Helper:
     value = None  #: The actual value of the input element that is posted upon form submission.
+    strip_value = False  #: strip value if true in get value
 
     validation_error = ''  #: Set during call of :func:`validate` with an error message if validation fails.
     validation_type = None  #: Form validation selector.
@@ -1080,8 +1081,13 @@ class ComponentBase(object):
 
     def get_value(self):
         """
-        Return the field value without conversions.
+        Return the field value
         """
+        if self.strip_value:
+            try:
+                return self.value.strip()
+            except AttributeError:
+                pass
         return self.value
 
     #########################
