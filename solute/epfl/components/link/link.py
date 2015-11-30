@@ -88,8 +88,8 @@ class Link(ComponentBase):
                                    selection=selection,
                                    stop_propagation_on_click=stop_propagation_on_click,
                                    popover_text=popover_text, context_menu=context_menu,
-                                   popover_trigger=popover_trigger,popover_position=popover_position,
-                                   popover_title=popover_title,btn_link_color=btn_link_color, **extra_params)
+                                   popover_trigger=popover_trigger, popover_position=popover_position,
+                                   popover_title=popover_title, btn_link_color=btn_link_color, **extra_params)
 
     @property
     def _url(self):

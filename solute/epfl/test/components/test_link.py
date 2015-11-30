@@ -1,12 +1,13 @@
 import pytest
 from solute.epfl import components
 from solute.epfl.core.epflcomponentbase import ComponentContainerBase
-
 from link_asserts import assert_href_is, assert_with_a_twist, assert_breadcrumb, assert_list_element
+
 
 @pytest.fixture(params=[True, False])
 def bool_toggle(request):
     return request.param
+
 
 @pytest.fixture(params=[
     # event_name, route, url
@@ -228,7 +229,6 @@ def test_selection(page):
         ((0, 3), '<mark>foo</mark>bar'),
         ((2, 4), 'fo<mark>ob</mark>ar'),
         ((2, 10), 'fo<mark>obar</mark>'), ]:
-
         compo.selection = selection
         assert result in compo.render(), \
             'selection set around foobar, but mark tag is missing or malformed in html.'
@@ -290,12 +290,54 @@ def test_popover_trigger(page):
     page.root_node = components.Link(
         text='foobar',
         popover_text='component popover text',
-        popover_trigger = "hover click"
+        popover_trigger="hover click"
     )
     page.handle_transaction()
 
     compo = page.root_node
 
-    assert 'data-toggle="popover" data-content="component popover text" data-trigger="hover click" data-placement="top"' in compo.render(), 'popover_text set but popover text is missing or malformed in html.'
+    assert 'data-toggle="popover" data-content="component popover text" data-trigger="hover click" data-placement="top"' in compo.render(), 'popover_trigger set but popover trigger is missing or malformed in html.'
 
 
+# popover_position=popover_position,popover_title=popover_title, btn_link_color=btn_link_color,
+
+def test_popover_position(page):
+    page.root_node = components.Link(
+        text='foobar',
+        popover_text='component popover text',
+        popover_trigger="hover click",
+        popover_position="left"
+    )
+    page.handle_transaction()
+
+    compo = page.root_node
+
+    assert 'data-toggle="popover" data-content="component popover text" data-trigger="hover click" data-placement="left"' in compo.render(), 'popover_position set but popover_position is missing or malformed in html.'
+
+
+def test_popover_title(page):
+    page.root_node = components.Link(
+        text='foobar',
+        popover_text='component popover text',
+        popover_trigger="hover click",
+        popover_position="left",
+        popover_title="popover title"
+    )
+    page.handle_transaction()
+
+    compo = page.root_node
+
+    assert 'data-toggle="popover" data-content="component popover text" data-trigger="hover click" data-placement="left" title="popover title"' in compo.render(), 'popover_title set but popover_title is missing or malformed in html.'
+
+
+def test_btn_link_color(page):
+    page.root_node = components.Link(
+        text='foobar',
+        btn_link=True,
+        btn_link_color="primary"
+    )
+    page.handle_transaction()
+
+    compo = page.root_node
+
+    assert 'btn btn-primary' in compo.render(), 'btn_link_color set but btn_link_color is missing or malformed in html.'

@@ -16,7 +16,7 @@
            class="epfl-popover-link"
    {% endif %}
    {% if compo.popover_text %}
-        data-toggle="popover" data-content="{{ compo.popover_text }}" data-trigger="{{ compo.popover_trigger }}" data-placement="{{ compo.popover_position }}" title="{{ compo.popover_title }}"
+        data-toggle="popover" data-content="{{ compo.popover_text }}" data-trigger="{{ compo.popover_trigger }}" data-placement="{{ compo.popover_position }}"{{ ' title="'|safe + compo.popover_title + '"'|safe if compo.popover_title else '' }}
    {% endif %}
    {% if compo._url %}
    href="{{ compo._url }}"
