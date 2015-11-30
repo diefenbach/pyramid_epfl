@@ -389,7 +389,7 @@ class ComponentBase(object):
 
     # Input Helper:
     value = None  #: The actual value of the input element that is posted upon form submission.
-    strip_value = True  #: strip value if true in get value
+    strip_value = False  #: strip value if true in get value
 
     validation_error = ''  #: Set during call of :func:`validate` with an error message if validation fails.
     validation_type = None  #: Form validation selector.
