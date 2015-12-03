@@ -5,7 +5,7 @@ from solute.epfl.components.link.link import Link
 
 class Popover(Link):
     def __init__(self, page, cid, text=None, icon=None, popover_text=None, popover_trigger=None, popover_position=None,
-                 popover_title=None, **extra_params):
+                 **extra_params):
         """Popover convenience component
 
         :param text: Alias for name.
@@ -14,9 +14,7 @@ class Popover(Link):
         :param popover_text: If set, click on link displays this text
         :param popover_trigger: trigger for popover text
         :param popover_position: popover position possible values: left right top bottom
-        :param popover_title: popover title
         """
 
         super(Link, self).__init__(page, cid, text=text, icon=icon, popover_text=popover_text,
-                                   popover_trigger=popover_trigger, popover_position=popover_position,
-                                   popover_title=popover_title, **extra_params)
+                                   popover_trigger=popover_trigger, popover_position=popover_position, **extra_params)
