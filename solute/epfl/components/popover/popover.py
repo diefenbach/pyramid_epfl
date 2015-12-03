@@ -4,13 +4,6 @@ from solute.epfl.components.link.link import Link
 
 
 class Popover(Link):
-    text = None  #: Alias for name.
-    icon = None  #: The icon to be displayed in front of the text.
-    popover_text = None  #: If set, click on link displays this text
-    popover_trigger = "focus"  #: trigger for popover text
-    popover_position = "top"  #: popover position possible values: left right top bottom
-    popover_title = None  #: popover title
-
     def __init__(self, page, cid, text=None, icon=None, popover_text=None, popover_trigger=None, popover_position=None,
                  popover_title=None, **extra_params):
         """Popover convenience component
