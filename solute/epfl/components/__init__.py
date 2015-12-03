@@ -40,11 +40,11 @@ from stacked_progress.stacked_progress import StackedProgress
 from image.image import Image
 from text.text import Text
 from placeholder.placeholder import Placeholder
-from popover.popover import Popover
 from link.link import Link
 from breadcrumb.breadcrumb import Breadcrumb
 from plain_html.plain_html import PlainHtml
 from carousel.carousel import Carousel
+from popover.popover import Popover
 
 #: Lists
 from tabs_layout.tabs_layout import TabsLayout
@@ -129,10 +129,10 @@ def add_routes(config):
     Image.add_pyramid_routes(config)
     Text.add_pyramid_routes(config)
     Placeholder.add_pyramid_routes(config)
-    Popover.add_pyramid_routes(config)
     PlainHtml.add_pyramid_routes(config)
     Breadcrumb.add_pyramid_routes(config)
     Carousel.add_pyramid_routes(config)
+    Popover.add_pyramid_routes(config)
 
     TextList.add_pyramid_routes(config)
     Dropdown.add_pyramid_routes(config)

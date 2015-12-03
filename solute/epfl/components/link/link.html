@@ -11,12 +11,12 @@
    {% elif compo.list_element %}
        class="list-group-item col-sm-12{{ " active" if compo.is_current_url() or compo.active else "" }}"
    {% elif compo.btn_link %}
-       class="btn btn-default{{ " active" if compo.is_current_url() or compo.active else "" }}{{ " epfl-popover-link" if compo.popover_text else "" }}"
+       class="btn btn-{{ compo.btn_link_color }}{{ " active" if compo.is_current_url() or compo.active else "" }}{{ " epfl-popover-link" if compo.popover_text else "" }}"
    {% elif compo.popover_text %}
            class="epfl-popover-link"
    {% endif %}
    {% if compo.popover_text %}
-        data-toggle="popover" data-content="{{ compo.popover_text }}" data-trigger="{{ compo.popover_trigger }}" data-placement="top"
+        data-toggle="popover" data-content="{{ compo.popover_text }}" data-trigger="{{ compo.popover_trigger }}" data-placement="{{ compo.popover_position }}"{{ ' title="'|safe + compo.popover_title + '"'|safe if compo.popover_title else '' }}
    {% endif %}
    {% if compo._url %}
    href="{{ compo._url }}"
@@ -34,7 +34,7 @@
         {% set post_marked = name[compo.selection[1]:] %}
         <span class="marked_link">{{ pre_marked }}<mark>{{ marked }}</mark>{{ post_marked }}</span>
     {% else %}
-        <span>{{ name }}</span>
+        <span>{{ name if name else ''}}</span>
     {% endif %}
     {% if compo.get_context_menu() %}
         <button class='btn btn-default btn-xs epfl-context-menu-btn' type='button'><i class='fa fa-bars'></i></button>

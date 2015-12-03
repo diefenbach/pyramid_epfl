@@ -1,1 +1,1 @@
-__author__ = 'mast'
+# * encoding: utf-8
