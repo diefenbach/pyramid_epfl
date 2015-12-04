@@ -274,62 +274,6 @@ def test_context_menu(page, bool_toggle):
         assert 'data-event="rename"' not in compo.render(), "Fnd context menu entry rename where no was expected"
 
 
-def test_popover_text(page):
-    page.root_node = components.Link(
-        text='foobar',
-        popover_text='component popover text'
-    )
-    page.handle_transaction()
-
-    compo = page.root_node
-
-    assert 'data-toggle="popover" data-content="component popover text" data-trigger="focus" data-placement="top"' in compo.render(), 'popover_text set but popover text is missing or malformed in html.'
-
-
-def test_popover_trigger(page):
-    page.root_node = components.Link(
-        text='foobar',
-        popover_text='component popover text',
-        popover_trigger="hover click"
-    )
-    page.handle_transaction()
-
-    compo = page.root_node
-
-    assert 'data-toggle="popover" data-content="component popover text" data-trigger="hover click" data-placement="top"' in compo.render(), 'popover_trigger set but popover trigger is missing or malformed in html.'
-
-
-# popover_position=popover_position,popover_title=popover_title, btn_link_color=btn_link_color,
-
-def test_popover_position(page):
-    page.root_node = components.Link(
-        text='foobar',
-        popover_text='component popover text',
-        popover_trigger="hover click",
-        popover_position="left"
-    )
-    page.handle_transaction()
-
-    compo = page.root_node
-
-    assert 'data-toggle="popover" data-content="component popover text" data-trigger="hover click" data-placement="left"' in compo.render(), 'popover_position set but popover_position is missing or malformed in html.'
-
-
-def test_popover_title(page):
-    page.root_node = components.Link(
-        text='foobar',
-        popover_text='component popover text',
-        popover_trigger="hover click",
-        popover_position="left",
-        popover_title="popover title"
-    )
-    page.handle_transaction()
-
-    compo = page.root_node
-
-    assert 'data-toggle="popover" data-content="component popover text" data-trigger="hover click" data-placement="left" title="popover title"' in compo.render(), 'popover_title set but popover_title is missing or malformed in html.'
-
-
 def test_btn_link_color(page):
     page.root_node = components.Link(
         text='foobar',

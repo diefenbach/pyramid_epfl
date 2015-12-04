@@ -34,6 +34,28 @@ epfl.Link.prototype.after_response = function (data) {
     obj.elm.mouseleave(function (event) {
         obj.context_menu.hide();
     });
+
+    if (obj.params.popover_text) {
+
+        var content = obj.params.popover_text;
+        if($.isArray(obj.params.popover_text)){
+            content = "<ul>";
+            obj.params.popover_text.forEach(function(entry){
+                content += "<li>" +entry + "</li>";
+            });
+            content += "</ul>";
+        }
+
+        obj.elm.tooltipster({
+            content: content,
+            contentAsHTML: true,
+            debug: false,
+            position: obj.params.popover_position,
+            trigger:obj.params.propver_trigger,
+            theme:"tooltipster-shadow",
+            delay:100
+        });
+    }
 };
 
 epfl.Link.prototype.handle_local_click = function (event) {
@@ -60,8 +82,6 @@ epfl.Link.prototype.handle_local_click = function (event) {
     } else if (this.context_menu_entry.is(event.target)) {
         this.context_menu.hide();
         this.send_event($(event.target).data("event"), {});
-    } else if (this.params.popover_text) {
-        this.elm.popover('toggle');
     }
 
 };

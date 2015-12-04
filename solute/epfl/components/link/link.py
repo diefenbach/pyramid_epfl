@@ -7,8 +7,8 @@ from solute.epfl.core.epflcomponentbase import ComponentBase
 class Link(ComponentBase):
     asset_spec = "solute.epfl.components:link/static"
     template_name = "link/link.html"
-    js_name = ["link.js"]
-    css_name = ["link.css"]
+    js_name = ["link.js", "jquery.tooltipster.min.js"]
+    css_name = ["link.css", "tooltipster.css", "tooltipster-shadow.css"]
 
     compo_state = ["url", "route", "text", "icon", "name", "active", "context_menu", "popover_text", "popover_trigger"]
 
@@ -28,9 +28,8 @@ class Link(ComponentBase):
     btn_link_color = "default"  #: the color of the link button possible values: bootstrap colors: primary default etc ...
     new_window = False  #: Set to true if link should be opened in new window or tab
     popover_text = None  #: If set, click on link displays this text
-    popover_trigger = "focus"  #: trigger for popover text
+    popover_trigger = "hover"  #: trigger for popover text
     popover_position = "top"  #: popover position possible values: left right top bottom
-    popover_title = None  #: popover title
     active = False  #: Sets the active class in html
     stop_propagation_on_click = False  #: Set to true if click event should not be propagated to parent components
     #: Set to context menu list of dicts or to string
@@ -40,14 +39,14 @@ class Link(ComponentBase):
 
     new_style_compo = True
     compo_js_params = ['event_name', 'double_click_event_name', 'shift_click_event_name', 'stop_propagation_on_click',
-                       'popover_text']
+                       'popover_text', 'popover_position', 'popover_trigger']
     compo_js_name = 'Link'
     compo_js_extras = ['handle_click', 'handle_double_click', 'handle_shift_click']
 
     def __init__(self, page, cid, url=None, route=None, name=None, text=None, icon=None, breadcrumb=None, tile=None,
                  list_element=None, btn_link=None, new_window=None, event_name=None, double_click_event_name=None,
                  selection=None, stop_propagation_on_click=None, popover_text=None, context_menu=None,
-                 popover_trigger=None, popover_position=None, popover_title=None, btn_link_color=None, **extra_params):
+                 popover_trigger=None, popover_position=None, btn_link_color=None, **extra_params):
         """Simple Link component.
 
         Usage:
@@ -76,7 +75,6 @@ class Link(ComponentBase):
         :param popover_trigger: trigger for popover text
         :param context_menu: Set to context menu list of dicts or to string
         :param popover_position: popover position possible values: left right top bottom
-        :param popover_title: popover title
         :param btn_link_color: the color of the link button possible values: bootstrap colors: primary default etc ...
         list of dicts example: [{'name': u"Delete", 'event': "delete", 'type': "link"},{'name': "Rename", 'event': "rename", 'type': "link"}]
         if string is set link component calls container compos context_menu function with context_menu as parameter
@@ -89,7 +87,7 @@ class Link(ComponentBase):
                                    stop_propagation_on_click=stop_propagation_on_click,
                                    popover_text=popover_text, context_menu=context_menu,
                                    popover_trigger=popover_trigger, popover_position=popover_position,
-                                   popover_title=popover_title, btn_link_color=btn_link_color, **extra_params)
+                                   btn_link_color=btn_link_color, **extra_params)
 
     @property
     def _url(self):
