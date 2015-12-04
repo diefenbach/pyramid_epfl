@@ -33,9 +33,27 @@ def test_options(page):
 
     assert 'checked="checked"' not in page.root_node.render()
 
+    assert "<br/>" not in page.root_node.render()
+
     for option in ["plain text option", "tuple_option", "dict_option", "dict_id_option"]:
         page.root_node.value = option
         page.root_node.reset_render_cache()
 
         pattern = re.compile('<[^>]*value="' + option + '"[^>]*checked="checked"[^>]*>', re.MULTILINE)
         assert pattern.search(page.root_node.render())
+
+
+def test_linebreaks(page):
+    page.root_node = components.Radio(
+        options=[
+            "plain text option",
+            ("tuple_option", "tuple option"),
+            {"value": "dict_option", "visual": "dict option"},
+            {"id": "dict_id_option", "value": "invisible_field", "visual": "dict id option"}
+        ],
+        linebreak_between_options=True
+    )
+
+    page.handle_transaction()
+
+    assert "<br/>" in page.root_node.render()
