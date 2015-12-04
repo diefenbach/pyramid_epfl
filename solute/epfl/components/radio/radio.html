@@ -40,7 +40,9 @@
                        value="{{ value }}"
                        {% if compo.value == value %}checked="checked"{% endif %}
                        name="{{ compo.cid }}"
-                       {% if compo.readonly is defined and compo.readonly %}disabled{% endif %}>{{ visual }}{% endfor %}{% endif %}
+                       {% if compo.readonly is defined and compo.readonly %}disabled{% endif %}>{{ visual }}
+                {{ "<br>"|safe if compo.linebreak_between_options and loop.index != compo.options|length else""}}
+            {% endfor %}{% endif %}
         </div>
         {% if compo.validation_error %}
             <small class="help-block">{{ compo.validation_error }}</small>
