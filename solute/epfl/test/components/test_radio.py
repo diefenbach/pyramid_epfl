@@ -33,7 +33,7 @@ def test_options(page):
 
     assert 'checked="checked"' not in page.root_node.render()
 
-    assert "<br>" not in page.root_node.render()
+    assert "<br/>" not in page.root_node.render()
 
     for option in ["plain text option", "tuple_option", "dict_option", "dict_id_option"]:
         page.root_node.value = option
@@ -56,4 +56,4 @@ def test_linebreaks(page):
 
     page.handle_transaction()
 
-    assert "<br>" in page.root_node.render()
+    assert "<br/>" in page.root_node.render()
