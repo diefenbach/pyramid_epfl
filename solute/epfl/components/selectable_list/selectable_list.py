@@ -72,20 +72,41 @@ class SelectableList(LinkListLayout):
             return self.handle_select()
         compo = self.page.components[self.epfl_event_trace[0]]
         current_index = compo.position + self.row_offset
-        min_index = min(current_index, self.last_selected_index)
-        max_index = max(current_index + 1, self.last_selected_index)
-        old_row_settings = self.row_limit, self.row_offset
 
-        self.row_offset = min_index
-        self.row_limit = max_index - min_index
-        self.update_children()
+        if current_index < self.last_selected_index:
+            old_row_limit = self.row_limit
+            old_row_offset = self.row_offset
 
-        for compo in self.components:
-            if not compo.active:
-                self.handle_select(cid=compo.cid)
+            # load it all
+            self.row_limit = self.row_count
+            self.row_offset = 0
+            self.update_children()
 
-        self.row_limit, self.row_offset = old_row_settings
-        self.update_children(force=True)
+            index = 0
+            for compo in self.components:
+                if compo.active and index > current_index:
+                    self.handle_select(cid=compo.cid)
+                index+=1
+
+            self.row_limit = old_row_limit
+            self.row_offset = old_row_offset
+            self.update_children(force=True)
+        else:
+            min_index = min(current_index, self.last_selected_index)
+            max_index = max(current_index + 1, self.last_selected_index)
+
+            old_row_settings = self.row_limit, self.row_offset
+
+            self.row_offset = min_index
+            self.row_limit = max_index - min_index
+            self.update_children()
+
+            for compo in self.components:
+                if not compo.active:
+                    self.handle_select(cid=compo.cid)
+
+            self.row_limit, self.row_offset = old_row_settings
+            self.update_children(force=True)
 
     def get_selected(self):
         """
