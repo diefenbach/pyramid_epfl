@@ -72,41 +72,34 @@ class SelectableList(LinkListLayout):
             return self.handle_select()
         compo = self.page.components[self.epfl_event_trace[0]]
         current_index = compo.position + self.row_offset
+        old_row_settings = self.row_limit, self.row_offset
 
         if current_index < self.last_selected_index:
-            old_row_limit = self.row_limit
-            old_row_offset = self.row_offset
-
-            # load it all
+            # load the whole list, this is required for also deselecting compo which are 'in sleep'
             self.row_limit = self.row_count
             self.row_offset = 0
             self.update_children()
 
-            index = 0
-            for compo in self.components:
-                if compo.active and index > current_index:
-                    self.handle_select(cid=compo.cid)
-                index+=1
-
-            self.row_limit = old_row_limit
-            self.row_offset = old_row_offset
-            self.update_children(force=True)
+            # deselect all compos start from the current index
+            for index in range(current_index + 1, len(self.components)):
+                if self.components[index].active:
+                    self.handle_select(cid=self.components[index].cid)
         else:
+            # load the area between min and max index
             min_index = min(current_index, self.last_selected_index)
             max_index = max(current_index + 1, self.last_selected_index)
-
-            old_row_settings = self.row_limit, self.row_offset
 
             self.row_offset = min_index
             self.row_limit = max_index - min_index
             self.update_children()
 
+            # set these compos to selected
             for compo in self.components:
                 if not compo.active:
                     self.handle_select(cid=compo.cid)
-
-            self.row_limit, self.row_offset = old_row_settings
-            self.update_children(force=True)
+        # restore the old 'view' by reload the list with the old row settings
+        self.row_limit, self.row_offset = old_row_settings
+        self.update_children(force=True)
 
     def get_selected(self):
         """
