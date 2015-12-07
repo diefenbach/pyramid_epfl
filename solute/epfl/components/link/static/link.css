@@ -129,4 +129,8 @@ ul.context-dropdown-menu li.divider{
     padding-top: 3px;
 }
 
+ul.context-dropdown-menu li.entry.disabled {
+    color: #AAA;
+    cursor:not-allowed;
+}
 

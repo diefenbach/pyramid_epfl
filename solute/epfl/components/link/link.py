@@ -33,7 +33,7 @@ class Link(ComponentBase):
     active = False  #: Sets the active class in html
     stop_propagation_on_click = False  #: Set to true if click event should not be propagated to parent components
     #: Set to context menu list of dicts or to string
-    #: list of dicts example: [{'name': u"Delete", 'event': "delete", 'type': "link"},{'name': "Rename", 'event': "rename", 'type': "link"}]
+    #: list of dicts example: [{'name': u"Delete", 'event': "delete", 'type': "link"},{'name': "Rename", 'event': "rename", 'type': "link", 'disabled': True}]
     #: if string is set link component calls container compos context_menu function with context_menu as parameter
     context_menu = None
 

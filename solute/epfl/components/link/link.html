@@ -36,7 +36,7 @@
         <ul class="context-dropdown-menu">
             {% for entry in compo.get_context_menu() %}
                 {% if entry.type == "link" %}
-                    <li class="entry" data-event="{{ entry.event }}">{{ entry.name }}</li>
+                    <li class="entry{{ " disabled" if entry.disabled is defined and entry.disabled else "" }}" data-event="{{ entry.event }}">{{ entry.name }}</li>
                 {% else %}
                     <li class="divider"></li>
                 {% endif %}
