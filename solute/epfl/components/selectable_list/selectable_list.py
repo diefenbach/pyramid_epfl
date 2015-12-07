@@ -48,9 +48,12 @@ class SelectableList(LinkListLayout):
                         self.last_selected_index = compo.position + self.row_offset
                     else:
                         self.selected_ids.remove(compo.id)
+                        self.last_selected_index = compo.position + self.row_offset
                     return
+
         if cid is None:
             cid = self.epfl_event_trace[0]
+
         compo = self.page.components[cid]
         compo.active = not compo.active
         if compo.active:
@@ -59,6 +62,7 @@ class SelectableList(LinkListLayout):
         else:
             try:
                 self.selected_ids.remove(compo.id)
+                self.last_selected_index = compo.position + self.row_offset
             except KeyError:
                 pass
         compo.redraw()
@@ -68,35 +72,38 @@ class SelectableList(LinkListLayout):
         pass
 
     def handle_shift_click(self):
+        ## there was no click before, so handle this as normal click
         if self.last_selected_index is None:
             return self.handle_select()
+
+        # a shift-click should not affect the last_selected_index
+        # the next range should start where the last "real" click was
+        original_last_selected_index = self.last_selected_index
+
         compo = self.page.components[self.epfl_event_trace[0]]
         current_index = compo.position + self.row_offset
         old_row_settings = self.row_limit, self.row_offset
 
-        if current_index < self.last_selected_index:
-            # load the whole list, this is required for also deselecting compo which are 'in sleep'
-            self.row_limit = self.row_count
-            self.row_offset = 0
-            self.update_children()
+        # first deselect/inactivate all, we dont care about already set data on shift-click
+        # so we must get the whole list to also catch the sleeping ones
+        self.row_limit = self.row_count
+        self.row_offset = 0
+        self.update_children()
+        for compo in self.components:
+            compo.active = False
+        self.selected_ids = set([])
 
-            # deselect all compos start from the current index
-            for index in range(current_index + 1, len(self.components)):
-                if self.components[index].active:
-                    self.handle_select(cid=self.components[index].cid)
-        else:
-            # load the area between min and max index
-            min_index = min(current_index, self.last_selected_index)
-            max_index = max(current_index + 1, self.last_selected_index)
+        # load the area between min and max index
+        min_index = min(current_index, self.last_selected_index)
+        max_index = max(current_index, self.last_selected_index) + 1
 
-            self.row_offset = min_index
-            self.row_limit = max_index - min_index
-            self.update_children()
+        for index in range(min_index, max_index):
+            compo = self.components[index]
+            self.handle_select(cid=compo.cid)
 
-            # set these compos to selected
-            for compo in self.components:
-                if not compo.active:
-                    self.handle_select(cid=compo.cid)
+        # reset the original last selected index
+        self.last_selected_index = original_last_selected_index
+
         # restore the old 'view' by reload the list with the old row settings
         self.row_limit, self.row_offset = old_row_settings
         self.update_children(force=True)
