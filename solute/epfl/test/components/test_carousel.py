@@ -12,8 +12,6 @@ def test_render_carousel(page):
 
     compo = page.root_node
 
-    print compo.render()
-
     assert 'class="carousel slide"' in compo.render(), "carousel class not found"
     assert 'width:400px' in compo.render(), "width not found"
     assert 'height:200px' in compo.render(), "height not found"
@@ -34,8 +32,6 @@ def test_render_carousel_without_size(page):
 
     compo = page.root_node
 
-    print compo.render()
-
     assert 'class="carousel slide"' in compo.render(), "carousel class not found"
     assert 'width' not in compo.render(), "width not found"
     assert 'height' not in compo.render(), "height not found"
@@ -47,3 +43,18 @@ def test_render_carousel_without_size(page):
     assert 'src="image2.png"' in compo.render(), "image2 not found"
     assert 'src="image3.png"' in compo.render(), "image3 not found"
 
+
+def test_render_carousel_with_show_counter(page):
+    page.root_node = components.Carousel(
+        entries=["image1.png", "image2.png", "image3.png"],
+        show_counter=True
+    )
+    page.handle_transaction()
+
+    compo = page.root_node
+
+    result = compo.render()
+
+    # setting show_counter should remove the .carousel-indicators and enable the .carousel-numbers
+    assert 'class="carousel-indicators"' not in result, "carousel indicator class found"
+    assert 'class="carousel-numbers"' in result, "carousel numbers class not found"
