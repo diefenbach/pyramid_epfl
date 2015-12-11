@@ -217,7 +217,7 @@ epfl.PaginatedListLayout.prototype.setup_infinite_scrolling = function () {
     }
 
     var trigger_range = obj.params.row_limit / 5;
-    var shift = obj.params.row_limit / 2;
+    var shift = Math.floor(obj.params.row_limit / 2);
 
     window.setTimeout(function () {
         //debounce ensures that the scroll function only get called once in the given delay
