@@ -80,6 +80,9 @@ epfl.Link.prototype.handle_local_click = function (event) {
             });
         }
     } else if (this.context_menu_entry.is(event.target)) {
+        if ($(event.target).hasClass("disabled")) {
+            return;
+        }
         this.context_menu.hide();
         this.send_event($(event.target).data("event"), {});
     }
