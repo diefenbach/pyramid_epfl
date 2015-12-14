@@ -1,6 +1,10 @@
 import pytest
 from solute.epfl import components
 
+@pytest.fixture(params=[True, False, None])
+def bool_toggle(request):
+    return request.param
+
 
 def test_render_carousel(page):
     page.root_node = components.Carousel(
@@ -44,17 +48,20 @@ def test_render_carousel_without_size(page):
     assert 'src="image3.png"' in compo.render(), "image3 not found"
 
 
-def test_render_carousel_with_show_counter(page):
+def test_render_carousel_with_show_counter(page, bool_toggle):
     page.root_node = components.Carousel(
         entries=["image1.png", "image2.png", "image3.png"],
-        show_counter=True
+        show_counter=bool_toggle
     )
     page.handle_transaction()
 
     compo = page.root_node
-
     result = compo.render()
 
-    # setting show_counter should remove the .carousel-indicators and enable the .carousel-numbers
-    assert 'class="carousel-indicators"' not in result, "carousel indicator class found"
-    assert 'class="carousel-numbers"' in result, "carousel numbers class not found"
+    if bool_toggle:
+        # setting show_counter should remove the .carousel-indicators and enable the .carousel-numbers
+        assert 'class="carousel-indicators"' not in result, "carousel indicator class found"
+        assert 'class="carousel-numbers"' in result, "carousel numbers class not found"
+    else:
+        assert 'class="carousel-indicators"' in result, "carousel indicator class found"
+        assert 'class="carousel-numbers"' not in result, "carousel numbers class not found"
