@@ -427,8 +427,11 @@ epfl_module = function () {
         epfl.setLocation(encodeURI(target_url), epfl.tid);
     };
 
-    epfl.jump = function (target_url) {
-        epfl.setLocation(encodeURI(target_url));
+    epfl.jump = function (target_url, timeout) {
+        window.setTimeout(function() {
+            epfl.setLocation(encodeURI(target_url));
+        }, timeout);
+
     };
 
     epfl.jump_extern = function (target_url, target) {
