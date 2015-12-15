@@ -50,6 +50,7 @@ class SelectableList(LinkListLayout):
                         self.selected_ids.remove(compo.id)
                         self.last_selected_index = compo.position + self.row_offset
                     return
+            return
 
         if cid is None:
             cid = self.epfl_event_trace[0]
