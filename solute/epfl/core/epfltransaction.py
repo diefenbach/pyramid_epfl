@@ -199,6 +199,10 @@ class Transaction(MutableMapping):
         :param position: (optional) position this component shall hold inside its container.
         :param compo_obj: (optional) :class:`~solute.epfl.core.epflcomponentbase.ComponentBase` instance.
         """
+        if self.has_component(cid):
+            raise Exception('CID %s is not unique for this transaction. Existing compo info: %s' % (cid,
+                                                                                                    self.get_component(cid)))
+
         if not isinstance(compo_info, dict):
             compo_obj = compo_info
             compo_info = compo_obj.get_component_info()

@@ -1,4 +1,5 @@
 import time
+import pytest
 
 from solute.epfl.core.epfltransaction import Transaction
 from collections2.dicts import OrderedDict
@@ -106,3 +107,12 @@ def test_performance_has_and_set_component(pyramid_req):
     # Some aggressive timing constraints to keep everyone on his toes!
     assert (steps[-2] - steps[0]) / compo_depth / compo_width < 1. / 5000  # Setting components in under 0.0002s
     assert (steps[-1] - steps[-2]) / 1000 < 0.00001  # Checking if the component exists in under 0.00001s.
+
+
+def test_duplicated_cid_on_set_component(pyramid_req):
+    """ There can be only one cid in the compo_store per transaction """
+    transaction = Transaction(pyramid_req, None)
+    transaction.set_component('child_node_0', {})
+
+    with pytest.raises(Exception):
+        transaction.set_component('child_node_0', {})
