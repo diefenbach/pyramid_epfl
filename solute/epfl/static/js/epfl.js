@@ -347,7 +347,6 @@ epfl_module = function () {
             epfl.pleaseWaitSelector.stop(true);
             epfl.pleaseWaitSelector.show();
         }
-        epfl.center_element(epfl.pleaseWaitSelector);
     };
 
     epfl.hide_please_wait = function (is_ajax) { // Should be called as onsubmit

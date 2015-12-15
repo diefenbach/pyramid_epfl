@@ -8,13 +8,21 @@
 
 #epfl_please_wait {
     display:none;
-    padding:5px;
     position:absolute;
-    width:65px;
-    height:65px;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
     z-index:2000;
     /*background:#eee;*/
     /*border:1px solid #a0a0a0;*/
+}
+
+#epfl_please_wait i.fa.fa-spinner {
+    margin: -35px 0 0 -35px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
 }
 
 #epfl_message {
