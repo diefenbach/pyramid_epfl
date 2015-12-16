@@ -427,11 +427,16 @@ epfl_module = function () {
         epfl.setLocation(encodeURI(target_url), epfl.tid);
     };
 
-    epfl.jump = function (target_url, timeout) {
-        window.setTimeout(function() {
-            epfl.setLocation(encodeURI(target_url));
-        }, timeout);
-
+    epfl.jump = function (target_url, timeout, confirmation_msg) {
+        var confirmed = true;
+        if (confirmation_msg) {
+            confirmed = window.confirm(confirmation_msg);
+        }
+        if (confirmed === true) {
+            window.setTimeout(function() {
+                epfl.setLocation(encodeURI(target_url));
+            }, timeout);
+        }
     };
 
     epfl.jump_extern = function (target_url, target) {

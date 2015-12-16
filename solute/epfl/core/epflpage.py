@@ -596,7 +596,7 @@ class Page(object):
         """
         self.add_js_response("epfl.reload_page();")
 
-    def jump(self, route, wait=0, **route_params):
+    def jump(self, route, wait=0, confirmation_msg='', **route_params):
         """ Jumps to a new page.
         The target is given as route/route_params.
         The transactions (current an target-page-transaction) are not joined and
@@ -604,11 +604,11 @@ class Page(object):
         If you need the data of the current page in the next one (or vice versa), you must
         use "page.go_next(...)" instead.
         """
-
         target_url = self.get_route_path(route, **route_params)
 
-        js = "epfl.jump('{target_url}', {wait})".format(target_url=target_url,
-                                                        wait=wait)
+        js = "epfl.jump('{target_url}', {wait}, {confirmation_msg})".format(target_url=target_url,
+                                                                            wait=wait,
+                                                                            confirmation_msg=json.encode(confirmation_msg))
         self.add_js_response(js)
 
     def jump_extern(self, target_url, target="_blank"):
