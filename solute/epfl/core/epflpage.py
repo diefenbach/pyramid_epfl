@@ -603,6 +603,10 @@ class Page(object):
         therefore are completely unrelated.
         If you need the data of the current page in the next one (or vice versa), you must
         use "page.go_next(...)" instead.
+
+        :param route: Pyramid route name.
+        :param wait: Integer with milliseconds, used in window.setTimeout().
+        :param confirmation_msg: String message of the confirmation dialog.
         """
         target_url = self.get_route_path(route, **route_params)
 
