@@ -15,7 +15,6 @@ epfl.TextInput.prototype.handle_keypress = function(event) {
         $(this.input_selector + '_count').text($(this.input_selector).val().length);
     }
     if(this.params.submit_form_on_enter && event.which == 13) {
-        console.log(1);
         epfl.FormInputBase.event_submit_form_on_enter(this.cid);
     }
 };
