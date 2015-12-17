@@ -15,6 +15,9 @@ class Checkbox(FormInputBase):
     """
 
     template_name = "checkbox/checkbox.html"
+    js_parts = []
+    js_name = FormInputBase.js_name + [("solute.epfl.components:checkbox/static", "checkbox.js")]
+    css_name = FormInputBase.css_name + [("solute.epfl.components:checkbox/static", "checkbox.css")]
 
     validation_type = 'bool'  #: Validate this field as a boolean.
 
@@ -30,9 +33,10 @@ class Checkbox(FormInputBase):
     #: where only one checkbox can be checked at a time.
     group = []
 
-    js_parts = FormInputBase.js_parts + ['checkbox/checkbox.js']
-    js_name = FormInputBase.js_name + [("solute.epfl.components:checkbox/static", "checkbox.js")]
-    css_name = FormInputBase.css_name + [("solute.epfl.components:checkbox/static", "checkbox.css")]
+    new_style_compo = True
+    compo_js_name = 'Checkbox'
+    compo_js_params = ['fire_change_immediately']
+    compo_js_extras = []
 
     def __init__(self, page, cid, grouped=None, group=None, **extra_params):
         """Checkbox component
