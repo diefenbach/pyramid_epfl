@@ -14,10 +14,8 @@ class TextInput(FormInputBase):
 
     """
 
-    js_parts = FormInputBase.js_parts[:]
-    js_parts.extend(['text_input/text_input.js'])
-    compo_state = FormInputBase.compo_state + ['layover_icon']
-
+    template_name = "text_input/text_input.html"
+    js_parts = []
     js_name = FormInputBase.js_name + [("solute.epfl.components:text_input/static", "text_input.js"),
                                        ("solute.epfl.components:text_input/static",
                                         "jquery.datetimepicker.js"),
@@ -25,13 +23,15 @@ class TextInput(FormInputBase):
     css_name = FormInputBase.css_name + [("solute.epfl.components:text_input/static", "text_input.css"),
                                          ("solute.epfl.components:text_input/static", "jquery.datetimepicker.css")]
 
+    compo_state = FormInputBase.compo_state + ['layover_icon']
+
     #: Maximum length for the input
     max_length = None
 
     #: Set to true to show a input counter right to the field. Requires a max_length to be set.
     show_count = False
 
-    template_name = "text_input/text_input.html"
+
 
     validation_type = 'text'  #: Validate as text.
 
@@ -53,6 +53,10 @@ class TextInput(FormInputBase):
     #: A text input always submits the form if enter is pressed. Hence, this field is not needed and False by default
     submit_form_on_enter = False
 
+    new_style_compo = True
+    compo_js_params = ['fire_change_immediately', 'max_length', 'show_count', 'typeahead', 'type_func', 'date', 'submit_form_on_enter']
+    compo_js_name = 'TextInput'
+    compo_js_extras = []
 
     def __init__(self, page, cid,
                  label=None,
