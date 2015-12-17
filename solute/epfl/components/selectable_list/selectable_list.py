@@ -108,6 +108,7 @@ class SelectableList(LinkListLayout):
         # restore the old 'view' by reload the list with the old row settings
         self.row_limit, self.row_offset = old_row_settings
         self.update_children(force=True)
+        self.redraw()
 
     def get_selected(self):
         """
