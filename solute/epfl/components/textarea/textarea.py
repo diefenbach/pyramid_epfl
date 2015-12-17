@@ -13,10 +13,14 @@ class Textarea(FormInputBase):
 
     """
     template_name = "textarea/textarea.html"
-
+    js_parts = []
     js_name = FormInputBase.js_name + [("solute.epfl.components:textarea/static", "textarea.js")]
     css_name = FormInputBase.css_name + [("solute.epfl.components:textarea/static", "textarea.css")]
-    js_parts = FormInputBase.js_parts + ['textarea/textarea.js']
+
+    new_style_compo = True
+    compo_js_extras = []
+    compo_js_name = 'Textarea'
+    compo_js_params = ['fire_change_immediately']
 
     validation_type = 'text'  #: Validate component as text.
 
