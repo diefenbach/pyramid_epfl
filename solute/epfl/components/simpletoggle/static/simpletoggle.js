@@ -5,7 +5,6 @@ epfl.SimpleToggle = function (cid, params) {
 epfl.SimpleToggle.inherits_from(epfl.ComponentBase);
 
 epfl.SimpleToggle.prototype.handle_click = function (event) {
-    console.log(event);
     epfl.ComponentBase.prototype.handle_click.call(this, event);
 
     var target = $(event.target);
