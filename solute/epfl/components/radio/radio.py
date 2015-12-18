@@ -13,17 +13,20 @@ class Radio(FormInputBase):
 
     """
     template_name = "radio/radio.html"
-
+    js_parts = []
     js_name = FormInputBase.js_name + [("solute.epfl.components:radio/static", "radio.js")]
     css_name = FormInputBase.css_name + [("solute.epfl.components:radio/static", "radio.css")]
-
-    js_parts = FormInputBase.js_parts + ['radio/radio.js']
 
     compo_state = FormInputBase.compo_state + ['options', 'linebreak_between_options']
 
     validation_type = 'text'  #: Validate as a text.
     options = None  #: List of strings or key, value tuples to be used as options.
     linebreak_between_options = False  #: add line breaks between options
+
+    new_style_compo = True
+    compo_js_name = 'Radio'
+    compo_js_params = ['fire_change_immediately']
+    compo_js_extras = []
 
     def __init__(self, page, cid, options=None, linebreak_between_options=None, **extra_params):
         """Simple radio form component.
