@@ -66,9 +66,6 @@ epfl.DatetimeInput.prototype.to_utc = function(date){
 epfl.DatetimeInput.prototype.after_response = function (data) {
     epfl.FormInputBase.prototype.after_response.call(this, data);
 
-//    epfl.FormInputBase.prototype.foobar.call(this, 'second try');
-//    this.logger('first try');
-
     this.input.datetimepicker({
         locale: 'de',
         format: this.params["date_format"],

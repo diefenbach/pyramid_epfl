@@ -1,8 +1,8 @@
 epfl.TextInput = function(cid, params) {
-    epfl.ComponentBase.call(this, cid, params);
+    epfl.FormInputBase.call(this, cid, params);
 };
 
-epfl.TextInput.inherits_from(epfl.ComponentBase);
+epfl.TextInput.inherits_from(epfl.FormInputBase);
 
 Object.defineProperty(epfl.TextInput.prototype, 'input_selector', {
     get: function () {
@@ -15,13 +15,8 @@ epfl.TextInput.prototype.handle_keypress = function(event) {
         $(this.input_selector + '_count').text($(this.input_selector).val().length);
     }
     if(this.params.submit_form_on_enter && event.which == 13) {
-        epfl.FormInputBase.event_submit_form_on_enter(this.cid);
+        this.handle_submit_form_on_enter();
     }
-};
-
-epfl.TextInput.prototype.handle_change = function(event) {
-    var enqueue_event = !this.params["fire_change_immediately"];
-    epfl.FormInputBase.on_change(this, $(this.input_selector).val(), this.cid, enqueue_event);
 };
 
 epfl.TextInput.prototype.after_response = function(data) {
@@ -37,9 +32,6 @@ epfl.TextInput.prototype.after_response = function(data) {
             lang: 'de'
         });
     }
-
-
-    // form submit always?
 
     if (this.params.typeahead) {
         var type_function = function(query, process){
@@ -69,7 +61,7 @@ epfl.TextInput.prototype.after_response = function(data) {
         }
     }, 0);
 
-    obj.elm.blur(obj.handle_change.bind(obj)).change(obj.handle_change.bind(obj));
+    this.register_change_handler();
 
     if (obj.params.show_count || obj.params.submit_form_on_enter) {
         obj.elm.keyup(obj.handle_keypress.bind(obj));

@@ -1,8 +1,8 @@
 epfl.NumberInput = function (cid, params) {
-    epfl.ComponentBase.call(this, cid, params);
+    epfl.FormInputBase.call(this, cid, params);
 };
 
-epfl.NumberInput.inherits_from(epfl.ComponentBase);
+epfl.NumberInput.inherits_from(epfl.FormInputBase);
 
 Object.defineProperty(epfl.NumberInput.prototype, 'input_selector', {
     'get': function() {
@@ -45,17 +45,14 @@ epfl.NumberInput.prototype.handle_keyup = function(event) {
     }
 };
 
-epfl.NumberInput.prototype.handle_change = function(event) {
-    var enqueue_event = !this.params.fire_change_immediately;
-    epfl.FormInputBase.on_change(this, $(this.input_selector).val(), this.cid, enqueue_event);
-};
-
 epfl.NumberInput.prototype.after_response = function(data) {
+    epfl.FormInputBase.prototype.after_response.call(this, data);
+    this.register_change_handler();
+
     this.strg = false;
     this.shiftKey = false;
+    $(this.input_selector)
+        .keydown(this.handle_keydown.bind(this))
+        .keyup(this.handle_keyup.bind(this));
 
-    $(this.input_selector).keydown(this.handle_keydown.bind(this));
-    $(this.input_selector).keyup(this.handle_keyup.bind(this));
-    $(this.input_selector).change(this.handle_change.bind(this));
-    $(this.input_selector).blur(this.handle_change.bind(this));
 };

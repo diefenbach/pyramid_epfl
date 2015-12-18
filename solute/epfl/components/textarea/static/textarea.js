@@ -1,20 +1,16 @@
 epfl.Textarea = function (cid, params) {
-    epfl.ComponentBase.call(this, cid, params);
+    epfl.FormInputBase.call(this, cid, params);
 };
 
-epfl.Textarea.inherits_from(epfl.ComponentBase);
+epfl.Textarea.inherits_from(epfl.FormInputBase);
 
-Object.defineProperty(epfl.Textarea.prototype, 'elm_input', {
+Object.defineProperty(epfl.Textarea.prototype, 'input_selector', {
     get: function() {
-        return $("#" + this.cid + "_input");
+        return "#" + this.cid + "_input";
     }
 });
 
-epfl.Textarea.prototype.handle_change = function(event) {
-    var enqueue_event = !this.params.fire_change_immediately;
-    epfl.FormInputBase.on_change(this, this.elm_input.val(), this.cid, enqueue_event);
-};
-
 epfl.Textarea.prototype.after_response = function(data) {
-    this.elm_input.blur(this.handle_change.bind(this)).change(this.handle_change.bind(this));
+    epfl.FormInputBase.prototype.after_response.call(this, data);
+    this.register_change_handler();
 };
