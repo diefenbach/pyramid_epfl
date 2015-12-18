@@ -21,7 +21,7 @@ class ColorPicker(FormInputBase):
     colors_visible = False  #: Works only with toggle button, set colors visible
 
     new_style_compo = True
-    compo_js_params = ['fire_change_immediately', 'colors_visible']
+    compo_js_params = FormInputBase.compo_js_params + ['colors_visible']
     compo_js_name = 'ColorPicker'
     compo_js_extras = ['handle_click']
 

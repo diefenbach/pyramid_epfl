@@ -25,8 +25,6 @@ class Radio(FormInputBase):
 
     new_style_compo = True
     compo_js_name = 'Radio'
-    compo_js_params = ['fire_change_immediately']
-    compo_js_extras = []
 
     def __init__(self, page, cid, options=None, linebreak_between_options=None, **extra_params):
         """Simple radio form component.

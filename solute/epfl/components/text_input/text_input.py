@@ -31,8 +31,6 @@ class TextInput(FormInputBase):
     #: Set to true to show a input counter right to the field. Requires a max_length to be set.
     show_count = False
 
-
-
     validation_type = 'text'  #: Validate as text.
 
     #: Set to true if typeahead should be provided by the input (if supported)
@@ -54,9 +52,8 @@ class TextInput(FormInputBase):
     submit_form_on_enter = False
 
     new_style_compo = True
-    compo_js_params = ['fire_change_immediately', 'max_length', 'show_count', 'typeahead', 'type_func', 'date', 'submit_form_on_enter']
+    compo_js_params = FormInputBase.compo_js_params + ['max_length', 'show_count', 'typeahead', 'type_func', 'date']
     compo_js_name = 'TextInput'
-    compo_js_extras = []
 
     def __init__(self, page, cid,
                  label=None,

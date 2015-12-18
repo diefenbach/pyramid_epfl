@@ -27,9 +27,7 @@ class Toggle(FormInputBase):
     default = False  #: The default value of the toggle.
 
     new_style_compo = True
-    compo_js_params = ['fire_change_immediately']
     compo_js_name = 'Toggle'
-    compo_js_extras = []
 
     def __init__(self, page, cid, on_text=None, off_text=None, default=None, **extra_params):
         """A toggling form input.

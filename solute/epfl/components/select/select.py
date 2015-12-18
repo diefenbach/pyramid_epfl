@@ -29,7 +29,6 @@ class Select(FormInputBase):
 
     new_style_compo = True
     compo_js_name = 'Select'
-    compo_js_params = ['fire_change_immediately', 'submit_form_on_enter']
 
     def __init__(self, page, cid, options=None, layout_vertical=None, **extra_params):
         """Select form element that gives the selected option as its value.

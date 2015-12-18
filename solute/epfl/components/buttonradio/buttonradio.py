@@ -25,8 +25,6 @@ class ButtonRadio(FormInputBase):
 
     new_style_compo = True
     compo_js_name = 'ButtonRadio'
-    compo_js_params = ['fire_change_immediately']
-    compo_js_extras = []
 
     def __init__(self, page, cid, options=None, **extra_params):
         """A component displaying a radio form input with buttons.

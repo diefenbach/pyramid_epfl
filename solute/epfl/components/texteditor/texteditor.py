@@ -28,7 +28,6 @@ class TextEditor(FormInputBase):
     new_style_compo = True
     compo_js_name = 'TextEditor'
     compo_js_params = ['editor_config_file', 'clean_paste']
-    compo_js_extras = []
 
     def __init__(self, page, cid, editor_config_file=None, clean_paste=None, **extra_params):
         """A wysiwyg text editor.

@@ -5,7 +5,7 @@ epfl.FormInputBase = function (cid, params) {
 epfl.FormInputBase.inherits_from(epfl.ComponentBase);
 
 epfl.FormInputBase.prototype.add_custom_style = function(style) {
-    this.elm.find('input').attr('style', style);
+    this.elm.find('input, select').attr('style', style);
 };
 
 epfl.FormInputBase.prototype.after_response = function(data) {
@@ -39,13 +39,13 @@ epfl.FormInputBase.prototype.send_change = function(event, value) {
 	    // first change to the form. always send event immediately so that
 	    // the serve can handle is_dirty change
 	    enqueue_event = false;
-	    epfl.repeat_enqueue(epfl.make_component_event(this.cid, 'set_dirty', {}), this.cid + "_set_dirty");
+            this.repeat_enqueue('set_dirty', {}, this.cid + "_set_dirty");
 	}
     }
     if (enqueue_event) {
-        epfl.repeat_enqueue(epfl.make_component_event(this.cid, 'change', {value: value}), this.cid + "_change");
+        this.repeat_enqueue('change', {value: value}, this.cid + "_change");
     } else {
-        epfl.components[this.cid].send_event("change", {value: value});
+        this.send_event('change', {value: value});
     }
 };
 
@@ -55,7 +55,6 @@ epfl.FormInputBase.prototype.handle_change = function(event, value) {
         value = $(event.target).val();
     }
 
-    console.log(value);
     if (value !== this.lastValue) {
         this.lastValue = value;
         this.send_change(event, value);

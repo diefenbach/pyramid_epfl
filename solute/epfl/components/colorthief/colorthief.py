@@ -34,7 +34,7 @@ class ColorThief(FormInputBase):
     compress_image = False
 
     new_style_compo = True
-    compo_js_params = ['fire_change_immediately', 'color_count']
+    compo_js_params = FormInputBase.compo_js_params + ['color_count']
     compo_js_name = 'ColorThief'
     compo_js_extras = ['handle_click', 'handle_drop']
 
@@ -109,4 +109,3 @@ class ColorThief(FormInputBase):
         bytes = io.BytesIO(base64.b64decode(coded_string))
         with get_palette(blob=bytes, color_count=color_count, compress_image=self.compress_image) as palette:
             return palette
-

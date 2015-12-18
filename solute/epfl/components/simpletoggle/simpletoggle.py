@@ -15,14 +15,12 @@ class SimpleToggle(FormInputBase):
     """
 
     template_name = "simpletoggle/simpletoggle.html"
-
-    validation_type = 'bool'  #: Form validation selector.
-
     js_name = FormInputBase.js_name + [("solute.epfl.components:simpletoggle/static", "simpletoggle.js")]
     css_name = FormInputBase.css_name + [("solute.epfl.components:simpletoggle/static", "simpletoggle.css")]
+    js_parts = []
 
+    validation_type = 'bool'  #: Form validation selector.
     default = False  #: The default value of the toggle.
-
     compo_state = FormInputBase.compo_state + [
         "enabled_icon", "disabled_icon", "enabled_icon_size", "disabled_icon_size", "enabled_icon_color",
         "disabled_icon_color"]
@@ -34,12 +32,10 @@ class SimpleToggle(FormInputBase):
     enabled_icon_color = "primary"  #: bootstrap color if value == True example: primary default warning etc
     disabled_icon_color = "default"  #: bootstrap color if value == False example: primary default warning etc
 
-    js_parts = []
-
     new_style_compo = True
     compo_js_name = 'SimpleToggle'
-    compo_js_params = ['enabled_icon', "disabled_icon", "enabled_icon_size", "disabled_icon_size",
-                       "fire_change_immediately", "enabled_icon_color", "disabled_icon_color"]
+    compo_js_params = FormInputBase.compo_js_params + ['enabled_icon', "disabled_icon", "enabled_icon_size", "disabled_icon_size",
+                                                       "enabled_icon_color", "disabled_icon_color"]
     compo_js_extras = ['handle_click']
 
     def __init__(self, page, cid,

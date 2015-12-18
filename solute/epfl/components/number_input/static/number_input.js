@@ -47,6 +47,7 @@ epfl.NumberInput.prototype.handle_keyup = function(event) {
 
 epfl.NumberInput.prototype.after_response = function(data) {
     epfl.FormInputBase.prototype.after_response.call(this, data);
+
     this.register_change_handler();
 
     this.strg = false;

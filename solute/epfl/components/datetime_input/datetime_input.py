@@ -50,7 +50,6 @@ class DatetimeInput(FormInputBase):
     label_style = None  #: Can be used to add additional css styles for the label
     input_style = None  #: Can be used to add additional css styles for the input
 
-
     new_style_compo = True
     compo_js_params = FormInputBase.compo_js_params + ['date_format', "value"]
     compo_js_name = 'DatetimeInput'

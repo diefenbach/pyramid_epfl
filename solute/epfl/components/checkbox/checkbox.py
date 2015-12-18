@@ -35,8 +35,6 @@ class Checkbox(FormInputBase):
 
     new_style_compo = True
     compo_js_name = 'Checkbox'
-    compo_js_params = ['fire_change_immediately']
-    compo_js_extras = []
 
     def __init__(self, page, cid, grouped=None, group=None, **extra_params):
         """Checkbox component

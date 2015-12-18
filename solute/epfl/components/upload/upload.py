@@ -106,7 +106,7 @@ class Upload(FormInputBase):
     error_message_file_type = "This File Type is not allowed"
 
     new_style_compo = True
-    compo_js_params = ['fire_change_immediately', 'allowed_file_types', 'show_remove_icon', 'maximum_file_size',
+    compo_js_params = FormInputBase.compo_js_params + ['allowed_file_types', 'show_remove_icon', 'maximum_file_size',
                        'value', 'handle_click', 'store_async', 'show_file_upload_input', 'show_drop_zone',
                        "maximum_image_width", "maximum_image_height", "error_message_image_size_to_big","error_message_image_size_to_small",
                        "error_message_file_size", "error_message_file_type","minimum_image_width", "minimum_image_height",]

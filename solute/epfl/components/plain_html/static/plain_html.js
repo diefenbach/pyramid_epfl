@@ -1,4 +1,4 @@
 epfl.PlainHtml = function(cid, params) {
-    epfl.ComponentBase.call(this, cid, params);
+    epfl.FormInputBase.call(this, cid, params);
 };
-epfl.PlainHtml.inherits_from(epfl.ComponentBase);
+epfl.PlainHtml.inherits_from(epfl.FormInputBase);

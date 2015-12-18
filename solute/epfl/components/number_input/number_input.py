@@ -30,8 +30,6 @@ class NumberInput(FormInputBase):
 
     new_style_compo = True
     compo_js_name = 'NumberInput'
-    compo_js_params = ['fire_change_immediately']
-    compo_js_extras = []
 
     def __init__(self, page, cid, label=None, name=None, min_value=None, max_value=None, input_pattern=None, default=None, validation_type=None, **extra_params):
         '''

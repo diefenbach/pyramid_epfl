@@ -20,9 +20,8 @@ epfl.TextInput.prototype.handle_keypress = function(event) {
 };
 
 epfl.TextInput.prototype.after_response = function(data) {
-    epfl.ComponentBase.prototype.after_response.call(this, data);
-    var obj = this;
-    var input_elm = $(obj.input_selector);
+    epfl.FormInputBase.prototype.after_response.call(this, data);
+    var compo = this;
 
     if (this.params.date) {
         $(this.input_selector).jqDatetimepicker({
@@ -47,23 +46,24 @@ epfl.TextInput.prototype.after_response = function(data) {
                 });
             };
 
-            var event = epfl.make_component_event(obj.cid, obj.params.type_func, {"query": query}, obj.cid + '_typeahead');
+            var event = epfl.make_component_event(compo.cid, compo.params.type_func, {"query": query}, compo.cid + '_typeahead');
             return get_source(event);
         };
-        $(obj.input_selector).typeahead({source: type_function,
+        $(compo.input_selector).typeahead({source: type_function,
                                items: 'all',
                                autoSelect: false});
     }
 
     window.setTimeout(function () {
+        var input_elm = $(compo.input_selector);
         if (input_elm.val() != input_elm.attr('data-initial-value')) {
-            obj.handle_change.bind(obj);
+            compo.handle_change.bind(compo);
         }
     }, 0);
 
     this.register_change_handler();
 
-    if (obj.params.show_count || obj.params.submit_form_on_enter) {
-        obj.elm.keyup(obj.handle_keypress.bind(obj));
+    if (compo.params.show_count || compo.params.submit_form_on_enter) {
+        compo.elm.keyup(compo.handle_keypress.bind(compo));
     }
 };
