@@ -52,7 +52,7 @@ class DatetimeInput(FormInputBase):
 
 
     new_style_compo = True
-    compo_js_params = ['fire_change_immediately', 'date_format', "value"]
+    compo_js_params = FormInputBase.compo_js_params + ['date_format', "value"]
     compo_js_name = 'DatetimeInput'
 
     def __init__(self, page, cid,

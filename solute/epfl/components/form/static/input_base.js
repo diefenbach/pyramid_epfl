@@ -1,5 +1,11 @@
 epfl.FormInputBase = function (cid, params) {
     epfl.ComponentBase.call(this, cid, params);
+};
+
+epfl.FormInputBase.inherits_from(epfl.ComponentBase);
+
+epfl.FormInputBase.prototype.after_response = function(data) {
+    epfl.ComponentBase.prototype.after_response.call(this, data);
 
     var addCustomStyle = function (element, style) {
         if(style !== "None"){
@@ -7,8 +13,15 @@ epfl.FormInputBase = function (cid, params) {
         }
     };
 
-    var selector = "#" + cid;
-    addCustomStyle($(selector + " input"),params["input_style"]);
+    console.log('FormInputBase.after_response', this.cid, this.params.input_style);
+
+    var selector = "#" + this.cid;
+    addCustomStyle($(selector + " input"), this.params.input_style);
+};
+
+
+epfl.FormInputBase.prototype.foobar = function(data) {
+    console.log('foobar');
 };
 
 epfl.FormInputBase.event_submit_form_on_enter = function (cid) {
@@ -46,5 +59,4 @@ epfl.FormInputBase.on_change = function (compo, value, cid, enqueue_event) {
 };
 
 
-epfl.FormInputBase.inherits_from(epfl.ComponentBase);
-
+// epfl.FormInputBase.inherits_from(epfl.ComponentBase);

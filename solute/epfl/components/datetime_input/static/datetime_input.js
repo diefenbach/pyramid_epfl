@@ -1,6 +1,9 @@
 epfl.DatetimeInput = function (cid, params) {
+    console.log(this.params)
     epfl.FormInputBase.call(this, cid, params);
+    console.log(this.params)
 };
+
 epfl.DatetimeInput.inherits_from(epfl.FormInputBase);
 
 Object.defineProperty(epfl.DatetimeInput.prototype, 'input', {
@@ -63,6 +66,9 @@ epfl.DatetimeInput.prototype.to_utc = function(date){
 epfl.DatetimeInput.prototype.after_response = function (data) {
     epfl.FormInputBase.prototype.after_response.call(this, data);
 
+//    epfl.FormInputBase.prototype.foobar.call(this, 'second try');
+//    this.logger('first try');
+
     this.input.datetimepicker({
         locale: 'de',
         format: this.params["date_format"],
@@ -123,3 +129,6 @@ epfl.DatetimeInput.prototype.change = function (event) {
     }
 };
 
+epfl.DatetimeInput.prototype.tester = function() {
+    console.log('datetime input tester');
+};

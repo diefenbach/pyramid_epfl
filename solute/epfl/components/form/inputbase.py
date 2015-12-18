@@ -6,7 +6,8 @@ class FormInputBase(ComponentBase):
     asset_spec = "solute.epfl.components:form/static"
 
     compo_state = ['label', 'readonly']
-    js_parts = ["form/input_base.js"]
+    #js_parts = ["form/input_base.js"]
+    js_parts = []
 
     js_name = ["input_base.js"]
     css_name = ["input_base.css"]
@@ -28,6 +29,11 @@ class FormInputBase(ComponentBase):
     layout_vertical = False
     label_style = None
     input_style = None
+
+    new_style_compo = True
+    compo_js_name = 'FormInputBase'
+    compo_js_params = ['submit_form_on_enter', 'input_focus', 'fire_change_immediately', 'label_style', 'input_style']
+    compo_js_extras = []
 
     def __init__(self, page, cid, label=None, name=None, default="", validation_type="",
                  **extra_params):
