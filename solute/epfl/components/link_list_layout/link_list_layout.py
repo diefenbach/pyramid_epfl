@@ -33,8 +33,6 @@ class LinkListLayout(PaginatedListLayout):
 
     new_style_compo = True
     compo_js_name = 'LinkListLayout'
-    compo_js_params = ['row_offset', 'row_limit', 'row_count', 'row_data', 'show_pagination', 'show_search',
-                       'search_focus', 'infinite_scrolling', 'search_timeout', 'infinite_scroll_debounce_delay']
 
     def __init__(self, page, cid, links=None, event_name=None, show_search=None, height=None, **kwargs):
         """Paginated list using the PrettyListLayout based on bootstrap. Offers search bar above and pagination below
