@@ -39,6 +39,7 @@ Object.defineProperty(epfl.PaginatedListLayout.prototype, 'list', {
 
 
 epfl.PaginatedListLayout.prototype.send_row_update = function (data, callback) {
+    console.log("hier");
     var obj = this;
     var _data = {
         row_data: obj.params.row_data,
@@ -142,8 +143,9 @@ epfl.PaginatedListLayout.prototype.after_response = function () {
                 default:
                     selected_offset = parseInt(target_string) - 1;
             }
+            console.log(selected_offset);
             if (selected_offset * obj.params.row_limit != obj.params.row_offset) {
-                obj.send_row_update({row_offset: selected_offset * obj.params.row_limit})
+                obj.send_row_update({row_offset: selected_offset * obj.params.row_limit});
             }
         });
     }
