@@ -42,7 +42,8 @@ class Checkbox(FormInputBase):
         :param grouped: (bool, optional) Used to distinct if a checkbox is part of a group.
         :param group: (list, optional) A list of cids, describing which checkboxes are part of this checkbox group.
         """
-        super(Checkbox, self).__init__(page, cid, grouped)
+        pass
+        #super(Checkbox, self).__init__(page, cid, grouped)
 
     def handle_change(self, value):
         self.value = value
