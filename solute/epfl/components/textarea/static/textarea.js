@@ -1,14 +1,20 @@
-epfl.TextArea = function (cid, params) {
+epfl.Textarea = function (cid, params) {
     epfl.ComponentBase.call(this, cid, params);
-
-    var selector = "#" + cid + "_input";
-    var compo = this;
-    var enqueue_event = !params["fire_change_immediately"];
-    var change = function (event) {
-        epfl.FormInputBase.on_change(compo, $(selector).val(), cid, enqueue_event);
-    };
-
-    $(selector).blur(change).change(change);
 };
 
-epfl.TextArea.inherits_from(epfl.ComponentBase);
+epfl.Textarea.inherits_from(epfl.ComponentBase);
+
+Object.defineProperty(epfl.Textarea.prototype, 'elm_input', {
+    get: function() {
+        return $("#" + this.cid + "_input");
+    }
+});
+
+epfl.Textarea.prototype.handle_change = function(event) {
+    var enqueue_event = !this.params.fire_change_immediately;
+    epfl.FormInputBase.on_change(this, this.elm_input.val(), this.cid, enqueue_event);
+};
+
+epfl.Textarea.prototype.after_response = function(data) {
+    this.elm_input.blur(this.handle_change.bind(this)).change(this.handle_change.bind(this));
+};
