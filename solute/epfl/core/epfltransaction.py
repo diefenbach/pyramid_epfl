@@ -200,10 +200,12 @@ class Transaction(MutableMapping):
         :param compo_obj: (optional) :class:`~solute.epfl.core.epflcomponentbase.ComponentBase` instance.
         """
         if self.has_component(cid):
-            raise Exception('CID {cid} is not unique for this transaction. Existing compo info: {compo_info}'.format(
-                cid=cid,
-                compo_info=self.get_component(cid))
-            )
+            raise Exception('CID {cid} is not unique for this transaction. Existing compo info: {compo_info}'
+                            ' - new compo info: {new_compo_info}'.format(
+                                cid=cid,
+                                compo_info=self.get_component(cid),
+                                new_compo_info=compo_info)
+                            )
 
         if not isinstance(compo_info, dict):
             compo_obj = compo_info
