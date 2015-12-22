@@ -4,8 +4,10 @@ from collections2 import OrderedDict
 
 
 class GroupedLinkListLayout(LinkListLayout):
+
     css_name = LinkListLayout.css_name + [('solute.epfl.components:grouped_link_list_layout/static',
                                            'grouped_link_list_layout.css')]
+    js_name = LinkListLayout.js_name + [('solute.epfl.components:grouped_link_list_layout/static', 'grouped_link_list_layout.js')]
 
     template_name = "grouped_link_list_layout/grouped_link_list_layout.html"
     data_interface = {'id': None,
@@ -17,6 +19,9 @@ class GroupedLinkListLayout(LinkListLayout):
 
     #: Add the specific list type for the grouped list layout. see :attr:`ListLayout.list_type`
     list_type = LinkListLayout.list_type + ['grouped']
+
+    new_style_compo = True
+    compo_js_name = 'GroupedLinkListLayout'
 
     def __init__(self, page, cid, links=None, use_headings=None, event_name=None, show_search=None, height=None,
                  **kwargs):
