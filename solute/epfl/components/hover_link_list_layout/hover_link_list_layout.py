@@ -18,7 +18,6 @@ class HoverLinkListLayout(LinkListLayout):
                                               'hover_link_list_layout.js')]
     new_style_compo = True
     compo_js_name = 'HoverLinkListLayout'
-    compo_js_params = ['src']
 
     data_interface = {
         'id': None,
