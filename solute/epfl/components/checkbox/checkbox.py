@@ -43,7 +43,6 @@ class Checkbox(FormInputBase):
         :param group: (list, optional) A list of cids, describing which checkboxes are part of this checkbox group.
         """
         pass
-        #super(Checkbox, self).__init__(page, cid, grouped)
 
     def handle_change(self, value):
         self.value = value

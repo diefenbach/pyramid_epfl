@@ -131,13 +131,16 @@ The method **may** contain the additional parameter \*args.
 
 The __init__ method **must** contain a docstring with a short description of the component. The docstring **should**
 contain a usage example. The docstring **must** contain a parameter description for any parameter other than the
-aforementioned.
+aforementioned. Also, the __init__ method does not need to call super() or set attributes directly, so it **should**
+just pass.
+
 
 Example:
 
 .. code-block:: python
 
     class ExampleComponent(solute.epfl.epflcomponentbase.ComponentBase):
+
         def __init__(self, page, cid, some_param=None, **extra_args):
             """This is an example component that really does nothing. Use it like this:
 
@@ -148,6 +151,8 @@ Example:
 
             :param some_param: This param does something, it can be set to None, True or False.
             """
+            pass
+
 
 The __init__ method **should** be the first method in any component.
 
