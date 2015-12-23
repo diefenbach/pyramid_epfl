@@ -17,7 +17,6 @@ class DatetimeInput(FormInputBase):
                                         "bootstrap-datetimepicker.min.js")]
     css_name = FormInputBase.css_name + [("solute.epfl.components:datetime_input/static",
                                           "bootstrap-datetimepicker.min.css")]
-    new_style_compo = True
     compo_js_params = FormInputBase.compo_js_params + ['date_format', "value"]
     compo_js_name = 'DatetimeInput'
     compo_state = FormInputBase.compo_state + ["date_format"]

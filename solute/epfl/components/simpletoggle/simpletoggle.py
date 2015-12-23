@@ -14,11 +14,9 @@ class SimpleToggle(FormInputBase):
 
     """
 
-    # general compo settings
     template_name = "simpletoggle/simpletoggle.html"
     js_name = FormInputBase.js_name + [("solute.epfl.components:simpletoggle/static", "simpletoggle.js")]
     css_name = FormInputBase.css_name + [("solute.epfl.components:simpletoggle/static", "simpletoggle.css")]
-    new_style_compo = True
     compo_js_name = 'SimpleToggle'
     compo_js_params = FormInputBase.compo_js_params + ['enabled_icon', "disabled_icon", "enabled_icon_size",
                                                        "disabled_icon_size", "enabled_icon_color",
@@ -68,7 +66,6 @@ class SimpleToggle(FormInputBase):
         """
         Form simple toggle Component
 
-        Derived attributes from ComponentBase:
         :param name: An element without a name cannot have a value
         :param default: Default value that may be pre-set or pre-selected
         :param label: Optional label describing the input field
@@ -76,8 +73,6 @@ class SimpleToggle(FormInputBase):
         :param value: The actual value of the input element that is posted upon form submission
         :param strip_value: strip value if True in get value
         :param validation_error: Set during call of :func:`validate` with an error message if validation fails
-
-        Derived attributes from FormInputBase
         :param fire_change_immediately: Set to true if input change events should be fired immediately to the server.
                                         Otherwise, change events are fired upon the next immediate epfl event
         :param placeholder: Placeholder text that can be displayed if supported by the input
@@ -91,8 +86,6 @@ class SimpleToggle(FormInputBase):
         :param compo_col: Set the width of the complete input component (default: max: 12)
         :param label_col: Set the width of the complete input component (default: 2)
         :param validation_type: Set the validation type, default 'text'
-
-        Custom attributes from this component:
         :param enabled_icon: font-awesome icon to be renderd if value == True
         :param disabled_icon: font-awesome icon to be renderd if value == False
         :param enabled_icon_size: font-awesome icon size if value == True example lg,2x,3x etc

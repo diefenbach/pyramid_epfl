@@ -13,30 +13,23 @@ except ImportError:
 
 
 class ColorThief(FormInputBase):
+
+    template_name = "colorthief/colorthief.html"
     js_name = FormInputBase.js_name + [("solute.epfl.components:colorthief/static", "colorthief.js")]
     css_name = FormInputBase.css_name + [("solute.epfl.components:colorthief/static", "colorthief.css")]
-    template_name = "colorthief/colorthief.html"
-    js_parts = []
+    compo_js_params = FormInputBase.compo_js_params + ['color_count']
+    compo_js_name = 'ColorThief'
+    compo_js_extras = ['handle_click', 'handle_drop']
     compo_state = FormInputBase.compo_state + ["image_src", "dominat_colors_count", "color_count", "add_icon_size",
                                                "compress_image"]
 
     height = None  #: Compo height in px if none nothing is set
-
     width = None  #: Compo width in px if none nothing is set
-
     image_src = None  #: image src if set the drop zone is hidden
-
     color_count = 7  #: Count of colors which got extracted from the image
-
     add_icon_size = "5x"  #: The add icon size use font awesome sizes
-
     #:  If set to true the image get compressed first to 200x200 px this is faster but less accurate
     compress_image = False
-
-    new_style_compo = True
-    compo_js_params = FormInputBase.compo_js_params + ['color_count']
-    compo_js_name = 'ColorThief'
-    compo_js_extras = ['handle_click', 'handle_drop']
 
     def __init__(self, page, cid, height=None, width=None, image_src=None, color_count=None, add_icon_size=None,
                  compress_image=None,
@@ -51,8 +44,7 @@ class ColorThief(FormInputBase):
         :param compress_image: If set to true the image get compressed first to 200x200 px this is faster but less accurate
         :return:
         """
-        super(ColorThief, self).__init__(page=page, cid=cid, height=height, width=width, image_src=image_src,
-                                         color_count=color_count, add_icon_size=add_icon_size, **extra_params)
+        pass
 
     def __new__(cls, *args, **config):
         try:
