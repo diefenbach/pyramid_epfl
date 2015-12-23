@@ -3,7 +3,7 @@ from solute.epfl.validators.text import TextValidator
 
 
 class TypeAhead(GroupedLinkListLayout):
-    search_focus = True  #: Focus on the search input field on load.
+    search_focus = False  #: Focus on the search input field on load.
     show_search = True  #: Show the search input field.
     use_headings = True  #: Sets GroupedLinkListLayout to show headings instead of submenus.
     open_on_hover = True  #: Open the result list if the mouse is hovered over the component.

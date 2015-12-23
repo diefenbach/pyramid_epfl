@@ -1,4 +1,5 @@
 from solute.epfl.components.form.inputbase import FormInputBase
+from solute.epfl.core import epflvalidators
 
 
 class NumberInput(FormInputBase):
@@ -52,6 +53,19 @@ class NumberInput(FormInputBase):
                                           default=default,
                                           validation_type=validation_type,
                                           **extra_params)
+
+    def init_transaction(self):
+        """ Calling super().init_transaction extended with default validators for
+        min_value and max_value.
+        """
+        super(NumberInput, self).init_transaction()
+
+        if self.name and self.validation_type == 'number' and \
+           (getattr(self, 'min_value', None) is not None or
+            getattr(self, 'max_value', None) is not None):
+            number_validator = epflvalidators.ValidatorBase.by_name('number')(min_value=self.min_value,
+                                                                              max_value=self.max_value)
+            self.validators.insert(0, number_validator)
 
     def handle_change(self, value):
         if self.validation_type == 'float' and value is not None:
