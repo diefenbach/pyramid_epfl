@@ -69,7 +69,6 @@ class TextInput(FormInputBase):
         """
         Form text input Component
 
-        Derived attributes from ComponentBase:
         :param name: An element without a name cannot have a value
         :param default: Default value that may be pre-set or pre-selected
         :param label: Optional label describing the input field
@@ -77,8 +76,6 @@ class TextInput(FormInputBase):
         :param value: The actual value of the input element that is posted upon form submission
         :param strip_value: strip value if True in get value
         :param validation_error: Set during call of :func:`validate` with an error message if validation fails
-
-        Derived attributes from FormInputBase
         :param fire_change_immediately: Set to true if input change events should be fired immediately to the server.
                                         Otherwise, change events are fired upon the next immediate epfl event
         :param placeholder: Placeholder text that can be displayed if supported by the input
@@ -92,8 +89,6 @@ class TextInput(FormInputBase):
         :param compo_col: Set the width of the complete input component (default: max: 12)
         :param label_col: Set the width of the complete input component (default: 2)
         :param validation_type: Set the validation type, default 'text'
-
-        Custom attributes from this component:
         :param typeahead: Set to true if typeahead should be provided by the input (if supported)
         :param type_func: Set the name of the function that is used to generate the typeahead values
         :param max_length: Maximum length for the input in characters

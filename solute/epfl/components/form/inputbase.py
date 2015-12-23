@@ -2,8 +2,7 @@ from solute.epfl.core.epflcomponentbase import ComponentBase
 
 
 class FormInputBase(ComponentBase):
-    """ A base class for input/form based components. Even if these classes do not need the __init__ method,
-    they must write their parameters in full to fulfill the style guide. """
+    """ A base class for input/form based components. """
 
     # general compo settings
     asset_spec = "solute.epfl.components:form/static"
@@ -15,12 +14,12 @@ class FormInputBase(ComponentBase):
     compo_state = ['label', 'readonly']
 
     # custom compo attributes
-    label = None
+    label = None  #: Optional label describing the input field.
     fire_change_immediately = False
-    placeholder = None
+    placeholder = None  #: Placeholder text that can be displayed if supported by the input.
     readonly = False
-    submit_form_on_enter = False
-    input_focus = False
+    submit_form_on_enter = False  #: If true, underlying form is submitted upon enter key in this input
+    input_focus = False  #: Set focus on this input when component is displayed
     label_style = None
     input_style = None
     layout_vertical = False
