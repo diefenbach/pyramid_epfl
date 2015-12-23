@@ -5,9 +5,9 @@ epfl.Form.inherits_from(epfl.ComponentBase);
 
 
 epfl.Form.prototype.after_response = function () {
-    var obj = this;
-	this.elm.submit(function(event) {
-	    event.preventDefault();
-	    obj.send_event("submit", {});
-	});
+    var compo = this;
+    this.elm.submit(function(event) {
+	event.preventDefault();
+	compo.send_event("submit", {});
+    });
 };
