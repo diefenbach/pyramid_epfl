@@ -14,7 +14,7 @@ class HoverLinkListLayout(LinkListLayout):
                   'row': ['hover_link_list_layout/theme']}
 
     # LinkListLayout is not new style, so we go one more up
-    js_name = PaginatedListLayout.js_name + [('solute.epfl.components:hover_link_list_layout/static',
+    js_name = LinkListLayout.js_name + [('solute.epfl.components:hover_link_list_layout/static',
                                               'hover_link_list_layout.js')]
     new_style_compo = True
     compo_js_name = 'HoverLinkListLayout'

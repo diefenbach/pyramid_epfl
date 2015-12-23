@@ -1,8 +1,7 @@
 epfl.HoverLinkListLayout = function(cid, params) {
-    epfl.PaginatedListLayout.call(this, cid, params);
+    epfl.LinkListLayout.call(this, cid, params);
 };
-// cause LinkListLayout has no JS, so it is no new style, so we use PaginatedListLayout here
-epfl.HoverLinkListLayout.inherits_from(epfl.PaginatedListLayout);
+epfl.HoverLinkListLayout.inherits_from(epfl.LinkListLayout);
 
 epfl.HoverLinkListLayout.prototype.after_response = function(data) {
     epfl.PaginatedListLayout.prototype.after_response.call(this, data);
