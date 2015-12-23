@@ -19,18 +19,19 @@ Object.defineProperty(epfl.ComponentBase.prototype, 'menu', {
 
 
 epfl.Dropdown.prototype.after_response = function () {
-    var obj = this;
+    var compo = this;
 
     this.toggle.click(function (event) {
         event.stopImmediatePropagation();
         event.preventDefault();
         $(this).dropdown('toggle');
     });
+
     this.menu.click(function (event) {
         event.stopImmediatePropagation();
         event.preventDefault();
         var menu_key = $(this).data("menu-key");
         $(this).parent().parent().prev().dropdown('toggle');
-        obj.send_event("item_selected", {key: menu_key});
+        compo.send_event("item_selected", {key: menu_key});
     });
 };
