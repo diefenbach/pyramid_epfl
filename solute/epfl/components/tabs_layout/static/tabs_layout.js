@@ -12,8 +12,9 @@ Object.defineProperty(epfl.ComponentBase.prototype, 'tab_menu', {
 
 
 epfl.TabsLayout.prototype.after_response = function () {
-    var obj = this;
-    obj.tab_menu.find('a').click(function (event) {
+    var compo = this;
+
+    compo.tab_menu.find('a').click(function (event) {
         event.preventDefault();
         if ($(this).parent().hasClass("active")) {
             return;
@@ -22,10 +23,10 @@ epfl.TabsLayout.prototype.after_response = function () {
             return;
         }
         var selected_compo_cid = $(this).data('tab-compo-cid');
-        obj.send_event("toggle_tab", {"selected_compo_cid": selected_compo_cid});
+        compo.send_event("toggle_tab", {"selected_compo_cid": selected_compo_cid});
     });
 
     window.setTimeout(function () {
-        obj.elm.find('[role="tabpanel"]').addClass("tab-pane");
+        compo.elm.find('[role="tabpanel"]').addClass("tab-pane");
     }, 0);
 };

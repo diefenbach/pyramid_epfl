@@ -2,15 +2,19 @@ from solute.epfl.core import epflcomponentbase
 
 
 class TabsLayout(epflcomponentbase.ComponentContainerBase):
+
     asset_spec = "solute.epfl.components:tabs_layout/static"
     template_name = "tabs_layout/tabs_layout.html"
 
     compo_state = ["active_tab_cid"]
 
-    js_parts = epflcomponentbase.ComponentContainerBase.js_parts + ["tabs_layout/tabs_layout.js"]
     js_name = ["tabs_layout.js"]
 
     active_tab_cid = ""  #: CID of the currently active tab.
+
+    new_style_compo = True
+    compo_js_name = 'TabsLayout'
+
 
     def __init__(self, page, cid, **extra_params):
         """A Layouting component displaying its children inside separate tabs.
