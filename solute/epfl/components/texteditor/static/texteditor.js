@@ -4,9 +4,9 @@ epfl.TextEditor = function(cid, params) {
 
 epfl.TextEditor.inherits_from(epfl.FormInputBase);
 
-Object.defineProperty(epfl.TextEditor.prototype, 'input_selector', {
+Object.defineProperty(epfl.TextEditor.prototype, 'form_element', {
     get: function() {
-        return "#" + this.cid + "_texteditor";
+        return $("#" + this.cid + "_texteditor");
     }
 });
 

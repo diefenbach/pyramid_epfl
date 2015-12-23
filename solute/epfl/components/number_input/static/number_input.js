@@ -4,14 +4,14 @@ epfl.NumberInput = function (cid, params) {
 
 epfl.NumberInput.inherits_from(epfl.FormInputBase);
 
-Object.defineProperty(epfl.NumberInput.prototype, 'input_selector', {
+Object.defineProperty(epfl.NumberInput.prototype, 'form_element', {
     'get': function() {
-        return "#" + this.cid + "_input";
+        return $("#" + this.cid + "_input");
     }
 });
 
 epfl.NumberInput.prototype.handle_keydown = function(event) {
-    var validation_type = $(this.input_selector).data('validation-type');
+    var validation_type = this.form_element.data('validation-type');
     var allowed_keys = [46, 8, 9, 27, 13, 110, 35, 36, 37, 38, 39, 40, 189, 109, 171, 173];
     if (validation_type === "float") {
         allowed_keys.push(190);
@@ -52,7 +52,7 @@ epfl.NumberInput.prototype.after_response = function(data) {
 
     this.strg = false;
     this.shiftKey = false;
-    $(this.input_selector)
+    this.form_element
         .keydown(this.handle_keydown.bind(this))
         .keyup(this.handle_keyup.bind(this));
 

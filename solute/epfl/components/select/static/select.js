@@ -4,9 +4,9 @@ epfl.Select = function (cid, params) {
 
 epfl.Select.inherits_from(epfl.FormInputBase);
 
-Object.defineProperty(epfl.Select.prototype, 'input_selector', {
+Object.defineProperty(epfl.Select.prototype, 'form_element', {
     get: function () {
-        return "#" + this.cid + " select";
+        return $("#" + this.cid + " select");
     }
 });
 

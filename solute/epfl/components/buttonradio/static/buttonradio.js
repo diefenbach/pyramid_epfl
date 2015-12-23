@@ -4,9 +4,9 @@ epfl.ButtonRadio = function (cid, params) {
 
 epfl.ButtonRadio.inherits_from(epfl.FormInputBase);
 
-Object.defineProperty(epfl.ButtonRadio.prototype, 'input_selector', {
+Object.defineProperty(epfl.ButtonRadio.prototype, 'form_element', {
     'get': function() {
-        return "input[type=radio][name=" + this.cid + "]";
+        return $("input[type=radio][name=" + this.cid + "]");
     }
 });
 

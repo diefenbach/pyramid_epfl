@@ -4,15 +4,15 @@ epfl.TextInput = function(cid, params) {
 
 epfl.TextInput.inherits_from(epfl.FormInputBase);
 
-Object.defineProperty(epfl.TextInput.prototype, 'input_selector', {
+Object.defineProperty(epfl.TextInput.prototype, 'form_element', {
     get: function () {
-        return "#" + this.cid + '_input';
+        return $("#" + this.cid + '_input');
     }
 });
 
 epfl.TextInput.prototype.handle_keypress = function(event) {
     if(this.params.max_length) {
-        $(this.input_selector + '_count').text($(this.input_selector).val().length);
+        $("#" + this.cid + '_input' + '_count').text(this.form_element.val().length);
     }
     if(this.params.submit_form_on_enter && event.which == 13) {
         this.handle_submit_form_on_enter();
@@ -24,7 +24,7 @@ epfl.TextInput.prototype.after_response = function(data) {
     var compo = this;
 
     if (this.params.date) {
-        $(this.input_selector).jqDatetimepicker({
+        this.form_element.jqDatetimepicker({
             format:'d.m.Y H:i',
             step: 15,
             closeOnTimeSelect: true,
@@ -49,14 +49,13 @@ epfl.TextInput.prototype.after_response = function(data) {
             var event = epfl.make_component_event(compo.cid, compo.params.type_func, {"query": query}, compo.cid + '_typeahead');
             return get_source(event);
         };
-        $(compo.input_selector).typeahead({source: type_function,
-                               items: 'all',
-                               autoSelect: false});
+        compo.form_element.typeahead({source: type_function,
+                                      items: 'all',
+                                      autoSelect: false});
     }
 
     window.setTimeout(function () {
-        var input_elm = $(compo.input_selector);
-        if (input_elm.val() != input_elm.attr('data-initial-value')) {
+        if (compo.form_element.val() != compo.form_element.attr('data-initial-value')) {
             compo.handle_change.bind(compo);
         }
     }, 0);

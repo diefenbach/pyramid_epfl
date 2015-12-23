@@ -4,9 +4,9 @@ epfl.Textarea = function (cid, params) {
 
 epfl.Textarea.inherits_from(epfl.FormInputBase);
 
-Object.defineProperty(epfl.Textarea.prototype, 'input_selector', {
+Object.defineProperty(epfl.Textarea.prototype, 'form_element', {
     get: function() {
-        return "#" + this.cid + "_input";
+        return $("#" + this.cid + "_input");
     }
 });
 

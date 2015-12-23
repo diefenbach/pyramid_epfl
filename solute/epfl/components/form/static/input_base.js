@@ -68,25 +68,25 @@ epfl.FormInputBase.prototype.handle_keydown = function(event) {
 };
 
 epfl.FormInputBase.prototype.register_change_handler = function() {
-    /* if the compo has a input_selecter set, register it with blur() and change() events
+    /* if the compo has a form_element set, register it with blur() and change() events
        to trigger handle_change */
-    if (this.input_selector && $(this.input_selector).length) {
-        $(this.input_selector).blur(this.handle_change.bind(this)).change(this.handle_change.bind(this));
+    if (this.form_element && this.form_element.length) {
+        this.form_element.blur(this.handle_change.bind(this)).change(this.handle_change.bind(this));
     } else {
-        console.log('Called FromInputBase.register_change_handler without set input_selector',
-                    this.input_selector);
+        console.log('Called FromInputBase.register_change_handler without set form_element',
+                    this.form_element);
     }
 };
 
 epfl.FormInputBase.prototype.register_submit_form_on_enter_handler = function() {
-   /* if the compo has a input_selecter set, register it with blur() and change() events
+   /* if the compo has a form_element set, register it with blur() and change() events
        to trigger handle_change */
-    if (this.input_selector && $(this.input_selector).length) {
+    if (this.form_element && this.form_element.length) {
         if (this.params.submit_form_on_enter) {
-            $(this.input_selector).keydown(this.handle_keydown.bind(this));
+            this.form_element.keydown(this.handle_keydown.bind(this));
         }
     } else {
-        console.log('Called FromInputBase.register_submit_form_on_enter_handler without set input_selector',
-                    this.input_selector);
+        console.log('Called FromInputBase.register_submit_form_on_enter_handler without set form_element',
+                    this.form_element);
     }
 };

@@ -4,9 +4,9 @@ epfl.DatetimeInput = function (cid, params) {
 
 epfl.DatetimeInput.inherits_from(epfl.FormInputBase);
 
-Object.defineProperty(epfl.DatetimeInput.prototype, 'input_selector', {
+Object.defineProperty(epfl.DatetimeInput.prototype, 'form_element', {
     get: function () {
-        return "#" + this.cid + " input";
+        return $("#" + this.cid + " input");
     }
 });
 
@@ -61,7 +61,7 @@ epfl.DatetimeInput.prototype.to_utc = function(date){
 
 epfl.DatetimeInput.prototype.custom_handle_change = function(event) {
     // custom handler needed, cause the value is not just $elm.val()
-    var value = $(this.input_selector).val();
+    var value = this.form_element.val();
     if(!value){
         value = null;
     } else {
@@ -73,7 +73,7 @@ epfl.DatetimeInput.prototype.custom_handle_change = function(event) {
 epfl.DatetimeInput.prototype.after_response = function (data) {
     epfl.FormInputBase.prototype.after_response.call(this, data);
 
-    $(this.input_selector).datetimepicker({
+    this.form_element.datetimepicker({
         locale: 'de',
         format: this.params["date_format"],
         icons: {
@@ -90,13 +90,13 @@ epfl.DatetimeInput.prototype.after_response = function (data) {
         useCurrent:false
     });
 
-    $(this.input_selector)
+    this.form_element
         .blur(this.custom_handle_change.bind(this))
         .change(this.custom_handle_change.bind(this));
 
     if (this.params.value != null) {
-        if ($(this.input_selector).data("DateTimePicker")) {
-            $(this.input_selector).data("DateTimePicker").date(moment(this.params["value"]).locale("de"));
+        if (this.form_element.data("DateTimePicker")) {
+            this.form_element.data("DateTimePicker").date(moment(this.params["value"]).locale("de"));
         }
     }
 };

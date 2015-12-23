@@ -4,9 +4,9 @@ epfl.Radio = function (cid, params) {
 
 epfl.Radio.inherits_from(epfl.FormInputBase);
 
-Object.defineProperty(epfl.Radio.prototype, 'input_selector', {
+Object.defineProperty(epfl.Radio.prototype, 'form_element', {
     'get': function() {
-        return "#" + this.cid + " input[name=" + this.cid + "]";
+        return $("#" + this.cid + " input[name=" + this.cid + "]");
     }
 });
 
