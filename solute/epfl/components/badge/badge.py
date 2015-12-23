@@ -2,7 +2,6 @@
 
 
 from solute.epfl.core.epflcomponentbase import ComponentBase
-from solute.epfl.core import epflutil
 
 
 class Badge(ComponentBase):
@@ -15,11 +14,10 @@ class Badge(ComponentBase):
     asset_spec = "solute.epfl.components:badge/static"
 
     template_name = "badge/badge.html"
-    js_name = ["badge.js"]
     css_name = ["badge.css"]
 
     compo_state = ["value"]
-    
+
     value = None  #: The value will be converted to string and shown inside the Badge.
 
     def __init__(self, page, cid, value=None, **extra_params):
