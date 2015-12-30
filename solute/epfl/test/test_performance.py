@@ -1,5 +1,5 @@
 import pytest
-from solute.epfl import components, epflassets
+from solute.epfl import components, epflassets, epflpage
 import time
 
 
@@ -9,7 +9,6 @@ detected between BDMS MultiSelect component and Text.
 
 SelectableList performance on Produktdaten page points toward implementation errors (high turnaround time).
 """
-
 
 @pytest.fixture(params=[
     1000,
@@ -77,8 +76,13 @@ def test_static_selectable_list_wide(toggle, page, compo_count):
     out = page()
     end = time.time()
 
-    print end - start, float(end-start) / compo_count / 4
-    assert False
+    # rerun a second time to also check cache performance
+    new_page = epflpage.Page(None, page.request, page.transaction)
+    rerun_start = time.time()
+    out = new_page()
+    rerun_end = time.time()
+
+    print_output(compo_count, end, start, rerun_end, rerun_start)
 
 
 @pytest.mark.skipif('"--slowtests" not in sys.argv')
@@ -113,9 +117,26 @@ def test_static_selectable_list_high(toggle, page, compo_count):
     start = time.time()
     out = page()
     end = time.time()
+    # rerun a second time to also check cache performance
+    new_page = epflpage.Page(None, page.request, page.transaction)
+    rerun_start = time.time()
+    out = new_page()
+    rerun_end = time.time()
 
-    print end - start, float(end-start) / compo_count / 4
-    assert False
+    print_output(compo_count, end, start, rerun_end, rerun_start)
+
+
+def print_output(compo_count, end, start, rerun_end, rerun_start):
+    runtime = end - start
+    reruntime = rerun_end - rerun_start
+    print ""
+    print "=" * 50
+    print "Tested %s components." % (compo_count * 4)
+    print "=" * 50
+    print "Clean run: {0:.3}s ({1:.3}ms)".format(runtime, runtime/compo_count*1000)
+    print "Cache run: {0:.3}s ({1:.3}ms)".format(reruntime, reruntime/compo_count*1000)
+    print "Speedup: {0:.1%}".format(runtime/reruntime)
+    print "=" * 50
 
 
 class MyModel(epflassets.ModelBase):
