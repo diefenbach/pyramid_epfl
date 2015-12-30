@@ -1,14 +1,11 @@
 # coding: utf-8
-from pprint import pprint
-from collections2 import OrderedDict as odict
 from collections import MutableSequence, MutableMapping
 
-import types, copy, string, inspect
+import types, copy, inspect
 
 from pyramid import security
 
 from solute.epfl.core import epflclient, epflutil, epflacl, epflvalidators
-from solute.epfl import validators
 from solute.epfl.core.epflutil import Lifecycle, generate_dynamic_class_id, generate_cid
 
 import ujson as json
