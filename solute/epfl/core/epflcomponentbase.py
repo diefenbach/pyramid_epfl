@@ -363,6 +363,7 @@ class ComponentBase(object):
 
     is_rendered = False  #: True if this component was rendered calling :meth:`render`
     redraw_requested = False  #: Flag if this component wants to be redrawn.
+    cacheable = True  #: Flag if this component can be cached.
 
     _compo_info = None  #: Compo_info cache.
     _handles = None  #: Cache for a list of handle_event functions this component provides.
@@ -817,7 +818,17 @@ class ComponentBase(object):
         if self.render_cache is not None:
             return self.render_cache[target]
 
+        if self.cacheable and not self.redraw_requested and not self.page.transaction.is_changed_component(self.cid):
+            self.render_cache = self.page.transaction.get_component_cache(self.cid)
+            if self.render_cache:
+                self.is_rendered = True
+                if self.components:
+                    for compo in self.components:
+                        compo.render()
+                return self.render_cache[target]
+
         self.render_cache = {'main': '', 'js_raw': ''}
+        self.page.transaction.set_component_cache(self.cid, self.render_cache)
 
         if not self.is_visible(False):
             # this is the container where the component can be placed if visible afterwards

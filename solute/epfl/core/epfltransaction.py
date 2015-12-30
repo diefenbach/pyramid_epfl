@@ -189,6 +189,30 @@ class Transaction(MutableMapping):
         """
         return self['compo_store'].get(cid)
 
+    def is_changed_component(self, cid):
+        """True if the component has been changed or created in this request.
+
+        :param cid: component id of target component.
+        :returns: dict
+        """
+        return self.get_component(cid) != self._data_original['compo_store'].get(cid)
+
+    def get_component_cache(self, cid):
+        """Return the stored cache of this component.
+
+        :param cid: component id of target component.
+        :returns: str
+        """
+        return self['compo_cache'].get(cid)
+
+    def set_component_cache(self, cid, cache):
+        """Set the cache of this component.
+
+        :param cid: component id of target component.
+        :param cache: str of the html last used for this component.
+        """
+        self['compo_cache'][cid] = cache
+
     def set_component(self, cid, compo_info, position=None, compo_obj=None):
         """Set the components entry in this :class:`Transaction` instance. In some cases where the compo_info is not
         available at the time of this call, a compo_obj may be provided and be used as a source for the compo_info
@@ -246,6 +270,7 @@ class Transaction(MutableMapping):
             del self.instances[cid]
 
         self['compo_store'].pop(cid)
+        self['compo_cache'].pop(cid, None)
 
     def has_component(self, cid):
         """Check if the child component has an entry in this :class:`Transaction` instance.
@@ -358,7 +383,7 @@ class Transaction(MutableMapping):
         if not self.tid:
             raise Exception('Transaction store was accessed before transaction id was set.')
 
-        default_data = {'compo_store': {}, 'compo_struct': []}
+        default_data = {'compo_store': {}, 'compo_struct': [], 'compo_cache': {}}
 
         store_type = self.request.registry.settings.get('epfl.transaction.store')
         if store_type in ['redis', 'redis_context']:
