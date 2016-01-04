@@ -23,6 +23,7 @@ class SelectableList(LinkListLayout):
     selected_ids = set()  #: a set with selected component ids
 
     compo_js_name = 'SelectableList'
+    new_style_compo = True
 
     def __init__(self, page, cid, data_interface=None, *args, **extra_params):
         """

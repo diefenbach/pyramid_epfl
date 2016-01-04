@@ -143,7 +143,7 @@ epfl.PaginatedListLayout.prototype.after_response = function () {
                     selected_offset = parseInt(target_string) - 1;
             }
             if (selected_offset * obj.params.row_limit != obj.params.row_offset) {
-                obj.send_row_update({row_offset: selected_offset * obj.params.row_limit})
+                obj.send_row_update({row_offset: selected_offset * obj.params.row_limit});
             }
         });
     }

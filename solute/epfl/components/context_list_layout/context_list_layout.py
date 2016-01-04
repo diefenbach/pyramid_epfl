@@ -14,7 +14,7 @@ class ContextListLayout(PaginatedListLayout):
 
         data = []
         for i in range(0, 100):
-            data.append({'id': i, "data": "test" + str(i), 'context_menu':menu_type})
+            data.append({'id': i, "text": "test" + str(i), 'context_menu':menu_type})
 
     component example
 
@@ -47,26 +47,11 @@ class ContextListLayout(PaginatedListLayout):
 
     """
 
-    def __init__(self, page, cid, show_search=True, get_data=None, data_interface=None, *args, **kwargs):
-        """ContextListLayout Component
-
-        :param get_data: A get_data source that is used for this component
-        :param show_search: Enables a search field on top of the ContextList
-        :param data_interface: Data interface to translate the results from get_data polling.
-        """
-        kwargs.update({
-            'show_search': show_search,
-            'get_data': get_data,
-            'data_interface': data_interface
-        })
-        super(ContextListLayout, self).__init__(page, cid, *args, **kwargs)
-
     theme_path = {'row': ['context_list_layout/theme'],
                   'default': ['pretty_list_layout/theme', '<paginated_list_layout/theme'],
                   'inner_container': ['pretty_list_layout/theme', '>context_list_layout/theme']
                   }
 
-    js_parts = PaginatedListLayout.js_parts + ['context_list_layout/context_list_layout.js']
     default_child_cls = Link
 
     show_pagination = False  #: see :attr:`PaginatedListLayout.show_pagination`
@@ -81,6 +66,24 @@ class ContextListLayout(PaginatedListLayout):
 
     data_interface = {'id': None, 'text': None, 'context_menu': None}
 
+    new_style_compo = True
+    compo_js_name = 'ContextListLayout'
+
+
+
+    def __init__(self, page, cid, show_search=True, get_data=None, data_interface=None, *args, **kwargs):
+        """ContextListLayout Component
+
+        :param get_data: A get_data source that is used for this component
+        :param show_search: Enables a search field on top of the ContextList
+        :param data_interface: Data interface to translate the results from get_data polling.
+        """
+        kwargs.update({
+            'show_search': show_search,
+            'get_data': get_data,
+            'data_interface': data_interface
+        })
+        super(ContextListLayout, self).__init__(page, cid, *args, **kwargs)
 
     def handle_delete(self, entry_id, data):
         pass

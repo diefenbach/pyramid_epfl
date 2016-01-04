@@ -21,6 +21,9 @@ class PrettyListLayout(ListLayout):
     css_name = ListLayout.css_name + \
         [("solute.epfl.components:pretty_list_layout/static", "pretty_list_layout.css")]
 
+    new_style_compo = True
+    compo_js_name = 'PrettyListLayout'
+
     def __init__(self, page, cid, height=None, **kwargs):
         """ContainerComponent using Bootstrap to prettify the output like a list.
 

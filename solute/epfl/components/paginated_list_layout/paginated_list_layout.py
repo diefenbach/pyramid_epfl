@@ -38,7 +38,7 @@ class PaginatedListLayout(PrettyListLayout):
 
     theme_path = ['pretty_list_layout/theme', '<paginated_list_layout/theme']
 
-    js_parts = PrettyListLayout.js_parts + ["paginated_list_layout/paginated_list_layout.js"]
+    js_parts = []
     js_name = PrettyListLayout.js_name + [(
         'solute.epfl.components:paginated_list_layout/static',
         'paginated_list_layout.js'
@@ -46,6 +46,13 @@ class PaginatedListLayout(PrettyListLayout):
         'solute.epfl.components:paginated_list_layout/static',
         'jquery.ba-throttle-debounce.min.js'
     )]
+
+    new_style_compo = True
+    compo_js_params = PrettyListLayout.compo_js_params + ['row_offset', 'row_limit', 'row_count',
+                                                          'row_data', 'show_pagination', 'show_search',
+                                                          'search_focus', 'infinite_scrolling', 'search_timeout',
+                                                          'infinite_scroll_debounce_delay']
+    compo_js_name = 'PaginatedListLayout'
 
     #: Add the specific list type for the paginated list layout. see :attr:`ListLayout.list_type`
     list_type = PrettyListLayout.list_type + ['paginated']

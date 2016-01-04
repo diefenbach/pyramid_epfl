@@ -4,6 +4,7 @@ from collections2 import OrderedDict
 
 
 class GroupedLinkListLayout(LinkListLayout):
+
     css_name = LinkListLayout.css_name + [('solute.epfl.components:grouped_link_list_layout/static',
                                            'grouped_link_list_layout.css')]
 

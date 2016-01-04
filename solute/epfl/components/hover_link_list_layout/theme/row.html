@@ -1,5 +1,5 @@
 {% macro render() %}
     {% set compo = kwargs.compo %}
     {% set compo_obj = kwargs.compo_obj %}
-    {{ caller() }}
+    <div class="hover-data-container" data-src="{{ compo_obj.src }}">{{ caller() }}</div>
 {% endmacro %}
