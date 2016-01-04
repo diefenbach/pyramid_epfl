@@ -10,12 +10,11 @@ class Dropdown(epflcomponentbase.ComponentBase):
 
     asset_spec = "solute.epfl.components:dropdown/static"
 
-    js_parts = ["dropdown/dropdown.js"]
     js_name = ["dropdown.js"]
     compo_state = epflcomponentbase.ComponentBase.compo_state + ['children']
 
     template_name = "dropdown/dropdown.html"
-    
+
     small_button = True  #: Use a small button for the dropdown menu.
     caret = False  #: Show a caret indicator on the dropdown menu button.
     #: The label of the dropdown menu button. Optional, if a :attr:`menu_icon` is provided.
@@ -26,6 +25,9 @@ class Dropdown(epflcomponentbase.ComponentBase):
 
     #: List of dicts of children to show in this component. Must have a key and a label item.
     children = None
+
+    new_style_compo = True
+    compo_js_name = 'Dropdown'
 
     def __init__(self, page, cid, children=None, small_button=None, menu_label=None, menu_icon=None, caret=None,
                  **extra_params):
