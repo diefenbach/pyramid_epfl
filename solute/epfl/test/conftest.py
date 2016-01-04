@@ -8,12 +8,14 @@ from solute.epfl import get_epfl_jinja2_environment, includeme, epflpage, compon
 from pyramid_jinja2 import get_jinja2_environment
 
 
-def is_container_compo(compo_name):
-    if compo_name == 'ComponentBase':
-        return False
-    if compo_name == 'ComponentContainerBase':
-        return True
-    return issubclass(getattr(components, compo_name, ComponentBase), ComponentContainerBase)
+def pytest_configure(config):
+    config.addinivalue_line('markers', 'performance: Tests related to general framework performance.')
+    config.addinivalue_line(
+        'markers', 'component_api: Component specific tests ensuring style guide adherence and functionality.')
+    config.addinivalue_line(
+        'markers', 'page_api: Page specific tests ensuring style guide adherence and functionality.')
+    config.addinivalue_line(
+        'markers', 'transaction_api: Transaction specific tests ensuring functionality.')
 
 
 def pytest_addoption(parser):
@@ -65,6 +67,14 @@ def pytest_cmdline_preparse(args):
             new_args.append(test_path)
 
     args[:] = new_args
+
+
+def is_container_compo(compo_name):
+    if compo_name == 'ComponentBase':
+        return False
+    if compo_name == 'ComponentContainerBase':
+        return True
+    return issubclass(getattr(components, compo_name, ComponentBase), ComponentContainerBase)
 
 
 @pytest.fixture(scope='session')
