@@ -232,6 +232,7 @@ class AssertStyleInit(AssertBase):
             * All inherited parameters present or exempted.
             * All inherited docstrings correct.
             * Function parameters have docstrings as required.
+            * All defaults are None.
         """
         super(AssertStyleInit, self).__init__(parent)
 
@@ -314,6 +315,17 @@ class AssertStyleInit(AssertBase):
                     "{check_type}{compo_name} __init__ method is missing docs for {param}."
                     .format(compo_name=self.compo_name, param=var, check_type=check_type)
                 )
+
+        # All defaults are None.
+        argspec = inspect.getargspec(init_func)
+        argspec_offset = len(argspec.args) - len(argspec.defaults)
+        if any(v is not None for v in argspec.defaults):
+            self.errors.append(
+                "{check_type}{compo_name} __init__ method has defaults that are not set to None. {debug}"
+                .format(compo_name=self.compo_name, check_type=check_type, debug=dict([
+                    (argspec.args[i + argspec_offset], v) for i, v in enumerate(argspec.defaults) if v is not None
+                ]))
+            )
 
 
 class AssertStyleDocs(AssertBase):
