@@ -5,6 +5,9 @@ from solute.epfl.core.epfltransaction import Transaction
 from collections2.dicts import OrderedDict
 
 
+pytestmark = pytest.mark.transaction_api
+
+
 def test_basic_component_operations(pyramid_req):
     """Tests for basic component operations, this includes:
         * Setting component information,

@@ -7,6 +7,9 @@ from component_asserts import AssertCoherence, AssertRendering, AssertStyle
 from solute.epfl.core.epflcomponentbase import ComponentBase, ComponentContainerBase, CompoStateAttribute
 
 
+pytestmark = pytest.mark.component_api
+
+
 @pytest.fixture(params=['static', 'dynamic'])
 def base_type(request, page, component_base_type_class):
     """Generates test scenarios for ComponentBase components.

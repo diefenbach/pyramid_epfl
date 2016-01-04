@@ -1,5 +1,5 @@
 import pytest
-from solute.epfl import components, epflassets
+from solute.epfl import components, epflassets, epflpage
 import time
 
 
@@ -11,12 +11,18 @@ SelectableList performance on Produktdaten page points toward implementation err
 """
 
 
+pytestmark = [
+    pytest.mark.skipif(not pytest.config.getoption("--runslow"), reason='slow test'),
+    pytest.mark.performance
+]
+
+
 @pytest.fixture(params=[
     1000,
     2500,
     5000,
     10000,
-])
+], scope="function")
 def compo_count(request):
     return request.param
 
@@ -26,96 +32,120 @@ def toggle(request):
     return request.param
 
 
-@pytest.mark.skipif('"--slowtests" not in sys.argv')
-def test_static_selectable_list_wide(toggle, page, compo_count):
+@pytest.fixture(params=[True, False])
+def performance_page(request, page, compo_count):
     page.model = MyModel
-    page.root_node = components.CardinalLayout(
-        node_list=[
-            components.Box(
-                node_list=[
-                    components.Box(
-                        node_list=[
-                            components.Box(
-                                node_list=[
-                                    components.ColLayout(
-                                        node_list=[
-                                            components.SelectableList(
-                                                skip_child_access=True,
-                                                row_limit=compo_count,
-                                                data_interface={'id': None, 'text': None},
-                                                get_data='my_data'
-                                            ),
-                                            components.SelectableList(
-                                                skip_child_access=True,
-                                                row_limit=compo_count,
-                                                data_interface={'id': None, 'text': None},
-                                                get_data='my_data'
-                                            ),
-                                            components.SelectableList(
-                                                skip_child_access=True,
-                                                row_limit=compo_count,
-                                                data_interface={'id': None, 'text': None},
-                                                get_data='my_data'
-                                            ),
-                                            components.SelectableList(
-                                                skip_child_access=True,
-                                                row_limit=compo_count,
-                                                data_interface={'id': None, 'text': None},
-                                                get_data='my_data'
-                                            ),
-                                        ]
-                                    )
-                                ]
-                            )
-                        ]
-                    )
-                ]
-            )
-        ]
-    )
-    start = time.time()
-    out = page()
-    end = time.time()
+    if request.param:
+        page.root_node = components.CardinalLayout(
+            node_list=[
+                components.Box(
+                    node_list=[
+                        components.Box(
+                            node_list=[
+                                components.Box(
+                                    node_list=[
+                                        components.ColLayout(
+                                            node_list=[
+                                                components.SelectableList(
+                                                    skip_child_access=True,
+                                                    row_limit=compo_count,
+                                                    data_interface={'id': None, 'text': None},
+                                                    get_data='my_data'
+                                                ),
+                                                components.SelectableList(
+                                                    skip_child_access=True,
+                                                    row_limit=compo_count,
+                                                    data_interface={'id': None, 'text': None},
+                                                    get_data='my_data'
+                                                ),
+                                                components.SelectableList(
+                                                    skip_child_access=True,
+                                                    row_limit=compo_count,
+                                                    data_interface={'id': None, 'text': None},
+                                                    get_data='my_data'
+                                                ),
+                                                components.SelectableList(
+                                                    skip_child_access=True,
+                                                    row_limit=compo_count,
+                                                    data_interface={'id': None, 'text': None},
+                                                    get_data='my_data'
+                                                ),
+                                            ]
+                                        )
+                                    ]
+                                )
+                            ]
+                        )
+                    ]
+                )
+            ]
+        )
+    else:
+        page.root_node = components.CardinalLayout(
+            node_list=[
+                components.Box(
+                    node_list=[
+                        components.Box(
+                            node_list=[
+                                components.Box(
+                                    node_list=[
+                                        components.ColLayout(
+                                            node_list=[
+                                                components.SelectableList(
+                                                    skip_child_access=True,
+                                                    row_limit=compo_count * 4,
+                                                    data_interface={'id': None, 'text': None},
+                                                    get_data='my_data'
+                                                ),
+                                            ]
+                                        )
+                                    ]
+                                )
+                            ]
+                        )
+                    ]
+                )
+            ]
+        )
+    return page
 
-    print end - start, float(end-start) / compo_count / 4
-    assert False
 
+def test_performance(performance_page, compo_count):
+    timings = []
 
-@pytest.mark.skipif('"--slowtests" not in sys.argv')
-def test_static_selectable_list_high(toggle, page, compo_count):
-    page.model = MyModel
-    page.root_node = components.CardinalLayout(
-        node_list=[
-            components.Box(
-                node_list=[
-                    components.Box(
-                        node_list=[
-                            components.Box(
-                                node_list=[
-                                    components.ColLayout(
-                                        node_list=[
-                                            components.SelectableList(
-                                                skip_child_access=True,
-                                                row_limit=compo_count * 4,
-                                                data_interface={'id': None, 'text': None},
-                                                get_data='my_data'
-                                            ),
-                                        ]
-                                    )
-                                ]
-                            )
-                        ]
-                    )
-                ]
-            )
-        ]
-    )
-    start = time.time()
-    out = page()
-    end = time.time()
+    # initial run to get a cache
+    timings.append(time.time())
+    out = performance_page()
+    timings.append(time.time())
 
-    print end - start, float(end-start) / compo_count / 4
-    assert False
+    # rerun a second time to check cache performance
+    new_page = epflpage.Page(None, performance_page.request, performance_page.transaction)
+    timings.append(time.time())
+    out = new_page()
+    timings.append(time.time())
+
+    # rerun a third time to check performance with an empty cache
+    performance_page.transaction['compo_cache'] = {}
+    new_page = epflpage.Page(None, performance_page.request, performance_page.transaction)
+    timings.append(time.time())
+    out = new_page()
+    timings.append(time.time())
+
+    start, end, rerun_start, rerun_end, nocache_start, nocache_end = timings
+
+    runtime = end - start
+    rerun_time = rerun_end - rerun_start
+    nocache_time = nocache_end - nocache_start
+    print ""
+    print "=" * 50
+    print "Tested %s components." % (compo_count * 4)
+    print "=" * 50
+    print "Start run: {0:.3}s ({1:.3}ms)".format(runtime, runtime/compo_count*1000)
+    print "Clean run: {0:.3}s ({1:.3}ms)".format(nocache_time, nocache_time/compo_count*1000)
+    print "Cache run: {0:.3}s ({1:.3}ms)".format(rerun_time, rerun_time/compo_count*1000)
+    print "Clean Speedup: {0:.1%}".format(runtime/rerun_time)
+    print "Cache Speedup: {0:.1%}".format(nocache_time/rerun_time)
+    print "=" * 50
 
 
 class MyModel(epflassets.ModelBase):
