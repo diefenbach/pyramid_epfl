@@ -16,11 +16,14 @@ class Select(FormInputBase):
 
     """
 
+    # core internals
     template_name = "select/select.html"
     js_name = FormInputBase.js_name + [("solute.epfl.components:select/static", "select.js")]
     css_name = FormInputBase.css_name + [("solute.epfl.components:select/static", "select.css")]
-    compo_js_name = 'Select'
     compo_state = FormInputBase.compo_state + ['options']
+
+    # js settings
+    compo_js_name = 'Select'
 
     # derived attribute overrides
     validation_type = 'text'  #: Validate input as text.

@@ -5,14 +5,18 @@ from solute.epfl.components.form.inputbase import FormInputBase
 
 class ColorPicker(FormInputBase):
 
+    # core internals
     template_name = "colorpicker/colorpicker.html"
     js_name = FormInputBase.js_name + [("solute.epfl.components:colorpicker/static", "colorpicker.js")]
     css_name = FormInputBase.css_name + [("solute.epfl.components:colorpicker/static", "colorpicker.css")]
+    compo_state = FormInputBase.compo_state + ["value_options", "toggle_button", "colors_visible"]
+
+    # js settings
     compo_js_params = FormInputBase.compo_js_params + ['colors_visible']
     compo_js_name = 'ColorPicker'
     compo_js_extras = ['handle_click']
-    compo_state = FormInputBase.compo_state + ["value_options", "toggle_button", "colors_visible"]
 
+    # custom definitions
     TYPE_RGB = 0  #: Constant for value options list, show data as rgb
     TYPE_SPECIAL = 1  #: Constant for value options list, show data as special
 

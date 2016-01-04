@@ -17,11 +17,18 @@ class Upload(FormInputBase):
 
     """
 
+    # core internals
     template_name = "upload/upload.html"
     js_name = FormInputBase.js_name + [("solute.epfl.components:upload/static", "upload.js"),
                                        ("solute.epfl.components:upload/static", "jquery.iframe-transport.js"),
                                        ("solute.epfl.components:upload/static", "jquery.fileupload.js")]
     css_name = FormInputBase.css_name + [("solute.epfl.components:upload/static", "upload.css"), ]
+    compo_state = FormInputBase.compo_state + ["allowed_file_types", "show_remove_icon", "maximum_file_size",
+                                               "handle_click", "store_async", "height", "width", "file_infos",
+                                               "maximum_image_width",  "maximum_image_height", "minimum_image_width",
+                                               "minimum_image_height", "use_old_value_format"]
+
+    # js settings
     compo_js_params = FormInputBase.compo_js_params + ['allowed_file_types', 'show_remove_icon', 'maximum_file_size',
                                                        'value', 'handle_click', 'store_async', 'show_file_upload_input',
                                                        'show_drop_zone', "maximum_image_width", "maximum_image_height",
@@ -31,10 +38,6 @@ class Upload(FormInputBase):
                                                        "minimum_image_height"]
     compo_js_extras = ['handle_drop', 'handle_click']
     compo_js_name = 'Upload'
-    compo_state = FormInputBase.compo_state + ["allowed_file_types", "show_remove_icon", "maximum_file_size",
-                                               "handle_click", "store_async", "height", "width", "file_infos",
-                                               "maximum_image_width",  "maximum_image_height", "minimum_image_width",
-                                               "minimum_image_height", "use_old_value_format"]
 
     # custom compo attributes
     height = None  #: Compo height in px if none nothing is set

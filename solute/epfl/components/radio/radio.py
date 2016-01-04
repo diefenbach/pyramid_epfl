@@ -13,11 +13,14 @@ class Radio(FormInputBase):
 
     """
 
+    # core internals
     template_name = "radio/radio.html"
     js_name = FormInputBase.js_name + [("solute.epfl.components:radio/static", "radio.js")]
     css_name = FormInputBase.css_name + [("solute.epfl.components:radio/static", "radio.css")]
-    compo_js_name = 'Radio'
     compo_state = FormInputBase.compo_state + ['options', 'linebreak_between_options']
+
+    # js settings
+    compo_js_name = 'Radio'
 
     # derived attribute overrides
     validation_type = 'text'  #: Validate as a text.

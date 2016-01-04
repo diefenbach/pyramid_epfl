@@ -13,9 +13,12 @@ class TextEditor(FormInputBase):
 
     """
 
+    # core internals
     template_name = "texteditor/texteditor.html"
     js_name = [('solute.epfl.components:texteditor/static', 'texteditor.js')]
     js_name_no_bundle = [('solute.epfl.components:texteditor/static', 'ckeditor.js')]
+
+    # js settings
     compo_js_name = 'TextEditor'
     compo_js_params = ['editor_config_file', 'clean_paste']
 

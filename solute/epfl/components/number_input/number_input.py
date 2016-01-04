@@ -14,11 +14,14 @@ class NumberInput(FormInputBase):
 
     """
 
+    # core internals
     template_name = "number_input/number_input.html"
     js_name = FormInputBase.js_name + [("solute.epfl.components:number_input/static", "number_input.js")]
     css_name = FormInputBase.css_name + [("solute.epfl.components:number_input/static", "number_input.css")]
-    compo_js_name = 'NumberInput'
     compo_state = FormInputBase.compo_state + ['min_value', 'max_value']
+
+    # js settings
+    compo_js_name = 'NumberInput'
 
     # derived attribute overrides
 

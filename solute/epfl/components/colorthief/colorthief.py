@@ -14,14 +14,17 @@ except ImportError:
 
 class ColorThief(FormInputBase):
 
+    # core internals
     template_name = "colorthief/colorthief.html"
     js_name = FormInputBase.js_name + [("solute.epfl.components:colorthief/static", "colorthief.js")]
     css_name = FormInputBase.css_name + [("solute.epfl.components:colorthief/static", "colorthief.css")]
+    compo_state = FormInputBase.compo_state + ["image_src", "dominat_colors_count", "color_count", "add_icon_size",
+                                               "compress_image"]
+
+    # js settings
     compo_js_params = FormInputBase.compo_js_params + ['color_count']
     compo_js_name = 'ColorThief'
     compo_js_extras = ['handle_click', 'handle_drop']
-    compo_state = FormInputBase.compo_state + ["image_src", "dominat_colors_count", "color_count", "add_icon_size",
-                                               "compress_image"]
 
     # custom compo attributes
     height = None  #: Compo height in px if none nothing is set

@@ -13,11 +13,14 @@ class ButtonRadio(FormInputBase):
 
     """
 
+    # core internals
     template_name = "buttonradio/buttonradio.html"
     js_name = FormInputBase.js_name + [("solute.epfl.components:buttonradio/static", "buttonradio.js")]
     css_name = FormInputBase.css_name + [("solute.epfl.components:buttonradio/static", "buttonradio.css")]
-    compo_js_name = 'ButtonRadio'
     compo_state = FormInputBase.compo_state + ['options']
+
+    # js settings
+    compo_js_name = 'ButtonRadio'
 
     # derived attribute overrides
     validation_type = 'text'  #: Evaluate this component as text.

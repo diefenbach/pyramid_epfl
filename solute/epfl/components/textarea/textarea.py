@@ -13,9 +13,12 @@ class Textarea(FormInputBase):
 
     """
 
+    # core internals
     template_name = "textarea/textarea.html"
     js_name = FormInputBase.js_name + [("solute.epfl.components:textarea/static", "textarea.js")]
     css_name = FormInputBase.css_name + [("solute.epfl.components:textarea/static", "textarea.css")]
+
+    # js settings
     compo_js_name = 'Textarea'
 
     # derived attribute overrides

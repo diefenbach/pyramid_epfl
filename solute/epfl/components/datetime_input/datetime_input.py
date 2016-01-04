@@ -9,7 +9,7 @@ from solute.epfl.components.form.inputbase import FormInputBase
 
 class DatetimeInput(FormInputBase):
 
-    # general compo settings
+    # core internals
     template_name = "datetime_input/datetime_input.html"
     js_name = FormInputBase.js_name + [("solute.epfl.components:datetime_input/static", "datetime_input.js"),
                                        ("solute.epfl.components:datetime_input/static", "moment-with-locales.min.js"),
@@ -17,9 +17,11 @@ class DatetimeInput(FormInputBase):
                                         "bootstrap-datetimepicker.min.js")]
     css_name = FormInputBase.css_name + [("solute.epfl.components:datetime_input/static",
                                           "bootstrap-datetimepicker.min.css")]
+    compo_state = FormInputBase.compo_state + ["date_format"]
+
+    # js settings
     compo_js_params = FormInputBase.compo_js_params + ['date_format', "value"]
     compo_js_name = 'DatetimeInput'
-    compo_state = FormInputBase.compo_state + ["date_format"]
 
     # custom definitions
     DATE_FORMAT_LOCALE = "LL"  #: Constant for locale format example: 18. Juli 2015

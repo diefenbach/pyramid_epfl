@@ -13,9 +13,12 @@ class Checkbox(FormInputBase):
 
     """
 
+    # core internals
     template_name = "checkbox/checkbox.html"
     js_name = FormInputBase.js_name + [("solute.epfl.components:checkbox/static", "checkbox.js")]
     css_name = FormInputBase.css_name + [("solute.epfl.components:checkbox/static", "checkbox.css")]
+
+    # js settings
     compo_js_name = 'Checkbox'
 
     # derived attribute overrides

@@ -14,17 +14,20 @@ class SimpleToggle(FormInputBase):
 
     """
 
+    # core internals
     template_name = "simpletoggle/simpletoggle.html"
     js_name = FormInputBase.js_name + [("solute.epfl.components:simpletoggle/static", "simpletoggle.js")]
     css_name = FormInputBase.css_name + [("solute.epfl.components:simpletoggle/static", "simpletoggle.css")]
+    compo_state = FormInputBase.compo_state + [
+        "enabled_icon", "disabled_icon", "enabled_icon_size", "disabled_icon_size", "enabled_icon_color",
+        "disabled_icon_color"]
+
+    # js settings
     compo_js_name = 'SimpleToggle'
     compo_js_params = FormInputBase.compo_js_params + ['enabled_icon', "disabled_icon", "enabled_icon_size",
                                                        "disabled_icon_size", "enabled_icon_color",
                                                        "disabled_icon_color"]
     compo_js_extras = ['handle_click']
-    compo_state = FormInputBase.compo_state + [
-        "enabled_icon", "disabled_icon", "enabled_icon_size", "disabled_icon_size", "enabled_icon_color",
-        "disabled_icon_color"]
 
     # derived attribute overrides
     validation_type = 'bool'  #: Form validation selector.

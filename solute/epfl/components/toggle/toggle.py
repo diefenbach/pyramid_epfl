@@ -13,11 +13,14 @@ class Toggle(FormInputBase):
 
     """
 
+    # core internals
     template_name = "toggle/toggle.html"
     js_name = FormInputBase.js_name + [("solute.epfl.components:toggle/static", "bootstrap-switch.min.js"),
                                        ("solute.epfl.components:toggle/static", "toggle.js")]
     css_name = FormInputBase.css_name + [("solute.epfl.components:toggle/static", "bootstrap-switch.min.css"),
                                          ("solute.epfl.components:toggle/static", "toggle.css")]
+
+    # js settings
     compo_js_name = 'Toggle'
 
     # derived attribute overrides

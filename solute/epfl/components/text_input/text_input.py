@@ -14,6 +14,7 @@ class TextInput(FormInputBase):
 
     """
 
+    # core internals
     template_name = "text_input/text_input.html"
     js_name = FormInputBase.js_name + [("solute.epfl.components:text_input/static", "text_input.js"),
                                        ("solute.epfl.components:text_input/static",
@@ -21,9 +22,12 @@ class TextInput(FormInputBase):
                                        ("solute.epfl.components:text_input/static", "bootstrap3-typeahead.min.js")]
     css_name = FormInputBase.css_name + [("solute.epfl.components:text_input/static", "text_input.css"),
                                          ("solute.epfl.components:text_input/static", "jquery.datetimepicker.css")]
-    compo_js_params = FormInputBase.compo_js_params + ['max_length', 'show_count', 'typeahead', 'type_func', 'date']
-    compo_js_name = 'TextInput'
     compo_state = FormInputBase.compo_state + ['layover_icon']
+
+    # js settings
+    compo_js_params = FormInputBase.compo_js_params + ['max_length', 'show_count', 'typeahead', 'type_func', 'date']
+
+    compo_js_name = 'TextInput'
 
     # derived attribute overrides
     validation_type = 'text'  #: Set the validation type, default 'text'

@@ -13,12 +13,15 @@ class CodeEditor(FormInputBase):
 
     """
 
+    # core internals
     template_name = "codeeditor/codeeditor.html"
     js_name = FormInputBase.js_name + [('solute.epfl.components:codeeditor/static', 'codeeditor.js')]
     js_name_no_bundle = [
         ('solute.epfl.components:codeeditor/static', 'codemirror/lib/codemirror.js'),
     ]
     css_name = FormInputBase.css_name + [('solute.epfl.components:codeeditor/static', 'codemirror/lib/codemirror.css')]
+
+    # js settings
     compo_js_name = 'CodeEditor'
 
     # derived attribute overrides
