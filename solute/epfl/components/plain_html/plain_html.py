@@ -6,7 +6,6 @@ class PlainHtml(FormInputBase):
 
     # core internals
     template_name = "plain_html/plain_html.html"
-    js_name = js_name = FormInputBase.js_name + [("solute.epfl.components:plain_html/static", "plain_html.js")]
 
     # js settings
     compo_js_name = 'PlainHtml'
