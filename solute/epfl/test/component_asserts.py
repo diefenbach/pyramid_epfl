@@ -229,7 +229,10 @@ class AssertStyleInit(AssertBase):
         """Asserts for the init method documentation of the component. Contains the following checks:
             * Docstring present.
             * Required parameters present and in the correct position.
+            * All inherited parameters present or exempted.
+            * All inherited docstrings correct.
             * Function parameters have docstrings as required.
+            * All defaults are None.
         """
         super(AssertStyleInit, self).__init__(parent)
 
@@ -246,9 +249,18 @@ class AssertStyleInit(AssertBase):
                               epfl.core.epflcomponentbase.ComponentContainerBase]:
             return
 
+        base = self.component.__bases__[0]
+        base_init_func = base.__init__
+        base_init_docs = base_init_func.__doc__
+        base_init_code = base_init_func.func_code
+
         # Docstring present.
         if not init_docs:
             self.errors.append("{check_type}{compo_name} __init__ method has no doc string."
+                               .format(compo_name=self.compo_name, check_type=check_type))
+            return
+        if not base_init_docs:
+            self.errors.append("{check_type}{compo_name}'s parent __init__ method has no doc string."
                                .format(compo_name=self.compo_name, check_type=check_type))
             return
 
@@ -264,6 +276,36 @@ class AssertStyleInit(AssertBase):
             self.errors.append("{check_type}{compo_name} __init__ method is missing or misplacing parameter '{name}'."
                                .format(compo_name=self.compo_name, name=name, check_type=check_type))
 
+        # All inherited parameters present or exempted.
+        base_varnames = set(base_init_code.co_varnames).difference(getattr(self.component, 'exempt_params', []))
+        # Get the varnames not present in both.
+        missing_varnames = base_varnames.difference(init_code.co_varnames)
+        # Remove standard varnames.
+        missing_varnames = missing_varnames.difference(['self', 'args', 'kwargs', 'page', 'cid'])
+        # Reduce to the varnames only present in the parent.
+        missing_varnames = missing_varnames.intersection(base_init_code.co_varnames)
+
+        if len(missing_varnames) > 0:
+            self.errors.append("{check_type}{compo_name} __init__ method is missing the following inherited parameters:"
+                               " {params}"
+                               .format(compo_name=self.compo_name, params=missing_varnames, check_type=check_type))
+
+        base_init_docs_dict = {}
+        for line in base_init_docs.split("\n"):
+            line = line.strip()
+            if not line.startswith(':param '):
+                continue
+            line_name = line[7:].split(':')[0]
+            base_init_docs_dict[line_name] = line
+
+        # All inherited docstrings correct.
+        for varname in base_varnames.intersection(init_code.co_varnames):
+            if base_init_docs_dict.get(varname, '') in init_docs:
+                continue
+            self.errors.append("{check_type}{compo_name} __init__ method has wrong docstring for inherited parameter "
+                               "{param}."
+                               .format(compo_name=self.compo_name, param=varname, check_type=check_type))
+
         # Function parameters have docstrings as required.
         for var in init_code.co_varnames:
             if var in ['self', 'page', 'args', 'kwargs', 'extra_params', 'cid']:
@@ -273,6 +315,17 @@ class AssertStyleInit(AssertBase):
                     "{check_type}{compo_name} __init__ method is missing docs for {param}."
                     .format(compo_name=self.compo_name, param=var, check_type=check_type)
                 )
+
+        # All defaults are None.
+        argspec = inspect.getargspec(init_func)
+        argspec_offset = len(argspec.args) - len(argspec.defaults)
+        if any(v is not None for v in argspec.defaults):
+            self.errors.append(
+                "{check_type}{compo_name} __init__ method has defaults that are not set to None. {debug}"
+                .format(compo_name=self.compo_name, check_type=check_type, debug=dict([
+                    (argspec.args[i + argspec_offset], v) for i, v in enumerate(argspec.defaults) if v is not None
+                ]))
+            )
 
 
 class AssertStyleDocs(AssertBase):
