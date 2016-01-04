@@ -183,6 +183,7 @@ class Upload(FormInputBase):
         :param handle_click: Generate a handle_click event if the component is clicked on by the user.
         :param store_async: Upload the image immediately via handle_store, store has to return a URI that will be used
                             as value.
+        :param file_infos: infos about the uploaded files
         :param use_old_value_format: This is required for backward compatibilty in older versions only the base64 string
                                      or url was in data in new version its always a list
         :param error_message_image_size_to_big: This error is shown via javascript if image size is not correct
