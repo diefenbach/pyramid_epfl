@@ -2,10 +2,8 @@ from solute.epfl.core import epflcomponentbase
 
 
 class Form(epflcomponentbase.ComponentContainerBase):
-    template_name = "form/form.html"
-    js_parts = epflcomponentbase.ComponentContainerBase.js_parts[:]
-    js_parts.append("form/form.js")
 
+    template_name = "form/form.html"
     asset_spec = "solute.epfl.components:form/static"
     js_name = ["form.js"]
 
@@ -15,6 +13,9 @@ class Form(epflcomponentbase.ComponentContainerBase):
 
     validate_hidden_fields = False  #: Flag to determine whether hidden fields will be validated. TODO: DEFECTIVE!
     is_dirty = False  #: Flag whether the form has had any change of value since initialisation.
+
+    new_style_compo = True
+    compo_js_name = 'Form'
 
     def __init__(self, page, cid, node_list=None, validate_hidden_fields=False, **extra_params):
         """Generates a form container with some convenience handling for child components with name and value.
@@ -37,8 +38,8 @@ class Form(epflcomponentbase.ComponentContainerBase):
     def register_field(self, field):
         """
         Make a field known to the parent form. Since any component can reside in a form, the child components
-        which register themselves as fields have to provide the methods reset() and validate() (see :class:`.FormInputBase`),
-        since these are called for all registered fields by the parent form.
+        which register themselves as fields have to provide the methods reset() and validate()
+        (see :class:`.FormInputBase`), since these are called for all registered fields by the parent form.
         """
         if self._registered_fields is None:
             self._registered_fields = set()
