@@ -1,28 +1,17 @@
 # coding: utf-8
 
-"""
-
-"""
-
-import types
-import copy
-
-from pyramid import security
-
 from solute.epfl.core import epflcomponentbase
-from solute.epfl.core import epflutil
-import json
 
 
 class Diagram(epflcomponentbase.ComponentBase):
-    asset_spec = "solute.epfl.components:diagram/static"
 
     template_name = "diagram/diagram.html"
-    js_parts = epflcomponentbase.ComponentBase.js_parts + ["diagram/diagram.js"]
-
+    asset_spec = "solute.epfl.components:diagram/static"
     js_name = ["highcharts.js", "exporting.js", "export-csv-1.2.1.js", "diagram.js"]
-
     compo_state = ["diagram_params"]
+    new_style_compo = True
+    compo_js_name = 'Diagram'
+    compo_js_params = ['diagram_params']
 
     diagram_params = None  #: Dict of diagram parameters. Please consult the highcharts.js documentation.
 
@@ -31,7 +20,7 @@ class Diagram(epflcomponentbase.ComponentBase):
 
         :param diagram_params: Dict of diagram parameters. Please consult the highcharts.js documentation.
         """
-        super(Diagram, self).__init__(page, cid, diagram_params=diagram_params, **extra_params)
+        pass
 
     def get_params(self):
         if self.diagram_params is None:
@@ -44,13 +33,13 @@ class Diagram(epflcomponentbase.ComponentBase):
     def handle_visibilityChange(self, series_visibility):
         if self.diagram_params is None:
             self.diagram_params = {}
-        if not "series" in self.diagram_params:
+        if "series" not in self.diagram_params:
             return
         for series_visibility_entry in series_visibility:
             if "name" in series_visibility_entry:
                 for backed_series_entry in self.diagram_params["series"]:
                     if backed_series_entry["name"] == series_visibility_entry["name"]:
-                        if ("visible" in series_visibility_entry) and (series_visibility_entry["visible"] == False):
+                        if ("visible" in series_visibility_entry) and (series_visibility_entry["visible"] is False):
                             backed_series_entry["visible"] = False
                         elif "visible" in backed_series_entry:
                             backed_series_entry.pop("visible")

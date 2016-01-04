@@ -3,11 +3,10 @@ epfl.Diagram = function (cid, params) {
 };
 epfl.Diagram.inherits_from(epfl.ComponentBase);
 
-
 epfl.Diagram.prototype.after_response = function () {
-    var obj = this;
+    var compo = this;
 
-    this.elm.highcharts(this.params);
+    this.elm.highcharts(this.params.diagram_params);
 
     // handle changes in series visibility
     this.elm.find('.highcharts-legend-item').click(function (event) {
@@ -21,6 +20,6 @@ epfl.Diagram.prototype.after_response = function () {
             }
             series_visibility.push(series_json);
         }
-        obj.send_event("visibilityChange", {series_visibility: series_visibility});
+        compo.send_event("visibilityChange", {series_visibility: series_visibility});
     });
 };
