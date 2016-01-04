@@ -11,13 +11,12 @@ def bool_toggle(request):
 
 
 def test_render_number_of_shown_pages(page):
-    compo = components.Text(value='some text')
     row_offset = 0
     row_limit = 20
     row_count = 500
     paginated_node_list = []
     for i in range(0, row_limit):
-        paginated_node_list.append(compo)
+        paginated_node_list.append(components.Text(value='some text'))
 
     page.root_node = components.PaginatedListLayout(
         show_pagination=True,
