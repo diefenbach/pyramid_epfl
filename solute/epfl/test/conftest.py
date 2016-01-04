@@ -16,6 +16,20 @@ def is_container_compo(compo_name):
     return issubclass(getattr(components, compo_name, ComponentBase), ComponentContainerBase)
 
 
+def pytest_addoption(parser):
+    parser.addoption(
+        "--runslow",
+        action="store_true",
+        help="Run tests marked as slow (mostly performance related tests)."
+    )
+
+
+def pytest_collection_modifyitems(items):
+    for item in items:
+        if item.nodeid.startswith("solute/epfl/test/components/"):
+            item.add_marker('component_api')
+
+
 def pytest_cmdline_preparse(args):
     """Selects a set of component specific tests if the parameter --target is present. Selects both the generic
     Component tests and the custom tests if available.

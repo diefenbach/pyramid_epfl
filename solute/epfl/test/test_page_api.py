@@ -17,6 +17,9 @@ from page import PageWithJS, PageWithJSNoBundle, PageWithCSS, PageWithCSSNoBundl
     PageWithCSSandJSNoBundle
 
 
+pytestmark = pytest.mark.page_api
+
+
 def test_basic_component_operations(pyramid_req):
     """Test the basic component operations of the page api.
     """
