@@ -22,6 +22,7 @@ class TabsLayout(epflcomponentbase.ComponentContainerBase):
                  **extra_params):
         """A Layouting component displaying its children inside separate tabs.
 
+        :param node_list: List of child components.
         :param active_tab_cid: CID of the currently active tab.
         """
         pass

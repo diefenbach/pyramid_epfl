@@ -15,6 +15,7 @@ class SelectableList(LinkListLayout):
     compo_js_name = 'SelectableList'
 
     # derived attribute overrides
+
     #: List type extension, see :attr:`ListLayout.list_type` for details.
     list_type = LinkListLayout.list_type + ['selectable']
     data_interface = {'id': None, 'text': None}

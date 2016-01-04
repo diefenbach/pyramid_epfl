@@ -30,11 +30,10 @@ class LinkListLayout(PaginatedListLayout):
                       'text': None,
                       'url': None}
     auto_update_children = False
+    #: Add the specific list type for the link list layout. see :attr:`ListLayout.list_type`
     list_type = PaginatedListLayout.list_type + ['link']
 
     # custom compo attributes
-
-    #: Add the specific list type for the link list layout. see :attr:`ListLayout.list_type`
     links = None  #: List of dicts to be used as entries.
     event_name = None  #: Default event to be triggered on clicks.
 
