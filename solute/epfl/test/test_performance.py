@@ -111,40 +111,28 @@ def performance_page(request, page, compo_count):
 
 
 def test_performance(performance_page, compo_count):
-    timings = []
-
     # initial run to get a cache
-    timings.append(time.time())
+    timings = [time.time()]
     out = performance_page()
     timings.append(time.time())
 
-    # rerun a second time to check cache performance
+    # rerun a second time to check cached performance
     new_page = epflpage.Page(None, performance_page.request, performance_page.transaction)
     timings.append(time.time())
     out = new_page()
     timings.append(time.time())
 
-    # rerun a third time to check performance with an empty cache
-    performance_page.transaction['compo_cache'] = {}
-    new_page = epflpage.Page(None, performance_page.request, performance_page.transaction)
-    timings.append(time.time())
-    out = new_page()
-    timings.append(time.time())
-
-    start, end, rerun_start, rerun_end, nocache_start, nocache_end = timings
+    start, end, rerun_start, rerun_end = timings
 
     runtime = end - start
     rerun_time = rerun_end - rerun_start
-    nocache_time = nocache_end - nocache_start
     print ""
     print "=" * 50
     print "Tested %s components." % (compo_count * 4)
     print "=" * 50
     print "Start run: {0:.3}s ({1:.3}ms)".format(runtime, runtime/compo_count*1000)
-    print "Clean run: {0:.3}s ({1:.3}ms)".format(nocache_time, nocache_time/compo_count*1000)
     print "Cache run: {0:.3}s ({1:.3}ms)".format(rerun_time, rerun_time/compo_count*1000)
-    print "Clean Speedup: {0:.1%}".format(runtime/rerun_time)
-    print "Cache Speedup: {0:.1%}".format(nocache_time/rerun_time)
+    print "Cache Speedup: {0:.1%}".format(runtime/rerun_time)
     print "=" * 50
 
 
