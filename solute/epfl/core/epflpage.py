@@ -746,3 +746,6 @@ class PageComponents(object):
 
     def __getitem__(self, key):
         return getattr(self.page, key)
+
+    def __len__(self):
+        return len(self.page.transaction.get('compo_store', {}))
