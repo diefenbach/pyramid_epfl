@@ -1,5 +1,4 @@
 # coding: utf-8
-from solute.epfl.core import epflcomponentbase
 from solute.epfl.components import LinkListLayout
 
 
@@ -7,30 +6,68 @@ class SelectableList(LinkListLayout):
     """
     Selectable List is a MultiSelect Component, multiple values can be selected
     """
-    js_name = LinkListLayout.js_name + [('solute.epfl.components:selectable_list/static', 'selectable_list.js')]
-    data_interface = {'id': None, 'text': None}
 
+    # core internals
+    js_name = LinkListLayout.js_name + [('solute.epfl.components:selectable_list/static', 'selectable_list.js')]
     compo_state = LinkListLayout.compo_state + ["search_text", "selected_ids", "last_selected_index"]
 
+    # js settings
+    compo_js_name = 'SelectableList'
+
+    # derived attribute overrides
     #: List type extension, see :attr:`ListLayout.list_type` for details.
     list_type = LinkListLayout.list_type + ['selectable']
+    data_interface = {'id': None, 'text': None}
 
+    # custom compo attributes
     search_text = None  #: search text for custom search text handling
-
     scroll_pos = None  #: Scrollbar position this is used to jump back to the last scroll pos after redraw
     last_selected_index = None  #: The index of the element last selected.
-
     selected_ids = set()  #: a set with selected component ids
 
-    compo_js_name = 'SelectableList'
-    new_style_compo = True
-
-    def __init__(self, page, cid, data_interface=None, *args, **extra_params):
+    def __init__(self, page, cid,
+                 node_list=None,
+                 height=None,
+                 show_search=None,
+                 show_pagination=None,
+                 search_placeholder=None,
+                 search_focus=None,
+                 visible_pages_limit=None,
+                 reset_row_offset_on_search_change=None,
+                 search_focus_after_search=None,
+                 search_timeout=None,
+                 infinite_scroll_debounce_delay=None,
+                 links=None,
+                 event_name=None,
+                 data_interface=None,
+                 search_text=None,
+                 scroll_pos=None,
+                 last_selected_index=None,
+                 selected_ids=None,
+                 **extra_params):
         """
         Selectable List is a MultiSelect Component, multiple values can be selected
+
+        :param node_list: List of child components.
+        :param height: Set the list to the given height in pixels.
+        :param show_search: Toggle weather the search field is shown or not.
+        :param show_pagination: Toggle weather the pagination is shown or not.
+        :param search_placeholder: The placeholder text for the search input.
+        :param search_focus: Toggle weather the search field receives focus on load or not.
+        :param visible_pages_limit: Specify the number of pages that should be visible in the pagination bar.
+        :param reset_row_offset_on_search_change: Reset row_offset once the user changes the search string.
+        :param search_focus_after_search: Focus the search input after a search
+        :param search_timeout: The timeout in ms until the search event fires
+        :param infinite_scroll_debounce_delay: The delay for scroll debounce in infinite scrolling lists
+        :param links: List of dicts with text and url. May contain an icon entry.
+        :param event_name: The name of an event to be triggered instead of rendering normal links.
         :param data_interface: data interface for child class needs id and text
+        :param search_text: search text for custom search text handling
+        :param scroll_pos: Scrollbar position this is used to jump back to the last scroll pos after redraw
+        :param last_selected_index: The index of the element last selected.
+        :param selected_ids: a set with selected component ids
         """
-        super(SelectableList, self).__init__(page, cid, data_interface=data_interface, *args, **extra_params)
+        pass
 
     @staticmethod
     def default_child_cls(*args, **kwargs):

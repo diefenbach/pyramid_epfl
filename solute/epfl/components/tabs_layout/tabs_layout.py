@@ -3,23 +3,28 @@ from solute.epfl.core import epflcomponentbase
 
 class TabsLayout(epflcomponentbase.ComponentContainerBase):
 
-    asset_spec = "solute.epfl.components:tabs_layout/static"
+    # core internals
     template_name = "tabs_layout/tabs_layout.html"
-
+    asset_spec = "solute.epfl.components:tabs_layout/static"
     compo_state = ["active_tab_cid"]
-
     js_name = ["tabs_layout.js"]
 
-    active_tab_cid = ""  #: CID of the currently active tab.
-
+    # js settings
     new_style_compo = True
     compo_js_name = 'TabsLayout'
 
+    # custom compo attributes
+    active_tab_cid = ""  #: CID of the currently active tab.
 
-    def __init__(self, page, cid, **extra_params):
+    def __init__(self, page, cid,
+                 node_list=None,
+                 active_tab_cid=None,
+                 **extra_params):
         """A Layouting component displaying its children inside separate tabs.
+
+        :param active_tab_cid: CID of the currently active tab.
         """
-        super(TabsLayout, self).__init__(page, cid, **extra_params)
+        pass
 
     def render(self, target='main'):
         """Just before the normal rendering the visibility of all child components needs to be updated.

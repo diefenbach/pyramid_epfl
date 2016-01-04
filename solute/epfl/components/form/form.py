@@ -3,28 +3,33 @@ from solute.epfl.core import epflcomponentbase
 
 class Form(epflcomponentbase.ComponentContainerBase):
 
+    # core internals
     template_name = "form/form.html"
     asset_spec = "solute.epfl.components:form/static"
     js_name = ["form.js"]
-
     compo_state = ["_registered_fields", "is_dirty"]
 
-    _registered_fields = None  #: Private cache of the fields registered with this form.
-
-    validate_hidden_fields = False  #: Flag to determine whether hidden fields will be validated. TODO: DEFECTIVE!
-    is_dirty = False  #: Flag whether the form has had any change of value since initialisation.
-
+    # js settings
     new_style_compo = True
     compo_js_name = 'Form'
 
-    def __init__(self, page, cid, node_list=None, validate_hidden_fields=False, **extra_params):
+    # custom compo attributes
+    _registered_fields = None  #: Private cache of the fields registered with this form.
+    is_dirty = False  #: Flag whether the form has had any change of value since initialisatio
+
+    # internal compo attributes
+    validate_hidden_fields = False  #: Flag to determine whether hidden fields will be validated. TODO: DEFECTIVE!
+
+    def __init__(self, page, cid,
+                 node_list=None,
+                 validate_hidden_fields=None,
+                 **extra_params):
         """Generates a form container with some convenience handling for child components with name and value.
 
         :param node_list: List of child components.
         :param validate_hidden_fields: Flag to determine whether hidden fields will be validated.
         """
-        super(Form, self).__init__(page, cid, node_list=node_list, validate_hidden_fields=validate_hidden_fields,
-                                   **extra_params)
+        pass
 
     def handle_submit(self):
         pass
