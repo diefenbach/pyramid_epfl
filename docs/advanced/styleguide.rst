@@ -131,8 +131,7 @@ The method **may** contain the additional parameter \*args.
 
 The __init__ method **must** contain a docstring with a short description of the component. The docstring **should**
 contain a usage example. The docstring **must** contain a parameter description for any parameter other than the
-aforementioned. Also, the __init__ method does not need to call super() or set attributes directly, so it **should**
-just pass.
+aforementioned. Also, the __init__  **should** use pass.
 
 
 Example:
