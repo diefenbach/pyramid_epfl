@@ -13,36 +13,76 @@ except ImportError:
 
 
 class ColorThief(FormInputBase):
+
+    # core internals
+    template_name = "colorthief/colorthief.html"
     js_name = FormInputBase.js_name + [("solute.epfl.components:colorthief/static", "colorthief.js")]
     css_name = FormInputBase.css_name + [("solute.epfl.components:colorthief/static", "colorthief.css")]
-    template_name = "colorthief/colorthief.html"
-    js_parts = []
     compo_state = FormInputBase.compo_state + ["image_src", "dominat_colors_count", "color_count", "add_icon_size",
                                                "compress_image"]
 
-    height = None  #: Compo height in px if none nothing is set
-
-    width = None  #: Compo width in px if none nothing is set
-
-    image_src = None  #: image src if set the drop zone is hidden
-
-    color_count = 7  #: Count of colors which got extracted from the image
-
-    add_icon_size = "5x"  #: The add icon size use font awesome sizes
-
-    #:  If set to true the image get compressed first to 200x200 px this is faster but less accurate
-    compress_image = False
-
-    new_style_compo = True
-    compo_js_params = ['fire_change_immediately', 'color_count']
+    # js settings
+    compo_js_params = FormInputBase.compo_js_params + ['color_count']
     compo_js_name = 'ColorThief'
     compo_js_extras = ['handle_click', 'handle_drop']
 
-    def __init__(self, page, cid, height=None, width=None, image_src=None, color_count=None, add_icon_size=None,
+    # custom compo attributes
+    height = None  #: Compo height in px if none nothing is set
+    width = None  #: Compo width in px if none nothing is set
+    image_src = None  #: image src if set the drop zone is hidden
+    color_count = 7  #: Count of colors which got extracted from the image
+    add_icon_size = "5x"  #: The add icon size use font awesome sizes
+    #:  If set to true the image get compressed first to 200x200 px this is faster but less accurate
+    compress_image = False
+
+    def __init__(self, page, cid,
+                 name=None,
+                 default=None,
+                 label=None,
+                 mandatory=None,
+                 value=None,
+                 strip_value=None,
+                 validation_error=None,
+                 fire_change_immediately=None,
+                 placeholder=None,
+                 readonly=None,
+                 submit_form_on_enter=None,
+                 input_focus=None,
+                 label_style=None,
+                 input_style=None,
+                 layout_vertical=None,
+                 compo_col=None,
+                 label_col=None,
+                 validation_type=None,
+                 height=None,
+                 width=None,
+                 image_src=None,
+                 color_count=None,
+                 add_icon_size=None,
                  compress_image=None,
                  **extra_params):
         """ColorThief Compo: A Drop Area where images can be dropped and their colors get extracted
 
+        :param name: An element without a name cannot have a value
+        :param default: Default value that may be pre-set or pre-selected
+        :param label: Optional label describing the input field
+        :param mandatory: Set to true if value has to be provided for this element in order to yield a valid form
+        :param value: The actual value of the input element that is posted upon form submission
+        :param strip_value: strip value if True in get value
+        :param validation_error: Set during call of :func:`validate` with an error message if validation fails
+        :param fire_change_immediately: Set to true if input change events should be fired immediately to the server.
+                                        Otherwise, change events are fired upon the next immediate epfl event
+        :param placeholder: Placeholder text that can be displayed if supported by the input
+        :param readonly: Set to true if input cannot be changed and is displayed in readonly mode
+        :param submit_form_on_enter: If true, underlying form is submitted upon enter key in this input
+        :param input_focus: Set focus on this input when component is displayed
+        :param label_style: Can be used to add additional css styles for the label
+        :param input_style: Can be used to add additional css styles for the input
+        :param layout_vertical: Set to true if label should be displayed on top of the input and not on the left before
+                                it
+        :param compo_col: Set the width of the complete input component (default: max: 12)
+        :param label_col: Set the width of the complete input component (default: 2)
+        :param validation_type: Set the validation type, default 'text'
         :param height: Compo height in px if none nothing is set
         :param width: Compo width in px if none nothing is set
         :param image_src: image src if set the drop zone is hidden
@@ -51,8 +91,7 @@ class ColorThief(FormInputBase):
         :param compress_image: If set to true the image get compressed first to 200x200 px this is faster but less accurate
         :return:
         """
-        super(ColorThief, self).__init__(page=page, cid=cid, height=height, width=width, image_src=image_src,
-                                         color_count=color_count, add_icon_size=add_icon_size, **extra_params)
+        pass
 
     def __new__(cls, *args, **config):
         try:
@@ -109,4 +148,3 @@ class ColorThief(FormInputBase):
         bytes = io.BytesIO(base64.b64decode(coded_string))
         with get_palette(blob=bytes, color_count=color_count, compress_image=self.compress_image) as palette:
             return palette
-

@@ -1,8 +1,8 @@
 epfl.Upload = function (cid, params) {
-    epfl.ComponentBase.call(this, cid, params);
+    epfl.FormInputBase.call(this, cid, params);
 };
 
-epfl.Upload.inherits_from(epfl.ComponentBase);
+epfl.Upload.inherits_from(epfl.FormInputBase);
 
 Object.defineProperty(epfl.Upload.prototype, 'remove_icon', {
     get: function () {
@@ -19,7 +19,8 @@ Object.defineProperty(epfl.Upload.prototype, 'dropzone', {
 epfl.Upload.prototype.is_async_uploading = false;
 
 epfl.Upload.prototype.after_response = function (data) {
-    epfl.ComponentBase.prototype.after_response.call(this, data);
+    epfl.FormInputBase.prototype.after_response.call(this, data);
+
     var obj = this;
     if (obj.params['show_file_upload_input']) {
         obj.elm.find("input").fileupload({
@@ -226,7 +227,7 @@ epfl.Upload.prototype.upload_files_sync = function (data) {
         }
         raw_files.push({data: data[i].reader_result, name: data[i].file_name});
     }
-    obj.change(raw_files)
+    obj.change(raw_files);
 };
 
 epfl.Upload.prototype.check_for_valid_files = function (data) {
@@ -326,7 +327,7 @@ epfl.Upload.prototype.extract_file_data = function (files, callback) {
                 img.onerror = function () {
                     imageLoaded(true);
                 };
-            }
+            };
         })(files[i]);
         reader.readAsDataURL(files[i]);
     }
@@ -366,7 +367,7 @@ epfl.Upload.prototype.handle_click = function (event) {
     if (this.is_async_uploading) {
         return;
     }
-    epfl.ComponentBase.prototype.handle_click.call(this, event);
+    epfl.FormInputBase.prototype.handle_click.call(this, event);
 
     if (this.remove_icon.is(event.target)) {
         this.send_event('remove_icon', {});
@@ -374,4 +375,3 @@ epfl.Upload.prototype.handle_click = function (event) {
         this.send_event('click', {});
     }
 };
-

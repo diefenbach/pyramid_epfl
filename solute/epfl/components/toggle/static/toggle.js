@@ -1,16 +1,26 @@
 epfl.Toggle = function (cid, params) {
-    epfl.ComponentBase.call(this, cid, params);
-
-    var selector = "#" + cid + "_input";
-    $(selector).attr('checked', $(selector).val() == 'True');
-    $(selector).bootstrapSwitch('state');
-    var compo = this;
-    var enqueue_event = !params["fire_change_immediately"];
-
-    $(selector).on('switchChange.bootstrapSwitch', function (event, state) {
-        var val = $(this).closest("div").parent().hasClass("bootstrap-switch-on");
-        epfl.FormInputBase.on_change(compo, val, cid, enqueue_event);
-    });
+    epfl.FormInputBase.call(this, cid, params);
 };
 
-epfl.Toggle.inherits_from(epfl.ComponentBase);
+epfl.Toggle.inherits_from(epfl.FormInputBase);
+
+Object.defineProperty(epfl.Toggle.prototype, 'form_element', {
+    'get': function() {
+        return $("#" + this.cid + "_input");
+    }
+});
+
+epfl.Toggle.prototype.after_response = function(data) {
+    epfl.FormInputBase.prototype.after_response.call(this, data);
+
+    // control the gui
+    this.form_element.attr('checked', this.form_element.val() == 'True');
+    this.form_element.bootstrapSwitch('state');
+
+    // wrap bootstrap event to handle_change
+    var compo = this;
+    this.form_element.on('switchChange.bootstrapSwitch', function(event) {
+        var val = compo.elm.find('.bootstrap-switch').hasClass('bootstrap-switch-on');
+        compo.handle_change(event, val);
+    });
+};

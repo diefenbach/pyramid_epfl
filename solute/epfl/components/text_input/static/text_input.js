@@ -1,18 +1,38 @@
-epfl.TextInput = function (cid, params) {
+epfl.TextInput = function(cid, params) {
     epfl.FormInputBase.call(this, cid, params);
+};
 
-    var selector = "#" + cid + "_input";
+epfl.TextInput.inherits_from(epfl.FormInputBase);
+
+Object.defineProperty(epfl.TextInput.prototype, 'form_element', {
+    get: function () {
+        return $("#" + this.cid + '_input');
+    }
+});
+
+epfl.TextInput.prototype.handle_keypress = function(event) {
+    if(this.params.max_length) {
+        $("#" + this.cid + '_input' + '_count').text(this.form_element.val().length);
+    }
+    if(this.params.submit_form_on_enter && event.which == 13) {
+        this.handle_submit_form_on_enter();
+    }
+};
+
+epfl.TextInput.prototype.after_response = function(data) {
+    epfl.FormInputBase.prototype.after_response.call(this, data);
     var compo = this;
-    var enqueue_event = !params["fire_change_immediately"];
-    var max_length = params["max_length"];
-    var show_count = params["show_count"];
-    var typeahead = params["typeahead"];
-    var type_func = params["type_func"];
-    var date = params["date"];
-    var source = params["source"];
-    var submit_form_on_enter = params["submit_form_on_enter"];
 
-    if(typeahead) {
+    if (this.params.date) {
+        this.form_element.jqDatetimepicker({
+            format:'d.m.Y H:i',
+            step: 15,
+            closeOnTimeSelect: true,
+            lang: 'de'
+        });
+    }
+
+    if (this.params.typeahead) {
         var type_function = function(query, process){
             var get_source = function(epfl_event){
                 epfl.send(epfl_event, function(response){
@@ -26,46 +46,23 @@ epfl.TextInput = function (cid, params) {
                 });
             };
 
-            var event = epfl.make_component_event(cid, type_func, {"query": query}, cid + '_typeahead');
+            var event = epfl.make_component_event(compo.cid, compo.params.type_func, {"query": query}, compo.cid + '_typeahead');
             return get_source(event);
         };
-        $(selector).typeahead({source: type_function,
-                               items: 'all',
-                               autoSelect: false});
+        compo.form_element.typeahead({source: type_function,
+                                      items: 'all',
+                                      autoSelect: false});
     }
-    if(date){
-        $(selector).jqDatetimepicker({
-            format:'d.m.Y H:i',
-            step: 15,
-            closeOnTimeSelect: true,
-            lang: 'de'
-        });
-    }
-    var change = function (event) {
-        epfl.FormInputBase.on_change(compo, $(selector).val(), cid, enqueue_event);
-    };
-
-    var keydown = function(event){
-        if(max_length){
-            $(selector + '_count').text($(selector).val().length);
-        }
-        if(submit_form_on_enter && event.which == 13){
-            epfl.FormInputBase.event_submit_form_on_enter(cid);
-        }
-    };
-
-    var elm = $(selector);
 
     window.setTimeout(function () {
-        if (elm.val() != elm.attr('data-initial-value')) {
-            change();
+        if (compo.form_element.val() != compo.form_element.attr('data-initial-value')) {
+            compo.handle_change.bind(compo);
         }
     }, 0);
 
-    elm.blur(change).change(change);
-    if(show_count || submit_form_on_enter){
-        elm.keydown(keydown);
+    this.register_change_handler();
+
+    if (compo.params.show_count || compo.params.submit_form_on_enter) {
+        compo.elm.keyup(compo.handle_keypress.bind(compo));
     }
 };
-
-epfl.TextInput.inherits_from(epfl.FormInputBase);

@@ -1,15 +1,27 @@
 epfl.Checkbox = function (cid, params) {
-    epfl.ComponentBase.call(this, cid, params);
-
-    var selector = "#" + cid + "_input";
-    $(selector).attr('checked', $(selector).val() == 'True');
-    var compo = this;
-    var enqueue_event = !params["fire_change_immediately"];
-    var change = function (event) {
-        epfl.FormInputBase.on_change(compo, $(this).is(':checked'), cid, enqueue_event);
-    };
-
-    $(selector).blur(change).change(change);
+    epfl.FormInputBase.call(this, cid, params);
 };
 
-epfl.Checkbox.inherits_from(epfl.ComponentBase);
+epfl.Checkbox.inherits_from(epfl.FormInputBase);
+
+Object.defineProperty(epfl.Checkbox.prototype, 'form_element', {
+    get: function() {
+        return $("#" + this.cid + "_input");
+    }
+});
+
+epfl.Checkbox.prototype.custom_handle_change = function(event) {
+    // custom handler needed, cause the value is not just $elm.val()
+    var value =  this.form_element.is(':checked');
+    this.handle_change(event, value);
+};
+
+epfl.Checkbox.prototype.after_response = function(data) {
+    epfl.FormInputBase.prototype.after_response.call(this, data);
+
+    this.form_element.attr('checked', this.form_element.val() == 'True');
+
+    this.form_element
+        .blur(this.custom_handle_change.bind(this))
+        .change(this.custom_handle_change.bind(this));
+};

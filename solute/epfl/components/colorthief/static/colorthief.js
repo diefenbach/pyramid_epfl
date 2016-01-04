@@ -1,7 +1,7 @@
 epfl.ColorThief = function (cid, params) {
-    epfl.ComponentBase.call(this, cid, params);
+    epfl.FormInputBase.call(this, cid, params);
 };
-epfl.ColorThief.inherits_from(epfl.ComponentBase);
+epfl.ColorThief.inherits_from(epfl.FormInputBase);
 
 Object.defineProperty(epfl.ColorThief.prototype, 'color_field', {
     get: function () {
@@ -34,19 +34,20 @@ Object.defineProperty(epfl.ColorThief.prototype, 'image', {
 });
 
 epfl.ColorThief.prototype.after_response = function (data) {
-    epfl.ComponentBase.prototype.after_response.call(this, data);
+    epfl.FormInputBase.prototype.after_response.call(this, data);
     this.image.on('dragstart', function(event) { event.preventDefault(); });
-}
+};
 
 epfl.ColorThief.prototype.handle_click = function (event) {
-    epfl.ComponentBase.prototype.handle_click.call(this, event);
+    epfl.FormInputBase.prototype.handle_click.call(this, event);
+
     var target = $(event.target);
     if (this.color_field.is(event.target)) {
         this.send_event("click_color", {"color": target.data("color")});
     } else if (this.check_icon.is(event.target)) {
         this.send_event("click_color", {"color": target.parent().data("color")});
     } else if (this.remove_icon.is(event.target)) {
-        this.send_event("change", {value: null})
+        this.send_event("change", {value: null});
     }
 };
 
