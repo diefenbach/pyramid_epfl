@@ -281,7 +281,7 @@ class AssertStyleInit(AssertBase):
         # Get the varnames not present in both.
         missing_varnames = base_varnames.difference(init_code.co_varnames)
         # Remove standard varnames.
-        missing_varnames = missing_varnames.difference(['self', 'args', 'kwargs', 'page', 'cid'])
+        missing_varnames = missing_varnames.difference(['self', 'args', 'kwargs', 'page', 'cid', 'extra_params'])
         # Reduce to the varnames only present in the parent.
         missing_varnames = missing_varnames.intersection(base_init_code.co_varnames)
 
@@ -357,7 +357,7 @@ class AssertStyleDocs(AssertBase):
             if attr_name in ['asset_spec', 'compo_state', 'theme_path', 'css_name', 'js_name', 'js_parts',
                              'new_style_compo', 'compo_js_params', 'compo_js_extras', 'compo_js_name', 'template_name',
                              'compo_config', 'data_interface', 'default_child_cls', 'auto_update_children',
-                             'theme_path_default', 'js_name_no_bundle']:
+                             'theme_path_default', 'js_name_no_bundle', 'exempt_params']:
                 continue
 
             # Only valid attributes are present.

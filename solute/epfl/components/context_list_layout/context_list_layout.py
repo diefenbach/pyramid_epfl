@@ -68,16 +68,34 @@ class ContextListLayout(PaginatedListLayout):
     data_interface = {'id': None, 'text': None, 'context_menu': None}
 
     def __init__(self, page, cid,
-                 show_pagination=None,
+                 node_list=None,
+                 height=None,
                  show_search=None,
+                 show_pagination=None,
+                 search_placeholder=None,
+                 search_focus=None,
+                 visible_pages_limit=None,
+                 reset_row_offset_on_search_change=None,
+                 search_focus_after_search=None,
+                 search_timeout=None,
+                 infinite_scroll_debounce_delay=None,
                  get_data=None,
                  auto_update_children=None,
                  data_interface=None,
                  **kwargs):
         """ContextListLayout Component
 
+        :param node_list: List of child components.
+        :param height: Set the list to the given height in pixels.
+        :param show_search: Toggle weather the search field is shown or not.
         :param show_pagination: Toggle weather the pagination is shown or not.
-        :param show_search: Enables a search field on top of the ContextList
+        :param search_placeholder: The placeholder text for the search input.
+        :param search_focus: Toggle weather the search field receives focus on load or not.
+        :param visible_pages_limit: Specify the number of pages that should be visible in the pagination bar.
+        :param reset_row_offset_on_search_change: Reset row_offset once the user changes the search string.
+        :param search_focus_after_search: Focus the search input after a search
+        :param search_timeout: The timeout in ms until the search event fires
+        :param infinite_scroll_debounce_delay: The delay for scroll debounce in infinite scrolling lists
         :param get_data: A get_data source that is used for this component
         :param auto_update_children: Updates are triggered every request in after_event_handling if True.
         :param data_interface: Data interface to translate the results from get_data polling.
