@@ -56,6 +56,7 @@ class SimpleToggle(FormInputBase):
                  layout_vertical=None,
                  compo_col=None,
                  label_col=None,
+                 validation_type=None,
                  enabled_icon=None,
                  disabled_icon=None,
                  enabled_icon_size=None,
