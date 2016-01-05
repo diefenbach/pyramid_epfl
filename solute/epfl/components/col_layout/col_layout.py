@@ -22,29 +22,30 @@ class ColLayout(epflcomponentbase.ComponentContainerBase):
 
     Every child component is should have the cols attribute indicating the number of cols it
     should use. The cols attribute must a number between 1 and 12. If it is missing, 12 is used.
-    
-    To create responsive layouts (see http://getbootstrap.com/css/#grid), col classes can be used for 
+
+    To create responsive layouts (see http://getbootstrap.com/css/#grid), col classes can be used for
     a column. For this, a child components can have a col_class attribute ("xs", "sm", "md", "lg")
     indicating the col class (e.g. "col-sm-12", "col-md-6", etc.) for the cols. If the col_class attribute
-    is missing for a child component, "md" is used. 
-    
+    is missing for a child component, "md" is used.
+
     A child component can also optionally have the align attribute ("left", "right" or "center"),
     indicating that it should be aligned in a certain way.
 
     """
 
+    # core internals
+    template_name = "col_layout/col_layout.html"
     asset_spec = "solute.epfl.components:col_layout/static"
     css_name = ["col_layout.css"]
-    js_name = []
-    js_parts = []
 
-    template_name = "col_layout/col_layout.html"
-
+    # custom compo attributes
     vertical_center = False  #: If set to true, child components are centered vertically.
-
     css_cls = None  #: Add the value of css_cls to the css class of the outermost div
 
-    def __init__(self, page, cid, vertical_center=False, css_cls=None, **extra_params):
+    def __init__(self, page, cid,
+                 node_list=None,
+                 vertical_center=None,
+                 css_cls=None, **extra_params):
         """
         A layout component that renders child components as cols (using Bootstrap's col layout).
 
@@ -53,11 +54,8 @@ class ColLayout(epflcomponentbase.ComponentContainerBase):
         A child component can also optionally have the text_center attribute (boolean), indicating
         that it should be centered horizontally.
 
+        :param node_list: List of child components.
         :param vertical_center: If set to true, child components are centered vertically
         :param css_cls: Add the value of css_cls to the css class of the outermost div
         """
-        super(ColLayout, self).__init__(
-            page=page, cid=cid,
-            vertical_center=vertical_center,
-            css_cls=css_cls,
-            **extra_params)
+        pass

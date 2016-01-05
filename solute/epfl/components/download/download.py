@@ -19,30 +19,62 @@ class Download(Button):
 
    """
 
+    # core internals
     js_name = [("solute.epfl.components:download/static", "download.js"),
                ("solute.epfl.components:download/static", "FileSaver.min.js")]
-    compo_js_name = 'Download'
 
+    # js settings
+    compo_js_name = 'Download'
     compo_js_params = Button.compo_js_params + ['download_direct']
+
+    # custom compo attributes
 
     #: Download the file(s) direct.
     download_direct = False
-
     #: The type of the downloaded file.
     file_type = 'text/csv'
 
-    def __init__(self, page, cid, label=None, value=None, event_name=None, event_target=None, is_submit=False,
-                 download_direct=None, **extra_params):
+    def __init__(self, page, cid,
+                 label=None,
+                 value=None,
+                 color=None,
+                 icon=None,
+                 icon_size=None,
+                 icon_color=None,
+                 tooltip=None,
+                 event_name=None,
+                 event_target=None,
+                 is_submit=None,
+                 confirm_first=None,
+                 confirm_message=None,
+                 button_size=None,
+                 disable_on_click=None,
+                 stop_propagation_on_click=None,
+                 download_direct=None,
+                 **extra_params):
         """Download component.
 
-        :param label: If set, the label is rendered before the button.
-        :param value: The value is used as button text if no icon is provided.
-        :param event_name: Mandatory name of the event handling method (without trailing "handle\_").
-        :param event_target: Optional target where the event handling method can be found.
-        :param is_submit: Set to true if button should have html type "submit".
+        :param label: If set, the label is rendered before the button
+        :param value: The value is used as button text if no icon is provided
+        :param color: Optional color of the button. Possible values: default, primary, warning, danger, success,
+                      transparent
+        :param icon: Optional font-awesome icon to be rendered as button value instead of the text attribute
+        :param icon_size: Optional font-awesome icon-size possible values: 'lg', 2, 3, 4, 5
+        :param icon_color: Optional color of the button icon. Possible values default, primary, warning, danger, success
+        :param tooltip: Optional tooltip text that is placed on the button
+        :param event_name: Mandatory name of the event handling method (without trailing "handle\_")
+        :param event_target: Optional target where the event handling method can be found
+        :param is_submit: Set to true if button should have html type "submit"
+        :param disabled: Set to true if button should be disabled
+        :param confirm_first: Set to true if user should be asked for confirmation first before the button event is
+                              triggered
+        :param confirm_message: Adapt this text for a custom confirmation dialog message
+        :param button_size: Optional button size. Possible values: 'btn-lg', 'btn-sm', 'btn-xs'
+        :param disable_on_click: If set to true, the html button (not the component!) is set to disabled on a click
+        :param stop_propagation_on_click: Set to true if click event should not be propagated to parent components
         :param download_direct: Download the file(s) direct
         """
-        super(Download, self).__init__(page, cid, label, value, event_name, event_target, is_submit, download_direct)
+        pass
 
     def handle_direct_download(self, cid):
         """

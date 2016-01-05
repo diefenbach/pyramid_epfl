@@ -5,17 +5,23 @@ from solute.epfl.core import epflcomponentbase
 
 class Diagram(epflcomponentbase.ComponentBase):
 
+    # core internals
     template_name = "diagram/diagram.html"
     asset_spec = "solute.epfl.components:diagram/static"
     js_name = ["highcharts.js", "exporting.js", "export-csv-1.2.1.js", "diagram.js"]
     compo_state = ["diagram_params"]
+
+    # js settings
     new_style_compo = True
     compo_js_name = 'Diagram'
     compo_js_params = ['diagram_params']
 
+    # custom compo attributes
     diagram_params = None  #: Dict of diagram parameters. Please consult the highcharts.js documentation.
 
-    def __init__(self, page, cid, diagram_params=None, **extra_params):
+    def __init__(self, page, cid,
+                 diagram_params=None,
+                 **extra_params):
         """A component for showing complex diagrams using highcharts.js.
 
         :param diagram_params: Dict of diagram parameters. Please consult the highcharts.js documentation.

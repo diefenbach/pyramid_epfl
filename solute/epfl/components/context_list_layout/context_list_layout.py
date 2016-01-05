@@ -1,6 +1,5 @@
 # * encoding: utf-8
-from solute.epfl.core import epflcomponentbase
-from solute.epfl.components import ListLayout, PaginatedListLayout, Link
+from solute.epfl.components import PaginatedListLayout, Link
 
 
 class ContextListLayout(PaginatedListLayout):
@@ -47,43 +46,63 @@ class ContextListLayout(PaginatedListLayout):
 
     """
 
+    # core settings
     theme_path = {'row': ['context_list_layout/theme'],
                   'default': ['pretty_list_layout/theme', '<paginated_list_layout/theme'],
                   'inner_container': ['pretty_list_layout/theme', '>context_list_layout/theme']
                   }
-
-    default_child_cls = Link
-
-    show_pagination = False  #: see :attr:`PaginatedListLayout.show_pagination`
-    show_search = True  #: see :attr:`PaginatedListLayout.show_search`
-
-    auto_update_children = True
-
     js_name = PaginatedListLayout.js_name + [
         ("solute.epfl.components:context_list_layout/static", "context_list_layout.js")]
     css_name = PaginatedListLayout.css_name + [
         ("solute.epfl.components:context_list_layout/static", "context_list_layout.css")]
 
-    data_interface = {'id': None, 'text': None, 'context_menu': None}
-
+    # js settings
     new_style_compo = True
     compo_js_name = 'ContextListLayout'
 
+    # derived attributes overrides
+    default_child_cls = Link
+    show_pagination = False  #: see :attr:`PaginatedListLayout.show_pagination`
+    show_search = True  #: see :attr:`PaginatedListLayout.show_search`
+    auto_update_children = True
+    data_interface = {'id': None, 'text': None, 'context_menu': None}
 
-
-    def __init__(self, page, cid, show_search=True, get_data=None, data_interface=None, *args, **kwargs):
+    def __init__(self, page, cid,
+                 node_list=None,
+                 height=None,
+                 hide_list=None,
+                 show_search=None,
+                 show_pagination=None,
+                 search_placeholder=None,
+                 search_focus=None,
+                 visible_pages_limit=None,
+                 reset_row_offset_on_search_change=None,
+                 search_focus_after_search=None,
+                 search_timeout=None,
+                 infinite_scroll_debounce_delay=None,
+                 get_data=None,
+                 auto_update_children=None,
+                 data_interface=None,
+                 **kwargs):
         """ContextListLayout Component
 
+        :param node_list: List of child components.
+        :param height: Set the list to the given height in pixels.
+        :param hide_list: Hide the list container but nothing else.
+        :param show_search: Toggle weather the search field is shown or not.
+        :param show_pagination: Toggle weather the pagination is shown or not.
+        :param search_placeholder: The placeholder text for the search input.
+        :param search_focus: Toggle weather the search field receives focus on load or not.
+        :param visible_pages_limit: Specify the number of pages that should be visible in the pagination bar.
+        :param reset_row_offset_on_search_change: Reset row_offset once the user changes the search string.
+        :param search_focus_after_search: Focus the search input after a search
+        :param search_timeout: The timeout in ms until the search event fires
+        :param infinite_scroll_debounce_delay: The delay for scroll debounce in infinite scrolling lists
         :param get_data: A get_data source that is used for this component
-        :param show_search: Enables a search field on top of the ContextList
+        :param auto_update_children: Updates are triggered every request in after_event_handling if True.
         :param data_interface: Data interface to translate the results from get_data polling.
         """
-        kwargs.update({
-            'show_search': show_search,
-            'get_data': get_data,
-            'data_interface': data_interface
-        })
-        super(ContextListLayout, self).__init__(page, cid, *args, **kwargs)
+        pass
 
     def handle_delete(self, entry_id, data):
         pass

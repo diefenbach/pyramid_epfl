@@ -3,7 +3,9 @@ from collections2.dicts import OrderedDict
 
 
 class TableLayout(PaginatedListLayout):
-    js_parts = []
+
+    # core internals
+    template_name = 'table_layout/table_layout.html'
     js_name = PaginatedListLayout.js_name + [('solute.epfl.components:table_layout/static',
                                               'table_layout.js'),
                                              ('solute.epfl.components:table_layout/static',
@@ -12,24 +14,14 @@ class TableLayout(PaginatedListLayout):
                                               'FileSaver.min.js')]
     css_name = PaginatedListLayout.css_name + \
         [("solute.epfl.components:table_layout/static", "css/table_layout.css")]
-
-    template_name = 'table_layout/table_layout.html'
-
     compo_state = PaginatedListLayout.compo_state + ['column_visibility', 'orderby', 'ordertype', 'row_colors']
 
-    #: Used to map specific fields to child classes.
-    map_child_cls = {}
-    fixed_header = True  #: Set to False if header should not be fixed.
-    #: Can be set to a tuple where each entry contains True/False denoting the visibility of the corresponding column
-    column_visibility = None
-    #: Set to true to show a export-button which will automatically export the tables data as .csv-file.
-    show_export = False
+    # js settings
+    compo_js_name = 'TableLayout'
+    compo_js_params = PaginatedListLayout.compo_js_params + ['fixed_header']
+    compo_js_extras = ['handle_click']
 
-    orderby = None  #: An optional string denoting which column should be initially used for sorting.
-    ordertype = None  #: An optional string denoting the initial sort order.
-
-    row_colors = None  #: This is a simple row_id to row color mapping example: {1:ROW_DANGER,2:ROW_SUCCESS}
-
+    # custom compo settings
     ROW_DEFAULT = "row-default"  #: Row color constant
     ROW_PRIMARY = "row-primary"  #: Row color constant
     ROW_SUCCESS = "row-success"  #: Row color constant
@@ -37,14 +29,38 @@ class TableLayout(PaginatedListLayout):
     ROW_WARNING = "row-warning"  #: Row color constant
     ROW_DANGER = "row-danger"  #: Row color constant
 
-    new_style_compo = True
-    compo_js_name = 'TableLayout'
-    compo_js_params = ['row_offset', 'row_limit', 'row_count', 'row_data', 'show_pagination', 'show_search',
-                       'search_focus', 'fixed_header', 'infinite_scrolling', 'infinite_scroll_debounce_delay']
-    compo_js_extras = ['handle_click']
+    # custom compo attributes
+    map_child_cls = {}  #: Used to map specific fields to child classes.
+    fixed_header = True  #: Set to False if header should not be fixed.
+    #: Can be set to a tuple where each entry contains True/False denoting the visibility of the corresponding column
+    column_visibility = None
+    #: Set to true to show a export-button which will automatically export the tables data as .csv-file.
+    show_export = False
+    orderby = None  #: An optional string denoting which column should be initially used for sorting.
+    ordertype = None  #: An optional string denoting the initial sort order.
+    row_colors = None  #: This is a simple row_id to row color mapping example: {1:ROW_DANGER,2:ROW_SUCCESS}
 
-    def __init__(self, page, cid, show_search=None, height=None, column_visibility=None, orderby=None, ordertype=None,
-                 row_colors=None, show_export=None, **kwargs):
+    def __init__(self, page, cid,
+                 node_list=None,
+                 height=None,
+                 hide_list=None,
+                 show_search=None,
+                 show_pagination=None,
+                 search_placeholder=None,
+                 search_focus=None,
+                 visible_pages_limit=None,
+                 reset_row_offset_on_search_change=None,
+                 search_focus_after_search=None,
+                 search_timeout=None,
+                 infinite_scroll_debounce_delay=None,
+                 map_child_cls=None,
+                 fixed_header=None,
+                 column_visibility=None,
+                 show_export=None,
+                 orderby=None,
+                 ordertype=None,
+                 row_colors=None,
+                 **kwargs):
         """Table based on a paginated list. Offers searchbar above and pagination below using the EPFL theming
         mechanism.
 
@@ -69,20 +85,28 @@ class TableLayout(PaginatedListLayout):
             }
         )
 
-        :param height: Set the table to the given height in pixels.
+        :param node_list: List of child components.
+        :param height: Set the list to the given height in pixels.
+        :param hide_list: Hide the list container but nothing else.
         :param show_search: Toggle weather the search field is shown or not.
         :param show_pagination: Toggle weather the pagination is shown or not.
+        :param search_placeholder: The placeholder text for the search input.
         :param search_focus: Toggle weather the search field receives focus on load or not.
+        :param visible_pages_limit: Specify the number of pages that should be visible in the pagination bar.
+        :param reset_row_offset_on_search_change: Reset row_offset once the user changes the search string.
+        :param search_focus_after_search: Focus the search input after a search
+        :param search_timeout: The timeout in ms until the search event fires
+        :param infinite_scroll_debounce_delay: The delay for scroll debounce in infinite scrolling lists
+        :param map_child_cls: Used to map specific fields to child classes.
+        :param fixed_header: Set to False if header should not be fixed.
         :param column_visibility: An optional tuple denoting which columns should be initially displayed or not.
                                   If set, its length has to match the length of table columns.
+        :param show_export: Set to true to show a export-button which will export the table data as .csv-file.
         :param orderby: An optional string denoting which column should be initially used for sorting.
         :param ordertype: An optional string denoting the initial sort order.
         :param row_colors: This is a simple row_id to row color mapping example: {1:ROW_DANGER,2:ROW_SUCCESS}
-        :param show_export: Set to true to show a export-button which will export the table data as .csv-file.
         """
-        super(PaginatedListLayout, self).__init__(
-            page, cid, show_search=None, height=height, column_visibility=column_visibility, row_colors=row_colors,
-            orderby=orderby, ordertype=ordertype, show_export=show_export, **kwargs)
+        pass
 
     def setup_component(self):
         PaginatedListLayout.setup_component(self)
