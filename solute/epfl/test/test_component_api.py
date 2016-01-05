@@ -147,3 +147,21 @@ def test_container_type_style(component_container_type_class, result):
     AssertStyle(component_container_type_class, result)
 
 
+def test_cid_attribute_protection(page):
+    class CIDAsAttributeComponent(ComponentContainerBase):
+        cid = 'foobar'
+
+    page.root_node = CIDAsAttributeComponent
+
+    with pytest.raises(Exception):
+        page()
+
+
+def test_new_style_deprecation_protection(page):
+    class NewStyleAttributeComponent(ComponentContainerBase):
+        new_style_compo = True
+
+    page.root_node = NewStyleAttributeComponent
+
+    with pytest.raises(Exception):
+        page()
