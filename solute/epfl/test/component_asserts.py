@@ -227,6 +227,7 @@ class AssertStyleStructure(AssertBase):
 class AssertStyleInit(AssertBase):
     def __init__(self, parent):
         """Asserts for the init method documentation of the component. Contains the following checks:
+            * Unique init method is present.
             * Docstring present.
             * Required parameters present and in the correct position.
             * All inherited parameters present or exempted.
@@ -253,6 +254,12 @@ class AssertStyleInit(AssertBase):
         base_init_func = base.__init__
         base_init_docs = base_init_func.__doc__
         base_init_code = base_init_func.func_code
+
+        # Unique init method is present.
+        if init_func == base_init_func:
+            self.errors.append("{check_type}{compo_name} __init__ method is inherited from parent not unique."
+                               .format(compo_name=self.compo_name, check_type=check_type))
+            return
 
         # Docstring present.
         if not init_docs:
