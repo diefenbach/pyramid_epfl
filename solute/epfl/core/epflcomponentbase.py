@@ -867,7 +867,7 @@ class ComponentBase(object):
             raise Exception("You illegally set a cid as a class attribute in " + repr(cls))
 
         if hasattr(cls, 'new_style_compo'):
-            raise DeprecationWarning('new_style_compo is deprecated use compo_js_auto_parts (in %s)' % (cls))
+            raise DeprecationWarning('new_style_compo is deprecated use compo_js_auto_parts, in: ' + repr(cls))
 
     def redraw(self, parts=None):
         """ This requests a redraw. All components that are requested to be redrawn are redrawn when
