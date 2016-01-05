@@ -8,7 +8,7 @@ class PlainHtml(FormInputBase):
     template_name = "plain_html/plain_html.html"
 
     # js settings
-    new_style_compo = False
+    compo_js_auto_parts = False
 
     # derived attribute overrides
     value = ''  #: The HTML this component displays

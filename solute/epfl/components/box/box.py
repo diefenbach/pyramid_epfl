@@ -16,7 +16,7 @@ class Box(epflcomponentbase.ComponentContainerBase):
     js_name = ["box.js"]
 
     # js settings
-    new_style_compo = True
+    compo_js_auto_parts = True
     compo_js_params = ['hover_box', 'hover_box_remove_on_close', 'hover_box_close_on_outside_click', 'is_removable',
                        'read_only']
     compo_js_extras = ['handle_click']

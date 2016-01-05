@@ -26,7 +26,7 @@ class Button(ComponentBase):
         ['disabled', 'icon', 'value', 'color', 'icon_size', 'icon_color']
 
     # js settings
-    new_style_compo = True
+    compo_js_auto_parts = True
     compo_js_params = ['event_target', 'event_name', 'confirm_first', 'confirm_message',
                        'stop_propagation_on_click', 'disable_on_click']
     compo_js_name = 'Button'

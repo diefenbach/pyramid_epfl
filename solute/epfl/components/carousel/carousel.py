@@ -23,7 +23,7 @@ class Carousel(ComponentBase):
     css_name = [("solute.epfl.components:carousel/static", "carousel.css")]
     compo_state = ComponentBase.compo_state + ["entries","width","height"]
 
-    new_style_compo = True
+    compo_js_auto_parts = True
     compo_js_params = []
     compo_js_name = 'Carousel'
     compo_js_extras = []

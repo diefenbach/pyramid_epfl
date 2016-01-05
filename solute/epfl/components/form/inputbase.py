@@ -8,7 +8,7 @@ class FormInputBase(ComponentBase):
     asset_spec = "solute.epfl.components:form/static"
     js_name = ["input_base.js"]
     css_name = ["input_base.css"]
-    new_style_compo = True
+    compo_js_auto_parts = True
     compo_js_name = 'FormInputBase'
     compo_js_params = ['submit_form_on_enter', 'input_focus', 'fire_change_immediately', 'label_style', 'input_style']
     compo_state = ['label', 'readonly']

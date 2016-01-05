@@ -10,7 +10,7 @@ class Form(epflcomponentbase.ComponentContainerBase):
     compo_state = ["_registered_fields", "is_dirty"]
 
     # js settings
-    new_style_compo = True
+    compo_js_auto_parts = True
     compo_js_name = 'Form'
 
     # custom compo attributes

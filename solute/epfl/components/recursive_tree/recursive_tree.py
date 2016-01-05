@@ -13,7 +13,7 @@ class RecursiveTree(epflcomponentbase.ComponentContainerBase):
     ]
 
     # js settings
-    new_style_compo = True
+    compo_js_auto_parts = True
     compo_js_params = ['scroll_position']
     compo_js_name = 'RecursiveTree'
 
