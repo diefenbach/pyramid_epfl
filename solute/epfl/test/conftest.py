@@ -30,6 +30,7 @@ def pytest_collection_modifyitems(items):
     for item in items:
         if item.nodeid.startswith("solute/epfl/test/components/"):
             item.add_marker('component_api')
+            item.add_marker('component_api_auto')
 
 
 def pytest_cmdline_preparse(args):
