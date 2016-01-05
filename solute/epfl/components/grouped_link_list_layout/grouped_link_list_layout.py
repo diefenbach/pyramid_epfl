@@ -23,6 +23,7 @@ class GroupedLinkListLayout(LinkListLayout):
     def __init__(self, page, cid,
                  node_list=None,
                  height=None,
+                 hide_list=None,
                  show_search=None,
                  show_pagination=None,
                  search_placeholder=None,
@@ -47,6 +48,7 @@ class GroupedLinkListLayout(LinkListLayout):
 
         :param node_list: List of child components.
         :param height: Set the list to the given height in pixels.
+        :param hide_list: Hide the list container but nothing else.
         :param show_search: Toggle weather the search field is shown or not.
         :param show_pagination: Toggle weather the pagination is shown or not.
         :param search_placeholder: The placeholder text for the search input.
