@@ -17,7 +17,7 @@ class Form(epflcomponentbase.ComponentContainerBase):
     # custom compo attributes
     _registered_fields = None  #: Private cache of the fields registered with this form.
     is_dirty = False  #: Flag whether the form has had any change of value since initialisatio
-    event_name = 'submit'  #: Default event handler name (without trailing /)
+    event_name = 'submit'  #: Default name of the event handling method (without trailing "handle\_").
 
     # internal compo attributes
     validate_hidden_fields = False  #: Flag to determine whether hidden fields will be validated. TODO: DEFECTIVE!
@@ -31,7 +31,7 @@ class Form(epflcomponentbase.ComponentContainerBase):
 
         :param node_list: List of child components.
         :param validate_hidden_fields: Flag to determine whether hidden fields will be validated.
-        :param event_name: Default event handler name (without trailing /).
+        :param event_name: Default name of the event handling method (without trailing "handle\_").
         """
         pass
 
