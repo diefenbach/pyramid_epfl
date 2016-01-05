@@ -11,7 +11,7 @@ class Dropdown(epflcomponentbase.ComponentBase):
     compo_state = epflcomponentbase.ComponentBase.compo_state + ['children']
 
     # js settings
-    new_style_compo = True
+    compo_js_auto_parts = True
     compo_js_name = 'Dropdown'
 
     # custom compo attributes

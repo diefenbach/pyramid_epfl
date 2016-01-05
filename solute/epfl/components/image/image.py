@@ -25,7 +25,7 @@ class Image(epflcomponentbase.ComponentBase):
     width = None  #: Set a fixed width. This is used directly in css so use "120px" or "10em", etc.
     padding = False  #: Set a padding. This is used directly in css so use "120px" or "10em", etc.
 
-    new_style_compo = True
+    compo_js_auto_parts = True
     compo_js_name = 'Image'
     compo_js_params = ['show_dominant_color', 'show_additional_colors']
     compo_js_extras = ['handle_drag']

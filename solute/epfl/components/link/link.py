@@ -12,7 +12,7 @@ class Link(ComponentBase):
     compo_state = ["url", "route", "text", "icon", "name", "active", "context_menu", "popover_text", "popover_trigger"]
 
     # js settings
-    new_style_compo = True
+    compo_js_auto_parts = True
     compo_js_params = ['event_name', 'double_click_event_name', 'shift_click_event_name', 'stop_propagation_on_click',
                        'popover_text', 'popover_position', 'popover_trigger']
     compo_js_name = 'Link'

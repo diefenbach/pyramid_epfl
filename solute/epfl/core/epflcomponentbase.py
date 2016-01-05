@@ -376,7 +376,7 @@ class ComponentBase(object):
     disable_auto_update = False
 
     #: New style components use the new default mechanism to update client side javascript states automatically.
-    new_style_compo = False
+    compo_js_auto_parts = False
     compo_js_params = []  #: Attributes to be provided as JS parameters.
     compo_js_extras = []  #: New style features to be activated.
     compo_js_name = 'ComponentBase'  #: Name of the JS Class.
@@ -866,6 +866,9 @@ class ComponentBase(object):
         if hasattr(cls, 'cid'):
             raise Exception("You illegally set a cid as a class attribute in " + repr(cls))
 
+        if hasattr(cls, 'new_style_compo'):
+            raise DeprecationWarning('new_style_compo is deprecated use compo_js_auto_parts, in: ' + repr(cls))
+
     def redraw(self, parts=None):
         """ This requests a redraw. All components that are requested to be redrawn are redrawn when
         the ajax-response is generated (namely page.handle_ajax_request()).
@@ -913,26 +916,26 @@ class ComponentBase(object):
         self.page.transaction.switch_component(cid, target, position=position)
 
     @classmethod
-    def check_new_style_js_parts(cls):
+    def check_compo_js_auto_parts(cls):
         if not cls.js_parts:
             return
 
         inherited_cls = cls.__bases__[0]
-        if inherited_cls.new_style_compo == cls.new_style_compo:
-            return inherited_cls.check_new_style_js_parts()
+        if inherited_cls.compo_js_auto_parts == cls.compo_js_auto_parts:
+            return inherited_cls.check_compo_js_auto_parts()
 
         if inherited_cls.js_parts is cls.js_parts:
             raise Exception(
                 'CompatibilityError: You have inherited a non empty js_parts attribute on a new style component %s. '
-                'Set your own new_style_compo compliant js_parts attribute or set new_style_compo to False.'
+                'Set your own compo_js_auto_parts compliant js_parts attribute or set compo_js_auto_parts to False.'
                 % cls
             )
 
     def get_compo_init_js(self):
-        if not self.new_style_compo:
+        if not self.compo_js_auto_parts:
             return ''
 
-        self.check_new_style_js_parts()
+        self.check_compo_js_auto_parts()
 
         params = {}
         for param_name in self.compo_js_params:

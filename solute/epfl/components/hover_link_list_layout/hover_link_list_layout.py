@@ -16,7 +16,7 @@ class HoverLinkListLayout(LinkListLayout):
                                          'hover_link_list_layout.js')]
 
     # js settings
-    new_style_compo = True
+    compo_js_auto_parts = True
     compo_js_name = 'HoverLinkListLayout'
 
     # derived attribute overrides

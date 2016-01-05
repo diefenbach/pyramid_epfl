@@ -57,7 +57,7 @@ class ContextListLayout(PaginatedListLayout):
         ("solute.epfl.components:context_list_layout/static", "context_list_layout.css")]
 
     # js settings
-    new_style_compo = True
+    compo_js_auto_parts = True
     compo_js_name = 'ContextListLayout'
 
     # derived attributes overrides

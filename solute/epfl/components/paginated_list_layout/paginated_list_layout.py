@@ -31,7 +31,7 @@ class PaginatedListLayout(PrettyListLayout):
     )]
 
     # js settings
-    new_style_compo = True
+    compo_js_auto_parts = True
     compo_js_params = PrettyListLayout.compo_js_params + ['row_offset', 'row_limit', 'row_count',
                                                           'row_data', 'show_pagination', 'show_search',
                                                           'search_focus', 'infinite_scrolling', 'search_timeout',

@@ -362,7 +362,7 @@ class AssertStyleDocs(AssertBase):
             # Watchdog if for "All custom attributes have a docstring.", attributes listed here are exempt from this
             # check due to them being core attributes.
             if attr_name in ['asset_spec', 'compo_state', 'theme_path', 'css_name', 'js_name', 'js_parts',
-                             'new_style_compo', 'compo_js_params', 'compo_js_extras', 'compo_js_name', 'template_name',
+                             'compo_js_auto_parts', 'compo_js_params', 'compo_js_extras', 'compo_js_name', 'template_name',
                              'compo_config', 'data_interface', 'default_child_cls', 'auto_update_children',
                              'theme_path_default', 'js_name_no_bundle', 'exempt_params']:
                 continue

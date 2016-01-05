@@ -12,7 +12,7 @@ class Diagram(epflcomponentbase.ComponentBase):
     compo_state = ["diagram_params"]
 
     # js settings
-    new_style_compo = True
+    compo_js_auto_parts = True
     compo_js_name = 'Diagram'
     compo_js_params = ['diagram_params']
 

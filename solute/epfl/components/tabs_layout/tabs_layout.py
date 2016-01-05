@@ -10,7 +10,7 @@ class TabsLayout(epflcomponentbase.ComponentContainerBase):
     js_name = ["tabs_layout.js"]
 
     # js settings
-    new_style_compo = True
+    compo_js_auto_parts = True
     compo_js_name = 'TabsLayout'
 
     # custom compo attributes
