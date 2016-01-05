@@ -24,6 +24,7 @@ class PrettyListLayout(ListLayout):
     def __init__(self, page, cid,
                  node_list=None,
                  height=None,
+                 hide_list=None,
                  **extra_params):
         """ContainerComponent using Bootstrap to prettify the output like a list.
 
