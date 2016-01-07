@@ -228,6 +228,9 @@ def includeme(config):
     if not asbool(config.get_settings().get('epfl.enable_has_access_check', False)):
         epflcomponentbase.ComponentBase._access = True
 
+    if config.get_settings().get('epfl.active_modules', '').find(',') != -1:
+        raise DeprecationWarning('Commas in epfl.active_modules are deprecated - remove them. Use one line per module')
+
     config.include('pyramid_jinja2')
 
     config.add_renderer('.html', 'pyramid_jinja2.renderer_factory')
