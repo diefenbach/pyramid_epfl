@@ -8,6 +8,7 @@ import jinja2
 
 from pyramid.response import Response
 from pyramid import security
+from pyramid.settings import asbool
 
 import ujson as json
 import socket
@@ -273,7 +274,7 @@ class Page(object):
 
     def add_static_component(self, cid, compo_obj, overwrite=False):
         """ Registers the component in the page. """
-        if self.request.registry.settings.get('epfl.debug', 'false') == 'true' \
+        if asbool(self.request.registry.settings.get('epfl.debug', False)) \
                 and self.transaction.get_component(cid) is not None and not overwrite:
             raise Exception('A component with CID %(cid)s is already present in this page!\n'
                             'Existing component: %(existing_compo)r of type %(existing_compo_unbound)r\n'
@@ -337,7 +338,7 @@ class Page(object):
 
         opts = {"tid": self.transaction.get_id(),
                 "ptid": self.transaction.get_pid(),
-                "log_time": self.request.registry.settings.get('epfl.performance_log.enabled') == 'True'}
+                "log_time": asbool(self.request.registry.settings.get('epfl.performance_log.enabled', False))}
 
         return "epfl.init_page(" + json.encode(opts) + ")"
 
