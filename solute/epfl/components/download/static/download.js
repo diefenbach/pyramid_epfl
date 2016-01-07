@@ -1,8 +1,8 @@
 epfl.Download = function(cid, params) {
-    epfl.ComponentBase.call(this, cid, params);
+    epfl.Button.call(this, cid, params);
 };
 
-epfl.Download.inherits_from(epfl.ComponentBase);
+epfl.Download.inherits_from(epfl.Button);
 
 Object.defineProperty(epfl.Download.prototype, 'button', {
     get: function () {

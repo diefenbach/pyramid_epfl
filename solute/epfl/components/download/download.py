@@ -20,8 +20,8 @@ class Download(Button):
    """
 
     # core internals
-    js_name = [("solute.epfl.components:download/static", "download.js"),
-               ("solute.epfl.components:download/static", "FileSaver.min.js")]
+    js_name = Button.js_name + [("solute.epfl.components:download/static", "download.js"),
+                                ("solute.epfl.components:download/static", "FileSaver.min.js")]
 
     # js settings
     compo_js_name = 'Download'
@@ -74,7 +74,8 @@ class Download(Button):
         :param stop_propagation_on_click: Set to true if click event should not be propagated to parent components
         :param download_direct: Download the file(s) direct
         """
-        pass
+        if not self.event_target:
+            self.event_target = self.cid
 
     def handle_direct_download(self, cid):
         """
