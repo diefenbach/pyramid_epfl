@@ -74,8 +74,7 @@ class Download(Button):
         :param stop_propagation_on_click: Set to true if click event should not be propagated to parent components
         :param download_direct: Download the file(s) direct
         """
-        if not self.event_target:
-            self.event_target = self.cid
+        pass
 
     def handle_direct_download(self, cid):
         """

@@ -98,5 +98,4 @@ class Button(ComponentBase):
         :param disable_on_click: If set to true, the html button (not the component!) is set to disabled on a click
         :param stop_propagation_on_click: Set to true if click event should not be propagated to parent components
         """
-        if not self.event_target:
-            self.event_target = self.cid
+        pass
