@@ -139,53 +139,30 @@ You probably are aware of the possibility to create such a class, so here's what
             stripped_conf.pop('cid', None)
             stripped_conf.pop('slot', None)
             if len(stripped_conf) > 0:
-                conf_hash = str(stripped_conf).__hash__()
                 [...]
             else:
                 return self.__unbound_cls__
 
-
- 3. Check if the config is that of a pre existing dynamic class in the global store and return it if possible.
-
-    .. code-block:: python
-
-                try:
-                    return self.__global_dynamic_class_store__[(conf_hash, self.__unbound_cls__)]
-                except KeyError:
-                    pass
-
- 4. Generate a dynamic class id, a name based on that and the original class name.
+ 3. Generate a dynamic class id, a name based on that and the original class name.
 
     .. code-block:: python
 
-                dynamic_class_id = "{0:08x}".format(randint(0, 0xffffffff))
-                name = '{name}_auto_{dynamic_class_id}'.format(
-                    name=self.__unbound_cls__.__name__,
-                    dynamic_class_id=dynamic_class_id
-                )
+                name = self.__unbound_cls__.__name__ + '_auto_' + generate_dynamic_class_id()
 
- 5. Fill the local class cache of this |unbound_compo|.
+ 4. Create the actual class of this |unbound_compo| with the given config.
 
     .. code-block:: python
 
-                self.__dynamic_class_store__ = type(name, (self.__unbound_cls__, ), {})
+                self.__dynamic_class_store__ = type(name, (self.__unbound_cls__, ), self.__unbound_config__)
 
- 6. Assign all necessary attributes from the config.
+ 5. Assign necessary attributes and return it.
 
     .. code-block:: python
 
-                self.__dynamic_class_store__ = type(name, (self.__unbound_cls__, ), {})
-                for param in self.__unbound_config__:
-                    setattr(self.__dynamic_class_store__, param, self.__unbound_config__[param])
                 setattr(self.__dynamic_class_store__, '___unbound_component__', self)
+                setattr(self.__dynamic_class_store__, '__epfl_do_not_track', True)
 
- 7. Put the fresh class in the global cache and return it.
-
-    .. code-block:: python
-
-                self.__global_dynamic_class_store__[(conf_hash, self.__unbound_cls__)] = self.__dynamic_class_store__
-                return self.__global_dynamic_class_store__[(conf_hash, self.__unbound_cls__)]
-
+                return self.__dynamic_class_store__
 
 Component instantiation
 -----------------------

@@ -167,8 +167,6 @@ class UnboundComponent(object):
     instantiated component if it is called with an :class:`.UnboundComponent`.
     """
     __dynamic_class_store__ = None  #: Internal caching for :attr:`UnboundComponent.__dynamic_class__`
-    __global_dynamic_class_store__ = {}  #: Global caching for :attr:`UnboundComponent.__dynamic_class__`
-    __use_global_store__ = True  #: Flag whether to use the global dynamic class cache.
 
     def __init__(self, cls, config):
         """
@@ -223,22 +221,11 @@ class UnboundComponent(object):
         stripped_conf.pop('cid', None)
         stripped_conf.pop('slot', None)
         if len(stripped_conf) > 0:
-            if self.__use_global_store__:
-                conf_hash = stripped_conf.__str__()
-                try:
-                    return self.__global_dynamic_class_store__[(conf_hash, self.__unbound_cls__)]
-                except KeyError:
-                    pass
-
             name = self.__unbound_cls__.__name__ + '_auto_' + generate_dynamic_class_id()
             self.__dynamic_class_store__ = type(name, (self.__unbound_cls__, ), self.__unbound_config__)
 
             setattr(self.__dynamic_class_store__, '___unbound_component__', self)
-            setattr(self.__dynamic_class_store__, '__epfl_do_not_track', not self.__use_global_store__)
-
-            if self.__use_global_store__:
-                self.__global_dynamic_class_store__[(conf_hash, self.__unbound_cls__)] = self.__dynamic_class_store__
-                return self.__global_dynamic_class_store__[(conf_hash, self.__unbound_cls__)]
+            setattr(self.__dynamic_class_store__, '__epfl_do_not_track', True)
 
             return self.__dynamic_class_store__
 

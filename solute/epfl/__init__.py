@@ -220,8 +220,9 @@ def includeme(config):
     """
     The main configuration of the EPFL
     """
-    epflcomponentbase.UnboundComponent.__use_global_store__ = config.get_settings().get('epfl.use_global_class_cache',
-                                                                                        'False') == 'True'
+    if config.get_settings().get('epfl.use_global_class_cache', None) is not None:
+        raise DeprecationWarning('epfl.use_global_class_cache is deprecated - Please remove it')
+
     if config.get_settings().get('epfl.enable_has_access_check', 'False') == 'False':
         epflcomponentbase.ComponentBase._access = True
 
