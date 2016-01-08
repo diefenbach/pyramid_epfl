@@ -17,7 +17,9 @@ epfl.FormInputBase.prototype.after_response = function(data) {
 };
 
 epfl.FormInputBase.prototype.handle_submit_form_on_enter = function () {
-    this.send_event('submit', {});
+    // delegate the submit event to the form
+    var parent_form = this.elm.closest('.epfl-form');
+    parent_form.submit();
 };
 
 epfl.FormInputBase.prototype.send_change = function(event, value) {

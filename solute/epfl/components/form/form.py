@@ -12,10 +12,12 @@ class Form(epflcomponentbase.ComponentContainerBase):
     # js settings
     compo_js_auto_parts = True
     compo_js_name = 'Form'
+    compo_js_params = ['event_name']
 
     # custom compo attributes
     _registered_fields = None  #: Private cache of the fields registered with this form.
     is_dirty = False  #: Flag whether the form has had any change of value since initialisatio
+    event_name = 'submit'  #: Default name of the event handling method (without trailing "handle\_").
 
     # internal compo attributes
     validate_hidden_fields = False  #: Flag to determine whether hidden fields will be validated. TODO: DEFECTIVE!
@@ -23,11 +25,13 @@ class Form(epflcomponentbase.ComponentContainerBase):
     def __init__(self, page, cid,
                  node_list=None,
                  validate_hidden_fields=None,
+                 event_name=None,
                  **extra_params):
         """Generates a form container with some convenience handling for child components with name and value.
 
         :param node_list: List of child components.
         :param validate_hidden_fields: Flag to determine whether hidden fields will be validated.
+        :param event_name: Default name of the event handling method (without trailing "handle\_").
         """
         pass
 

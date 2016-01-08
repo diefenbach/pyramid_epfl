@@ -8,6 +8,6 @@ epfl.Form.prototype.after_response = function () {
     var compo = this;
     this.elm.submit(function(event) {
 	event.preventDefault();
-	compo.send_event("submit", {});
+	compo.send_event(compo.params.event_name, {});
     });
 };
