@@ -1,5 +1,7 @@
 from pyramid.view import view_config
 from pyramid import security
+from pyramid.settings import aslist
+
 from functools import wraps
 from solute.epfl.components import GroupedLinkListLayout
 from solute.epfl.core import epflutil
@@ -132,8 +134,7 @@ class EPFLView(object):
     def configure(config):
         EPFLView.config = config
 
-        active_modules = [m.strip() for m in config.registry.settings.get('epfl.active_modules', '').split(',')
-                          if m.strip()]
+        active_modules = aslist(config.registry.settings.get('epfl.active_modules', ''))
         for m in active_modules:
             module = config.maybe_dotted(m)
             epflutil.Discover().discover_module(module)

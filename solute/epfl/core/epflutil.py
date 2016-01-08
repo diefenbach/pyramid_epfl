@@ -10,6 +10,7 @@ import socket
 from pyramid import security
 from pyramid import path
 from pyramid import threadlocal
+from pyramid.settings import asbool
 
 import solute.epfl
 from solute.epfl import core
@@ -127,7 +128,7 @@ class Lifecycle(object):
         registry = request.registry
         settings = registry.settings
 
-        if settings.get('epfl.performance_log.enabled') != 'True':
+        if not asbool(settings.get('epfl.performance_log.enabled', False)):
             return
 
         server, port = settings.get('epfl.performance_log.server'), int(settings.get('epfl.performance_log.port'))

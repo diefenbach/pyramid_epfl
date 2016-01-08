@@ -26,6 +26,7 @@ from webassets import Bundle
 from webassets import Environment
 
 from pyramid.path import AssetResolver
+from pyramid.settings import asbool
 
 
 class IEPFLJinja2Environment(Interface):
@@ -191,7 +192,7 @@ def generate_webasset_bundles(config):
     for cls in pages:
         page_bundles.append(extract_static_assets_from_components([cls]))
 
-    if config.registry.settings.get('epfl.webassets.active') != 'true':
+    if not asbool(config.registry.settings.get('epfl.webassets.active', False)):
         return
 
     ar = AssetResolver()
@@ -223,8 +224,12 @@ def includeme(config):
     if config.get_settings().get('epfl.use_global_class_cache', None) is not None:
         raise DeprecationWarning('epfl.use_global_class_cache is deprecated - Please remove it')
 
-    if config.get_settings().get('epfl.enable_has_access_check', 'False') == 'False':
+    # no access checks means grant access to all
+    if not asbool(config.get_settings().get('epfl.enable_has_access_check', False)):
         epflcomponentbase.ComponentBase._access = True
+
+    if config.get_settings().get('epfl.active_modules', '').find(',') != -1:
+        raise DeprecationWarning('Commas in epfl.active_modules are deprecated - remove them. Use one line per module')
 
     config.include('pyramid_jinja2')
 
