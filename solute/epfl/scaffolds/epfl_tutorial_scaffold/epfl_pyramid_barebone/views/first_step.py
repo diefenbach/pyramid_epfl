@@ -71,14 +71,14 @@ class NoteForm(Form):
 class NoteBox(Box):
 
     is_removable = True
-    disable_auto_update = True
+    #disable_auto_update = True
 
     def init_struct(self):
 
         # self.node_list.append(ComponentBase(template_name='epfl_pyramid_barebone:templates/note.html'))
         # self.node_list.append(Button(value='Edit this note',
         #                              event_name='edit_note'))
-        self.node_list.append(Text(value=self.text))
+        self.node_list.append(Text(value=self.reflect.container_compo.text))
         self.node_list.append(Button(value='Edit this note',
                                      event_name='edit_note'))
 
