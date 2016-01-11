@@ -33,6 +33,7 @@ class NoteModel(ModelBase):
 
 
 class NoteForm(components.Form):
+    """ This component displays the form to add and edit note entries. """
 
     id = None
     compo_state = components.Form.compo_state + ["id"]
@@ -91,9 +92,16 @@ class NoteForm(components.Form):
 
 
 class NoteLayout(components.CardinalLayout):
+    """ Define the global cardinal based layout with the links to the other tutorial steps.
+    This is also used as root for the other steps, so all will have a consistent layout. """
 
+    # avoid extra margin for the north slot
     plain = ['north']
+
+    # this forces a none-fluid base container
     constrained = True
+
+    # define the list of sub components used in this component
     node_list = [
         components.NavLayout(
             slot='north',
@@ -163,6 +171,8 @@ class FirstStepRoot(NoteLayout):
         ])
 
     def handle_open_details(self):
+        """ Handler to open a modal with some note details, triggered via click on the
+        LinkListLayout entries in the west slot. """
         calling_cid = self.epfl_event_trace[0]
         note_id = self.page.components[calling_cid].id
         note_data = self.page.model.get_note(note_id)
@@ -183,11 +193,17 @@ class FirstStepRoot(NoteLayout):
         self.redraw()
 
     def handle_edit_note(self):
+        """ Gets triggered via the "Edit this note" Button. To read the corrosponding note, the
+        event_trace is used to identify the calling component. With this information, the
+        component hierarchy is used to get the needed note_id. """
         calling_cid = self.epfl_event_trace[0]
         note_id = self.page.components[calling_cid].container_compo.container_compo.id
         self.page.note_form.load_note(note_id)
 
     def handle_delete_note(self):
+        """ Gets triggered via the "Delete this note" Button. To read the corrosponding note, the
+        event_trace is used to identify the calling component. With this information, the
+        component hierarchy is used to get the needed note_id. """
         calling_cid = self.epfl_event_trace[0]
         note_id = self.page.components[calling_cid].container_compo.container_compo.id
 
