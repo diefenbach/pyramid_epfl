@@ -14,6 +14,7 @@ from solute.epfl.components import NavLayout
 from solute.epfl.components import LinkListLayout
 
 from solute.epfl.core.epflassets import ModelBase
+from solute.epfl.core.epflassets import EPFLView
 from solute.epfl.core.epflcomponentbase import ComponentBase
 
 from .first_step import FirstStepRoot
@@ -107,7 +108,7 @@ class NoteModel(ModelBase):
 
         self.data_store['_id_lookup'][note['id']] = note
 
-        if note['parent'] != 0:
+        if note['parent']:
             self.get_note(note['parent']).setdefault('children', []).append(note['id'])
         else:
             self.data_store.setdefault('notes', []).append(note)
@@ -154,7 +155,7 @@ class SecondStepRoot(FirstStepRoot):
                                    get_data='notes')])
 
 
-@view_config(route_name='SecondStep')
+@EPFLView(route_name='SecondStep', route_pattern='/second')
 class SecondStepPage(epfl.Page):
     root_node = SecondStepRoot()
     model = NoteModel

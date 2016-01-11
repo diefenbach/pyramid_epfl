@@ -12,7 +12,8 @@ from solute.epfl.components import TextInput
 from solute.epfl.components import Button
 from solute.epfl.components import PasswordInput
 
-from solute.epfl.core.epflassets import epfl_acl, epfl_has_role
+from solute.epfl.core.epflassets import EPFLView
+from solute.epfl.core.epflacl import epfl_acl, epfl_has_role
 
 
 @epfl_acl([('admin', 'access')])
@@ -44,13 +45,13 @@ class Login(Box):
     users = {'admin': 'abcdefg',
              'someuser': '12345'}
 
-    node_list = [cfForm(cid='login_form',
-                        node_list=[TextInput(label='Username',
-                                          name='username'),
-                                   PasswordInput(label='Password',
-                                          name='password'),
-                                   Button(value='Login',
-                                            event_name='login')])]
+    node_list = [Form(cid='login_form',
+                      node_list=[TextInput(label='Username',
+                                           name='username'),
+                                 PasswordInput(label='Password',
+                                               name='password'),
+                                 Button(value='Login',
+                                        event_name='login')])]
 
     def handle_login(self):
         if not self.page.login_form.validate():
@@ -74,6 +75,6 @@ class ThirdStepRoot(FirstStepRoot):
         pass
 
 
-@view_config(route_name='ThirdStep')
+@EPFLView(route_name='ThirdStep', route_pattern='/third')
 class ThirdStepPage(epfl.Page):
     root_node = ThirdStepRoot()

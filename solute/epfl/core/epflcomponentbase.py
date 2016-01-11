@@ -800,6 +800,8 @@ class ComponentBase(object):
                 "ComponentRenderEnvironment" -> "ComponentBase.main" -> "jinja2.Markup";
             }
         """
+        # if self.cid == 'notes_list':
+        #     import ipdb; ipdb.set_trace()
 
         if self.render_cache is not None:
             return self.render_cache[target]
@@ -1191,6 +1193,7 @@ class ComponentContainerBase(ComponentBase):
     def update_children(self, force=False):
         """If a default_child_cls has been set this updates all child components to reflect the current state from
         get_data(). Will raise an exception if called twice without the force parameter present."""
+        import ipdb; ipdb.set_trace()
 
         if self.__update_children_done__ and not force:
             raise Exception('update_children called twice without force parameter for component %s.' % self.cid)

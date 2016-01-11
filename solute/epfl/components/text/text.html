@@ -28,6 +28,7 @@
     {% else %}
         <span id="{{ compo.cid }}" epflid="{{ compo.cid }}">{{ compo.value }}</span>
     {% endif %}
-{% else %}
+        {% else %}
+        yyyyyyyyyyyyy
     <span epflid="{{ compo.cid }}" title="{{ compo.title if compo.title is defined else '' }}">{{ compo.value }}</span>
 {% endif %}

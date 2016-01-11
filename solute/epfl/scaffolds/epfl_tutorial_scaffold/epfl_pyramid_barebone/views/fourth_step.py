@@ -7,7 +7,8 @@ from pyramid import security
 from .first_step import FirstStepRoot
 
 from solute.epfl.components import Box
-from solute.epfl.components import DragBox
+#from solute.epfl.components import DragBox
+from solute.epfl.core.epflassets import EPFLView
 
 
 class DropBox(Box):
@@ -31,18 +32,19 @@ class DropBox(Box):
 
 
 class FourthStepRoot(FirstStepRoot):
-    node_list = FirstStepRoot.node_list + [DropBox(slot='west',
-                                                   node_list=[DragBox(title=1),
-                                                              DragBox(title=2),
-                                                              DragBox(title=3),
-                                                              DragBox(title=4),
-                                                              DragBox(title=5), ]),
-                                           DropBox(cid='second_drop')]
+    node_list = []
+    # node_list = FirstStepRoot.node_list + [DropBox(slot='west',
+    #                                                node_list=[DragBox(title=1),
+    #                                                           DragBox(title=2),
+    #                                                           DragBox(title=3),
+    #                                                           DragBox(title=4),
+    #                                                           DragBox(title=5), ]),
+    #                                        DropBox(cid='second_drop')]
 
     def init_struct(self):
         pass
 
 
-@view_config(route_name='FourthStep')
+@EPFLView(route_name='FourthStep', route_pattern='/fourth')
 class FourthStepPage(epfl.Page):
     root_node = FourthStepRoot()
