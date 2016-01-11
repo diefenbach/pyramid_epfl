@@ -71,6 +71,7 @@ class NoteForm(Form):
 class NoteBox(Box):
 
     is_removable = True
+    disable_auto_update = True
 
     def init_struct(self):
 
