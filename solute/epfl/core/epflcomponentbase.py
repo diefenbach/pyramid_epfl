@@ -224,7 +224,7 @@ class UnboundComponent(object):
             container.page.transaction.set_component(self.position[0], compo_info, position=position)
         except Exception:
             if self.position[0] == self.__unbound_config__.get('__autogen_cid__'):
-                self(cid=None).register_in_transaction(container, slot, position)
+                return self(cid=None).register_in_transaction(container, slot, position)
         return container.page.transaction.get_component_instance(container.page, self.position[0])
 
     def __getstate__(self):
@@ -689,7 +689,6 @@ class ComponentBase(object):
         identified by it´s "component_id" (self.cid).
         May be overridden by concrete components.
         """
-
         event_handler = getattr(self, "handle_" + event_name, None)
         epfl_event_trace = event_params.pop('epfl_event_trace', [])
         try:
