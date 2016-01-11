@@ -772,8 +772,6 @@ class ComponentBase(object):
                 "ComponentRenderEnvironment" -> "ComponentBase.main" -> "jinja2.Markup";
             }
         """
-        # if self.cid == 'notes_list':
-        #     import ipdb; ipdb.set_trace()
 
         if self.render_cache is not None:
             return self.render_cache[target]
