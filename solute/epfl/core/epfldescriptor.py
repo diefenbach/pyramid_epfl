@@ -15,6 +15,9 @@ class Descriptor(object):
         raise NotImplementedError('You have to implement the pickle __setstate__ method of the Descriptor!')
 
     def __eq__(self, other):
+        """This method has to be implemented in order for the transaction to correctly recognize equivalence. Instances
+        generated from equal state must always equal themselves, else the transaction initialisation fails.
+        """
         raise NotImplementedError('You have to implement the __eq__ method of the Descriptor!')
 
 
@@ -25,13 +28,21 @@ class Reference(Descriptor):
 
     @property
     def container_compo(self):
+        """Same behavior as :meth:`__getattr__`, primarily present as autocomplete helper.
+        """
         return Reference('container_compo', self)
 
     @property
     def page(self):
+        """Same behavior as :meth:`__getattr__`, primarily present as autocomplete helper.
+        """
         return Reference('page', self)
 
     def __getattr__(self, item):
+        """This allows for free attribute names to be accessed, even chained, on a reflection. Only __value is a special
+        case, since it not being present (thus being searched using this function) makes the AttributeError mandatory.
+        You may change this behavior in order to implement storage chains using :class:`Reference`.
+        """
         if item == '__value':
             raise AttributeError()
         return Reference(item, self)
@@ -52,7 +63,10 @@ class Reference(Descriptor):
         return instance
 
     def __set__(self, instance, value):
-        self.__value = value
+        """Sets a shadow value to the private attribute __value. This method may be overwritten or expanded in order to
+        implement storage chains.
+        """
+        raise NotImplementedError("This method is not yet supported.")
 
     def __getstate__(self):
         value = AttributeError
@@ -66,13 +80,18 @@ class Reference(Descriptor):
             self.__value = value
 
     def __repr__(self):
+        """Reflections should always behave the same, no matter what instance you have. If the path of the reflection
+        is equal, their behavior has to be identical. No id(obj) is thus used in their representation.
+        """
         if self.target is None and self.parent is None:
             return '<Ref base reflection>'
         return '<Ref %r on %r>' % (self.target, self.parent)
 
     def __eq__(self, other):
+        """Reflections are equivalent if their pickled state is equivalent. Overall behavior is instance independent.
+        """
         if isinstance(other, Reference):
-            return repr(self) == repr(other)
+            return self.__getstate__() == other.__getstate__()
         return False
 
 
