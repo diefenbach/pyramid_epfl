@@ -1,41 +1,18 @@
 # coding: utf-8
 from collections import MutableSequence, MutableMapping
-
-import types, copy, inspect
+import types
+import copy
+import inspect
 
 from pyramid import security
-
-from solute.epfl.core import epflclient, epflutil, epflacl, epflvalidators
-from solute.epfl.core.epflutil import Lifecycle, generate_dynamic_class_id, generate_cid
-
 import ujson as json
-
 import jinja2
 import jinja2.runtime
 from jinja2.exceptions import TemplateNotFound
 
-
-class CompoStateAttribute(object):
-    """Descriptor for component state attributes.
-    """
-
-    def __init__(self, initial_value=None, name='var'):
-        """Wrapper to provide just in time access to the compo state in the transaction,
-
-        :param initial_value: The initial value of this compo state attribute.
-        :param name: The name of this compo state attribute.
-        """
-        self.initial_value = initial_value
-        self.name = name
-        self.type = CompoStateAttribute
-
-    def __get__(self, obj, cls):
-        if obj:
-            return obj.get_state_attr(self.name, self.initial_value)
-        return self
-
-    def __set__(self, obj, value):
-        return obj.set_state_attr(self.name, value)
+from solute.epfl.core import epflutil, epflacl, epflvalidators
+from solute.epfl.core.epfldescriptor import Descriptor, Reference, CompoStateAttribute
+from solute.epfl.core.epflutil import Lifecycle, generate_dynamic_class_id, generate_cid
 
 
 class MissingContainerComponentException(Exception):
@@ -176,9 +153,14 @@ class UnboundComponent(object):
         self.__unbound_cls__ = cls
         self.__unbound_config__ = config.copy()
 
-        # Copy config and create a cid if none exists.
+        # Create a cid if none exists.
+        if self.__unbound_config__.get('cid', None) is None:
+            self.__unbound_config__['cid'] = generate_cid()
+            self.__unbound_config__['__autogen_cid__'] = self.__unbound_config__['cid']
+
+        # Separate positional information from the config.
         self.position = (
-            self.__unbound_config__.pop('cid', None) or generate_cid(),
+            self.__unbound_config__.pop('cid', None),
             self.__unbound_config__.pop('slot', None)
         )
 
@@ -238,17 +220,12 @@ class UnboundComponent(object):
                       'ccid': container.cid,
                       'cid': self.position[0],
                       'slot': slot}
-        container.page.transaction.set_component(self.position[0], compo_info, position=position)
+        try:
+            container.page.transaction.set_component(self.position[0], compo_info, position=position)
+        except Exception:
+            if self.position[0] == self.__unbound_config__.get('__autogen_cid__'):
+                self(cid=None).register_in_transaction(container, slot, position)
         return container.page.transaction.get_component_instance(container.page, self.position[0])
-
-    def create_by_compo_info(self, *args, **kwargs):
-        """
-        Expose the :func:`ComponentBase.create_by_compo_info` in order to allow storing UnboundComponent instances
-        instead of raw classes. This is required in order to have dynamic classes at all with a pickling session store,
-        since only static classes can be pickled. The class is setup with all dynamic attributes by
-        :func:`__dynamic_class__`.
-        """
-        return self.__dynamic_class__.create_by_compo_info(*args, **kwargs)
 
     def __getstate__(self):
         """
@@ -403,15 +380,6 @@ class ComponentBase(object):
         config.add_static_view(name="epfl/components/" + compo_path_part,
                                path="solute.epfl.components:" + compo_path_part + "/static")
 
-    @classmethod
-    def create_by_compo_info(cls, page, compo_info, container_id):
-        compo_obj = cls(page, compo_info['cid'], __instantiate__=True, config=compo_info["config"])
-        if container_id:
-            container_compo = page.components[container_id]  # container should exist before their content
-            compo_obj.set_container_compo(container_compo, compo_info["slot"])
-            container_compo.add_component_to_slot(compo_obj, compo_info["slot"])
-        return compo_obj
-
     def __new__(cls, *args, **config):
         """
         Calling a class derived from ComponentBase will normally return an UnboundComponent via this method unless
@@ -452,8 +420,13 @@ class ComponentBase(object):
         hashable - as all mutable builtins are - a copy is generated in the compo state.
         """
         try:
-            return self.compo_info['compo_state'][key]
+            result = self.compo_info['compo_state'][key]
+            if isinstance(result, Descriptor):
+                return result.__get__(self, self.__class__)
+            return result
         except KeyError:
+            if isinstance(value, Descriptor):
+                return value.__get__(self, self.__class__)
             try:
                 hash(value)
             except TypeError:
@@ -463,7 +436,14 @@ class ComponentBase(object):
             return value
 
     def set_state_attr(self, key, value):
-        self.compo_info.setdefault('compo_state', {})[key] = value
+        if isinstance(self.compo_info.setdefault('compo_state', {}).get(key), Descriptor):
+            self.compo_info['compo_state'][key].__set__(self, value)
+        else:
+            self.compo_info.setdefault('compo_state', {})[key] = value
+
+    @property
+    def reflect(self):
+        return Reference()
 
     @property
     def request(self):
@@ -521,14 +501,6 @@ class ComponentBase(object):
     @container_compo.setter
     def container_compo(self, value):
         self.compo_info['ccid'] = value.cid
-
-    def register_in_transaction(self, container, slot=None, position=None):
-        compo_info = {'class': self.__unbound_component__.__getstate__(),
-                      'config': self.__config,
-                      'ccid': container.cid,
-                      'cid': self.cid,
-                      'slot': slot}
-        self.page.transaction.set_component(self.cid, compo_info, position=position, compo_obj=self)
 
     def get_component_info(self):
         info = {"class": self.__unbound_component__.__getstate__(),
@@ -846,7 +818,8 @@ class ComponentBase(object):
 
         for name in cls.combined_compo_state:
             original = getattr(cls, name, None)
-            if not isinstance(original, CompoStateAttribute) and not isinstance(original, types.MethodType):
+            if not isinstance(original, CompoStateAttribute) \
+                    and not isinstance(original, types.MethodType):
                 setattr(cls, name, CompoStateAttribute(original, name))
 
         if not cls.template_name:
@@ -1324,7 +1297,7 @@ class ComponentContainerBase(ComponentBase):
         self.node_list = self.init_struct() or self.node_list  # if init_struct returns None, keep original value.
         for node in self.node_list:
             cid, slot = node.position
-            self.add_component(node(self.page, cid, __instantiate__=True),
+            self.add_component(node,
                                slot=slot,
                                cid=cid)
 
@@ -1348,10 +1321,7 @@ class ComponentContainerBase(ComponentBase):
             cid, slot = compo_obj.position
             compo_obj = compo_obj.register_in_transaction(self, slot, position=position)
         else:
-            # Generate UUID if no cid has been set previously.
-            if not cid:
-                cid = generate_cid()
-            compo_obj.register_in_transaction(self, slot, position=position)
+            raise DeprecationWarning("Directly adding a component that was instantiated is no longer supported.")
 
         # the transaction-setup has to be redone because the component can be displayed directly in this request.
         compo_obj.init_transaction()

@@ -4,7 +4,8 @@ from solute.epfl import components
 
 from component_asserts import AssertCoherence, AssertRendering, AssertStyle
 
-from solute.epfl.core.epflcomponentbase import ComponentBase, ComponentContainerBase, CompoStateAttribute
+from solute.epfl.core.epflcomponentbase import ComponentBase, ComponentContainerBase
+from solute.epfl.core.epfldescriptor import CompoStateAttribute
 
 
 pytestmark = pytest.mark.component_api
