@@ -14,6 +14,9 @@ class Descriptor(object):
     def __setstate__(self, state):
         raise NotImplementedError('You have to implement the pickle __setstate__ method of the Descriptor!')
 
+    def __deepcopy__(self, memo):
+        raise NotImplementedError('You have to implement the __deepcopy__ method of the Descriptor!')
+
     def __eq__(self, other):
         """This method has to be implemented in order for the transaction to correctly recognize equivalence. Instances
         generated from equal state must always equal themselves, else the transaction initialisation fails.
@@ -53,7 +56,6 @@ class Reference(Descriptor):
 
         if hasattr(self, '__value'):
             return self.__value
-
         if self.target == 'container_compo':
             return self.parent.__get__(instance, owner).container_compo
         if self.target == 'page':
@@ -78,6 +80,11 @@ class Reference(Descriptor):
         self.target, self.parent, value = state
         if value is not AttributeError:
             self.__value = value
+
+    def __deepcopy__(self, memo):
+        copy = Reference()
+        copy.__setstate__(self.__getstate__())
+        return copy
 
     def __repr__(self):
         """Reflections should always behave the same, no matter what instance you have. If the path of the reflection
