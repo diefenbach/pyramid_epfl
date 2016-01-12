@@ -12,13 +12,16 @@ from .first_step import NoteLayout
 
 class NoteModel(ModelBase):
 
-    data_store = {'_id_counter': 1,
-                  '_id_lookup': {}}
+    data_store = {
+        '_id_counter': 1,
+        '_id_lookup': {}
+    }
 
     def add_note(self, note):
         note['id'] = self.data_store['_id_counter']
         self.data_store['_id_counter'] += 1
         note.setdefault('children', [])
+        note['show_children'] = True
         self.data_store['_id_lookup'][note['id']] = note
 
         if note['parent']:
@@ -36,13 +39,20 @@ class NoteModel(ModelBase):
         self.get_note(note_id).update(value)
 
     def load_notes(self, calling_component, *args, **kwargs):
-        notes = [n for n in self.data_store['_id_lookup'].values() if not n['parent']]
-        print notes
-        return notes
+        # import pprint
+        # pprint.pprint(self.data_store)
+        # print
 
-    def load_note_children(self, calling_component, *args, **kwargs):
-        print "load_note_children of id: %s" % (calling_component.id)
-        return [self.get_note(child_id) for child_id in self.get_note(calling_component.id)['children']]
+        notes_id = calling_component.id
+        if notes_id:
+            notes = [self.get_note(child_id) for child_id in self.get_note(notes_id)['children']]
+        else:
+            notes = [note for note in self.data_store['_id_lookup'].values()
+                     if not note['parent']]
+
+        print "%s hat folgende children: %s" % (notes_id, notes)
+        print
+        return notes
 
 
 class NoteForm(components.Form):
@@ -88,7 +98,7 @@ class NoteForm(components.Form):
         else:
             self.page.model.set_note(self.id, note_value)
 
-        self.page.notes_link_list.redraw()
+        #self.page.notes_link_list.redraw()
         self.page.notes_list.redraw()
         self.clean_form()
 
@@ -166,34 +176,27 @@ class SecondStepRoot(NoteLayout):
                 cid='notes_list',
                 title='My notes',
                 show_children=True,
-                #get_data=['notes', 'note_children'],
-                get_data=['notes'],
-                default_child_cls=components.RecursiveTree,
-                #data_interface=[{'id': None, 'label': 'title',
-                #                 'children': None},
-                #                {'id': None, 'label': 'title',
-                #                'children': None}]
-                data_interface={'id': None, 'label': 'title',
-                                'children': None}
-            ),
-            components.LinkListLayout(
-                cid='notes_link_list',
                 get_data='notes',
-                show_pagination=False,
-                show_search=False,
-                node_list=[
-                    ComponentBase(
-                        url='/',
-                        text='Home'),
-                    ComponentBase(
-                        url='/second',
-                        text='Second',
-                        static_align='bottom')],
-                data_interface={
-                    'id': None,
-                    'url': 'note?id={id}',
-                    'text': 'title'},
-                slot='west')
+                data_interface={'id': None, 'label': 'title', 'show_children': None}
+            ),
+            # components.LinkListLayout(
+            #     cid='notes_link_list',
+            #     get_data='notes',
+            #     show_pagination=False,
+            #     show_search=False,
+            #     node_list=[
+            #         ComponentBase(
+            #             url='/',
+            #             text='Home'),
+            #         ComponentBase(
+            #             url='/second',
+            #             text='Second',
+            #             static_align='bottom')],
+            #     data_interface={
+            #         'id': None,
+            #         'url': 'note?id={id}',
+            #         'text': 'title'},
+            #     slot='west')
         ])
 
 
@@ -219,15 +222,15 @@ class ExampleModel(ModelBase):
 @EPFLView(route_name='SecondStep', route_pattern='/second')
 class SecondStepPage(epfl.Page):
 
-    #root_node = SecondStepRoot()
-    root_node = components.RecursiveTree(
-        get_data=['first', 'second', 'third'],
-        show_children=True,
-        data_interface=[
-            components.RecursiveTree.data_interface,
-            components.RecursiveTree.data_interface,
-            components.RecursiveTree.data_interface
-        ]
-    )
+    root_node = SecondStepRoot()
+    # root_node = components.RecursiveTree(
+    #     get_data=['first', 'second', 'third'],
+    #     show_children=True,
+    #     data_interface=[
+    #         components.RecursiveTree.data_interface,
+    #         components.RecursiveTree.data_interface,
+    #         components.RecursiveTree.data_interface
+    #     ]
+    # )
 
-    model = ExampleModel
+    model = NoteModel
