@@ -29,6 +29,7 @@ class NoteModel(ModelBase):
         self.get_note(note_id).update(value)
 
     def load_notes(self, calling_component, *args, **kwargs):
+        print "load_notes"
         return self.data_store.get('notes', [])
 
 

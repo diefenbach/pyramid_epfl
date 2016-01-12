@@ -1,52 +1,95 @@
 # * encoding: utf-8
 
-from pyramid.view import view_config
 from solute import epfl
-
-from solute.epfl.components import Box
-from solute.epfl.components import Form
-from solute.epfl.components import NumberInput
-from solute.epfl.components import TextInput
-from solute.epfl.components import Textarea
-from solute.epfl.components import Button
-from solute.epfl.components import NavLayout
-
-from solute.epfl.components import LinkListLayout
-
-from solute.epfl.core.epflassets import ModelBase
+from solute.epfl import components
 from solute.epfl.core.epflassets import EPFLView
+from solute.epfl.core.epflassets import ModelBase
+
 from solute.epfl.core.epflcomponentbase import ComponentBase
 
-from .first_step import FirstStepRoot
+from .first_step import NoteLayout
 
 
-class NoteForm(Form):
-    node_list = [NumberInput(label='Parent note id',
-                          name='parent'),
-                 TextInput(label='Title',
-                        name='title'),
-                 Textarea(label='Text',
-                            name='text'),
-                 Button(value='Submit',
-                          event_name='submit'),
-                 Button(value='Cancel',
-                          event_name='cancel')]
+class NoteModel(ModelBase):
 
-    compo_state = Form.compo_state + ["id"]
+    data_store = {'_id_counter': 1,
+                  '_id_lookup': {}}
+
+    def add_note(self, note):
+        note['id'] = self.data_store['_id_counter']
+        self.data_store['_id_counter'] += 1
+        note.setdefault('children', [])
+        self.data_store['_id_lookup'][note['id']] = note
+
+        if note['parent']:
+            self.get_note(note['parent']).setdefault('children', []).append(note['id'])
+
+    def remove_note(self, note_id):
+        parent_id = self.data_store['_id_lookup'].pop(note_id)['parent']
+        if parent_id != 0:
+            self.get_note(parent_id)['children'].remove(note_id)
+
+    def get_note(self, note_id):
+        return self.data_store['_id_lookup'][note_id]
+
+    def set_note(self, note_id, value):
+        self.get_note(note_id).update(value)
+
+    def load_notes(self, calling_component, *args, **kwargs):
+        notes = [n for n in self.data_store['_id_lookup'].values() if not n['parent']]
+        print notes
+        return notes
+
+    def load_note_children(self, calling_component, *args, **kwargs):
+        print "load_note_children of id: %s" % (calling_component.id)
+        return [self.get_note(child_id) for child_id in self.get_note(calling_component.id)['children']]
+
+
+class NoteForm(components.Form):
+
     id = None
+    compo_state = components.Form.compo_state + ["id"]
+
+    node_list = [
+        components.NumberInput(
+            label='Parent note id',
+            name='parent'),
+        components.TextInput(
+            label='Title',
+            name='title',
+            mandatory=True,
+            placeholder='Insert a title here!'),
+        components.Textarea(
+            label='Text',
+            name='text',
+            mandatory=True),
+        components.Button(
+            value='Submit',
+            color='primary',
+            event_name='submit'),
+        components.Button(
+            value='Cancel',
+            event_name='cancel')
+    ]
 
     def handle_submit(self):
         if not self.validate():
-            self.page.show_fading_message('An error occurred in validating the form!', 'error')
+            self.page.show_fading_message(
+                'An error occurred in validating the form!', 'error'
+            )
             return
-        values = self.get_values()
-        note_value = {'parent': values['parent'],
-                      'title': values['title'],
-                      'text': values['text']}
+
+        note_value = self.get_values()
+        if note_value['parent']:
+            # force integer ids
+            note_value['parent'] = int(note_value['parent'])
         if self.id is None:
             self.page.model.add_note(note_value)
         else:
             self.page.model.set_note(self.id, note_value)
+
+        self.page.notes_link_list.redraw()
+        self.page.notes_list.redraw()
         self.clean_form()
 
     def handle_cancel(self):
@@ -68,19 +111,23 @@ class NoteForm(Form):
         self.redraw()
 
 
-class NoteBox(Box):
+class NoteBox(components.RecursiveTree):
+
+    pass
+
+
+class XXXNoteBox(components.Box):
     is_removable = True
     data_interface = {'id': None,
                       'text': None,
                       'children': None,
                       'title': '{title} - ({id})'}
 
-    theme_path = Box.theme_path[:]
+    theme_path = components.Box.theme_path[:]
     theme_path.append('<epfl_pyramid_barebone:templates/theme/note')
 
-    js_parts = Box.js_parts[:]
+    js_parts = components.Box.js_parts[:]
     js_parts.append('epfl_pyramid_barebone:templates/theme/note/note.js')
-
 
     def __init__(self, *args, **kwargs):
         super(NoteBox, self).__init__(*args, **kwargs)
@@ -97,65 +144,90 @@ class NoteBox(Box):
         self.page.model.remove_note(self.id)
 
 
-class NoteModel(ModelBase):
-    data_store = {'_id_counter': 1,
-                  '_id_lookup': {}}
+class NotesTree(components.RecursiveTree):
 
-    def add_note(self, note):
-        note['id'] = self.data_store['_id_counter']
-        self.data_store['_id_counter'] += 1
-        note.setdefault('children', [])
+    def handle_click_entry(self, *args, **kwargs):
+        import ipdb; ipdb.set_trace()
 
-        self.data_store['_id_lookup'][note['id']] = note
-
-        if note['parent']:
-            self.get_note(note['parent']).setdefault('children', []).append(note['id'])
-        else:
-            self.data_store.setdefault('notes', []).append(note)
-
-    def remove_note(self, note_id):
-        self.data_store['notes'] = [note for note in self.data_store['notes'] if note['id'] != note_id]
-        parent_id = self.data_store['_id_lookup'].pop(note_id)['parent']
-        if parent_id != 0:
-            self.get_note(parent_id)['children'].remove(note_id)
-
-    def get_note(self, note_id):
-        return self.data_store['_id_lookup'][note_id]
-
-    def set_note(self, note_id, value):
-        self.get_note(note_id).update(value)
-
-    def load_notes(self, calling_component, *args, **kwargs):
-        notes = self.data_store.get('notes', [])
-        return notes
-
-    def load_note_children(self, calling_component, *args, **kwargs):
-        return [self.get_note(child_id) for child_id in self.get_note(calling_component.id)['children']]
+    def handle_click_label(self):
+        import ipdb; ipdb.set_trace()
 
 
-class SecondStepRoot(FirstStepRoot):
+class SecondStepRoot(NoteLayout):
+
     def init_struct(self):
-        self.node_list.extend([Box(title='Edit note',
-                                   node_list=[NoteForm(cid='note_form')]),
-                               LinkListLayout(get_data='notes',
-                                              show_pagination=False,
-                                              show_search=False,
-                                              node_list=[ComponentBase(url='/',
-                                                                       text='Home'),
-                                                         ComponentBase(url='/second',
-                                                                       text='Second',
-                                                                       static_align='bottom')],
-                                              data_interface={'id': None,
-                                                              'url': 'note?id={id}',
-                                                              'text': 'title'},
-                                              slot='west'),
-                               Box(title='My notes',
-                                   default_child_cls=NoteBox,
-                                   data_interface=NoteBox.data_interface,
-                                   get_data='notes')])
+        self.node_list.extend([
+            components.Box(
+                title='Edit note',
+                node_list=[
+                    NoteForm(cid='note_form')]
+            ),
+            components.RecursiveTree(
+                cid='notes_list',
+                title='My notes',
+                show_children=True,
+                #get_data=['notes', 'note_children'],
+                get_data=['notes'],
+                default_child_cls=components.RecursiveTree,
+                #data_interface=[{'id': None, 'label': 'title',
+                #                 'children': None},
+                #                {'id': None, 'label': 'title',
+                #                'children': None}]
+                data_interface={'id': None, 'label': 'title',
+                                'children': None}
+            ),
+            components.LinkListLayout(
+                cid='notes_link_list',
+                get_data='notes',
+                show_pagination=False,
+                show_search=False,
+                node_list=[
+                    ComponentBase(
+                        url='/',
+                        text='Home'),
+                    ComponentBase(
+                        url='/second',
+                        text='Second',
+                        static_align='bottom')],
+                data_interface={
+                    'id': None,
+                    'url': 'note?id={id}',
+                    'text': 'title'},
+                slot='west')
+        ])
+
+
+class ExampleModel(ModelBase):
+    data = [
+        {'id': i, 'label': 'label %s' % i, 'icon_open': 'icon-open-%s' % i, 'icon_close': 'icon-close-%s' % i}
+        for i in range(0, 30)
+    ]
+
+    def load_first(self, *args, **kwargs):
+        print 'first'
+        return self.data[0:10]
+
+    def load_second(self, *args, **kwargs):
+        print 'second'
+        return self.data[10:20]
+
+    def load_third(self, *args, **kwargs):
+        print 'third'
+        return self.data[20:30]
 
 
 @EPFLView(route_name='SecondStep', route_pattern='/second')
 class SecondStepPage(epfl.Page):
-    root_node = SecondStepRoot()
-    model = NoteModel
+
+    #root_node = SecondStepRoot()
+    root_node = components.RecursiveTree(
+        get_data=['first', 'second', 'third'],
+        show_children=True,
+        data_interface=[
+            components.RecursiveTree.data_interface,
+            components.RecursiveTree.data_interface,
+            components.RecursiveTree.data_interface
+        ]
+    )
+
+    model = ExampleModel
