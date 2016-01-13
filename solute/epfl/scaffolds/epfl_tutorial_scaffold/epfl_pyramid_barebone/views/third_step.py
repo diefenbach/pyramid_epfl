@@ -32,7 +32,9 @@ class Logout(components.Box):
 
     def handle_logout(self):
         self.page.forget()
-        self.page.reload()
+        self.page.show_fading_message('Logout done.', 'success')
+        self.page.jump(self.page.request.matched_route.name, 1000)
+
 
 ## The Login Box is displayed for every user, beside the authenticated ones.
 ## That means: unauthorized ones.
@@ -46,14 +48,16 @@ class Login(components.Box):
     node_list = [
         components.Form(
             cid='login_form',
+            ## setting the default function to None bubbles the event higher
+            ## to this Login Box.
+            handle_submit=None,
             node_list=[components.TextInput(label='Username',
                                             name='username',
                                             mandatory=True),
-                       components.PasswordInput(
-                           label='Password',
-                           name='password',
-                           submit_form_on_enter=True,
-                           mandatory=True),
+                       components.PasswordInput(label='Password',
+                                                name='password',
+                                                submit_form_on_enter=True,
+                                                mandatory=True),
                        components.Button(value='Login',
                                          color='primary',
                                          event_name='login')])]
@@ -74,7 +78,7 @@ class Login(components.Box):
 
         self.show_fading_message('Success', 'success')
         self.page.remember(values['username'])
-        self.page.reload()
+        self.page.jump(self.page.request.matched_route.name, 1000)
 
 
 class ThirdStepRoot(NoteLayout):
@@ -82,7 +86,7 @@ class ThirdStepRoot(NoteLayout):
     def init_struct(self):
         self.node_list.extend([Login(),
                                Logout(),
-                               Admin(cid='admin_box')])
+                               Admin()])
 
 @EPFLView(route_name='ThirdStep', route_pattern='/third')
 class ThirdStepPage(epfl.Page):
