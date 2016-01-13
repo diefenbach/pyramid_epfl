@@ -34,7 +34,9 @@ class TextInput(FormInputBase):
 
     # custom compo attributes
     typeahead = False  #: Set to true if typeahead should be provided by the input (if supported)
-    type_func = 'typeahead'  #: Set the name of the function that is used to generate the typeahead values
+    #: Set the name of the function that is used to generate the typeahead values. This is a list of lists where the
+    #: first element is the value and the second one the text. It must be returned via return_ajax_response wrapper.
+    type_func = 'typeahead'
     max_length = None  #: Maximum length for the input in characters
     show_count = False  #: Set to true to show a input counter right to the field. Requires a max_length to be set
     password = False  #: Set to true if input field should be used as a password field
