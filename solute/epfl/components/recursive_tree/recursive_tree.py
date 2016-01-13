@@ -10,6 +10,8 @@ class RecursiveTree(epflcomponentbase.ComponentContainerBase):
     css_name = ['recursive_tree.css']
     compo_state = epflcomponentbase.ComponentContainerBase.compo_state + [
         'icon_open', 'icon_close', 'label', 'get_data', 'show_children', 'data_interface', 'scroll_position'
+        'icon_open', 'icon_close', 'label', 'get_data', 'show_children', 'data_interface', 'scroll_position',
+        'default_child_cls'
     ]
 
     # js settings
@@ -61,7 +63,7 @@ class RecursiveTree(epflcomponentbase.ComponentContainerBase):
 
     def init_struct(self):
         if self.default_child_cls is None:
-            self.default_child_cls = RecursiveTree(data_interface=self.data_interface)
+            self.default_child_cls = self.__unbound_component__(cid=None)
         if type(self.get_data) is list:
             data = self.get_data[:]
             self.get_data = data.pop(0)
