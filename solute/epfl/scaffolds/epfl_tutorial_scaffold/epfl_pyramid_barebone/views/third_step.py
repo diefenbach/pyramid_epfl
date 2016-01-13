@@ -1,80 +1,90 @@
 # * encoding: utf-8
 
-from pyramid.view import view_config
 from solute import epfl
-from pyramid import security
-
-from .first_step import FirstStepRoot
-
-from solute.epfl.components import Box
-from solute.epfl.components import Form
-from solute.epfl.components import TextInput
-from solute.epfl.components import Button
-from solute.epfl.components import PasswordInput
-
+from solute.epfl import components
 from solute.epfl.core.epflassets import EPFLView
-from solute.epfl.core.epflacl import epfl_acl, epfl_has_role
+from solute.epfl.core.epflacl import epfl_acl
 
+from .first_step import NoteLayout
 
+## Grant the access permission only to the principal admin
 @epfl_acl([('admin', 'access')])
-class Admin(Box):
+class Admin(components.Box):
+
     title = 'Admin Box'
 
-    def handle_hidden(self):
-        print "I'm hidden!"
+    node_list = [
+        components.Text(value='This box is only visible for the admin prinicipal.')
+    ]
 
 
+## The Logout Box is only displayed, if the user is authenticated
 @epfl_acl([('system.Authenticated', 'access')])
-class Logout(Box):
+class Logout(components.Box):
+
+    tester = 'foobar'
     title = 'Logout Box'
-    node_list = [Button(value='Logout',
+    node_list = [
+        components.Text(value='This box is only visible for all authenticated users'),
+        components.Button(value='Logout',
+                          color='warning',
                           event_name='logout')]
 
     def handle_logout(self):
         self.page.forget()
         self.page.reload()
 
-
-@epfl_acl(['access',  #: With default_allow=True and default_principle='system.Everyone', this is equal to the epfl
-                      #: default __acl__ in ComponentBase. To make sure the default settings do not influence this you
-                      #: can give the tuple (True, 'system.Everyone', 'access') instead the string 'access'.
+## The Login Box is displayed for every user, beside the authenticated ones.
+## That means: unauthorized ones.
+@epfl_acl(['access',
            (False, 'system.Authenticated', 'access')])
-class Login(Box):
+class Login(components.Box):
+
     title = 'Login Box'
+    users = {'admin': 'adminsecret',
+             'user': 'usersecret'}
+    node_list = [
+        components.Form(
+            cid='login_form',
+            node_list=[components.TextInput(label='Username',
+                                            name='username',
+                                            mandatory=True),
+                       components.PasswordInput(
+                           label='Password',
+                           name='password',
+                           submit_form_on_enter=True,
+                           mandatory=True),
+                       components.Button(value='Login',
+                                         color='primary',
+                                         event_name='login')])]
 
-    users = {'admin': 'abcdefg',
-             'someuser': '12345'}
-
-    node_list = [Form(cid='login_form',
-                      node_list=[TextInput(label='Username',
-                                           name='username'),
-                                 PasswordInput(label='Password',
-                                               name='password'),
-                                 Button(value='Login',
-                                        event_name='login')])]
+    def handle_submit(self):
+        """ This handler gets triggered on <enter> keypress by the password field. """
+        return self.handle_login()
 
     def handle_login(self):
         if not self.page.login_form.validate():
             return
+
         values = self.page.login_form.get_values()
 
         if self.users.get(values['username'], None) != values['password']:
             self.show_fading_message('Invalid authentication details!', 'error')
             return
 
+        self.show_fading_message('Success', 'success')
         self.page.remember(values['username'])
         self.page.reload()
 
 
-class ThirdStepRoot(FirstStepRoot):
-    node_list = FirstStepRoot.node_list + [Login(),
-                                           Logout(),
-                                           Admin(cid='admin_box')]
+class ThirdStepRoot(NoteLayout):
 
     def init_struct(self):
-        pass
-
+        self.node_list.extend([Login(),
+                               Logout(),
+                               Admin(cid='admin_box')])
 
 @EPFLView(route_name='ThirdStep', route_pattern='/third')
 class ThirdStepPage(epfl.Page):
+
     root_node = ThirdStepRoot()

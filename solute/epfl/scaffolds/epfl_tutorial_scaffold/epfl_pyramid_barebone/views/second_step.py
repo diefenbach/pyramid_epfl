@@ -166,6 +166,7 @@ class SecondStepRoot(NoteLayout):
             )
         self.redraw()
 
+
 @EPFLView(route_name='SecondStep', route_pattern='/second')
 class SecondStepPage(epfl.Page):
 
