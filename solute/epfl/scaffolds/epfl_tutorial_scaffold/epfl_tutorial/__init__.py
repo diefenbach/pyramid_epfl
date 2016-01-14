@@ -16,7 +16,7 @@ def main(global_config, **settings):
     config.set_session_factory(session_factory)
 
     config.add_static_view(name='static',
-                           path='epfl_pyramid_barebone:static',
+                           path='epfl_tutorial:static',
                            cache_max_age=3600)
 
     authn_policy = AuthTktAuthenticationPolicy('seekrit', hashalg='sha512')

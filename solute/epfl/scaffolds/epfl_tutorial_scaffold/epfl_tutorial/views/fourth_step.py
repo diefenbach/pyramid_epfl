@@ -13,8 +13,9 @@ from solute.epfl.core.epflassets import EPFLView
 
 class DropBox(Box):
     drop_position = None
-    js_name = Box.js_name + [('epfl_pyramid_barebone:static', 'drop.js')]
-    js_parts = Box.js_parts + ['epfl_pyramid_barebone:templates/drop.js']
+
+    #js_name = Box.js_name + [('epfl_pyramid_barebone:static', 'drop.js')]
+    #js_parts = Box.js_parts + ['epfl_pyramid_barebone:templates/drop.js']
 
     def handle_drag_stop(self, position=None, cid=None, over_cid=None):
         if position is None:
