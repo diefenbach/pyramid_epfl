@@ -49,7 +49,7 @@ class Logout(components.Box):
 class ThirdStepLogin(NoteLayout):
 
     def init_struct(self):
-        self.node_list.extend([components.LoginBox()])
+        self.node_list.extend([components.LoginBox(hover_box=False)])
 
 
 ## This root node is used on the ThirdStep page
