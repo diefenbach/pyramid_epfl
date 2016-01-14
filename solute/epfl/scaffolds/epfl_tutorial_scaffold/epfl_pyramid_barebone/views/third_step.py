@@ -8,8 +8,9 @@ from solute.epfl.core.epflacl import epfl_acl
 from .first_step import NoteLayout
 
 ## Grant the access permission only to the principal admin
-@epfl_acl([('admin', 'access')])
+@epfl_acl([(True, 'admin', 'access')])
 class Admin(components.Box):
+    """ Display a box to verify, that the current user is 'admin'. """
 
     title = 'Admin Box'
 
@@ -17,12 +18,20 @@ class Admin(components.Box):
         components.Text(value='This box is only visible for the admin prinicipal.')
     ]
 
+## Grant the access permission to all authenticated users
+@epfl_acl([(True, 'system.Authenticated', 'access')])
+class User(components.Box):
+    """ Display a box to verify, that the current user is authenticated. """
+    title = 'User Box'
+
+    node_list = [
+        components.Text(value='This box is visible for all authenticated prinicipals.')
+    ]
 
 ## The Logout Box is only displayed, if the user is authenticated
-@epfl_acl([('system.Authenticated', 'access')])
+@epfl_acl([(True, 'system.Authenticated', 'access')])
 class Logout(components.Box):
-
-    tester = 'foobar'
+    """ Component that displays the Logout Button with some text. """
     title = 'Logout Box'
     node_list = [
         components.Text(value='This box is only visible for all authenticated users'),
@@ -35,60 +44,47 @@ class Logout(components.Box):
         self.page.show_fading_message('Logout done.', 'success')
         self.page.jump(self.page.request.matched_route.name, 1000)
 
-
-## The Login Box is displayed for every user, beside the authenticated ones.
-## That means: unauthorized ones.
-@epfl_acl(['access',
-           (False, 'system.Authenticated', 'access')])
-class Login(components.Box):
-
-    title = 'Login Box'
-    users = {'admin': 'adminsecret',
-             'user': 'usersecret'}
-    node_list = [
-        components.Form(
-            cid='login_form',
-            ## setting the default function to None bubbles the event higher
-            ## to this Login Box.
-            handle_submit=None,
-            node_list=[components.TextInput(label='Username',
-                                            name='username',
-                                            mandatory=True),
-                       components.PasswordInput(label='Password',
-                                                name='password',
-                                                submit_form_on_enter=True,
-                                                mandatory=True),
-                       components.Button(value='Login',
-                                         color='primary',
-                                         event_name='login')])]
-
-    def handle_submit(self):
-        """ This handler gets triggered on <enter> keypress by the password field. """
-        return self.handle_login()
-
-    def handle_login(self):
-        if not self.page.login_form.validate():
-            return
-
-        values = self.page.login_form.get_values()
-
-        if self.users.get(values['username'], None) != values['password']:
-            self.show_fading_message('Invalid authentication details!', 'error')
-            return
-
-        self.show_fading_message('Success', 'success')
-        self.page.remember(values['username'])
-        self.page.jump(self.page.request.matched_route.name, 1000)
-
-
-class ThirdStepRoot(NoteLayout):
+## This root node is used for the forbidden view. It displays the LoginBox
+## integrated in the NoteLayout
+class ThirdStepLogin(NoteLayout):
 
     def init_struct(self):
-        self.node_list.extend([Login(),
-                               Logout(),
-                               Admin()])
+        self.node_list.extend([components.LoginBox()])
 
-@EPFLView(route_name='ThirdStep', route_pattern='/third')
-class ThirdStepPage(epfl.Page):
 
-    root_node = ThirdStepRoot()
+## This root node is used on the ThirdStep page
+class ThirdStepAuthenticatedRoot(NoteLayout):
+
+    def init_struct(self):
+        self.node_list.extend([Admin(),
+                               User(),
+                               Logout()])
+
+## the forbidden view is used without route. If there is no custom
+## Page used, the pyramid's default 403 permission view is shown.
+@EPFLView(forbidden_view=True)
+class LoginPage(epfl.Page):
+
+    root_node = ThirdStepLogin()
+    users = {'admin': 'adminsecret',
+             'user': 'usersecret'}
+
+    def login(self, username, password):
+        if self.users.get(username, None) != password:
+            self.show_fading_message('Invalid authentication details!', 'error')
+            return False
+
+        self.remember(username)
+        return True
+
+## grant authenticated users the authenticated permission globally
+## which is used below to pretect the "Homepage" Page
+epfl_acl([(True, 'system.Authenticated', 'access')], use_as_global=True)
+
+## because auf the permission parameter, this view is only accessable for users
+## with the 'access' permission, which is globally assigned to all authenticated
+## ones above.
+@EPFLView(route_name='third', route_pattern='/third', permission='access')
+class ThirdStep(epfl.Page):
+
+    root_node = ThirdStepAuthenticatedRoot()
