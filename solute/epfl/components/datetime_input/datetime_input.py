@@ -28,6 +28,7 @@ class DatetimeInput(FormInputBase):
     DATE_FORMAT_MONTH_YEAR = "MM[/]YYYY"  #: Constant for month year format example: 08/2015
     DATE_FORMAT_YEAR = "YYYY"  #: Constant for year format example: 2015
     DATE_FORMAT_LOCALE_WITH_TIME = "LLL"  #: Constant for locale format with time example: 18. Juli 2015 00:00
+    DATE_FORMAT_ISO_TTMMJJJJ = "DD.MM.YYYY"  #: Constant for locale format: 31.12.2015
 
     # custom compo attributes
     calendar_icon = True  #: Set to true if calendar overlay icon should be displayed

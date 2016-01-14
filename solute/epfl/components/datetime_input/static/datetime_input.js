@@ -10,6 +10,7 @@ Object.defineProperty(epfl.DatetimeInput.prototype, 'form_element', {
     }
 });
 
+epfl.DatetimeInput.prototype.DATE_FORMAT_ISO_DDMMYYYY = 'DD.MM.YYYY';
 epfl.DatetimeInput.prototype.DATE_FORMAT_LOCALE = "LL";
 epfl.DatetimeInput.prototype.DATE_FORMAT_MONTH_YEAR = "MM[/]YYYY";
 epfl.DatetimeInput.prototype.DATE_FORMAT_YEAR = "YYYY";
@@ -52,6 +53,13 @@ epfl.DatetimeInput.prototype.to_utc = function(date){
         var day = parts[0].slice(0,-1);
         var month = parts[1];
         month = this.GERMAN_MONTHS.indexOf(month);
+        var year = parts[2];
+        date = new Date(year,month,day,0,0,0,0);
+    }else if(date_format == this.DATE_FORMAT_ISO_DDMMYYYY) {
+        //example: 31.12.2015
+        var parts = date.split(".");
+        var day = parts[0];
+        var month = parseInt(parts[1]-1);
         var year = parts[2];
         date = new Date(year,month,day,0,0,0,0);
     }
