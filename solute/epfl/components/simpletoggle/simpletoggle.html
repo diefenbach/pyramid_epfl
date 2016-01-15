@@ -1,6 +1,6 @@
 {% set compo_col = compo.compo_col %}
 <div id="{{ compo.cid }}" epflid="{{ compo.cid }}"
-     class="row epfl-toggle-input {{ 'mandatory' if compo.mandatory else '' }}">
+     class="row epfl-toggle-input{{ ' mandatory' if compo.mandatory else '' }}{{' readonly' if compo.readonly else ''}}">
     {% if compo.label %}
         {% if compo.layout_vertical == True %}
             <div class="row">

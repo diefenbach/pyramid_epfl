@@ -24,9 +24,10 @@ class SimpleToggle(FormInputBase):
 
     # js settings
     compo_js_name = 'SimpleToggle'
-    compo_js_params = FormInputBase.compo_js_params + ['enabled_icon', "disabled_icon", "enabled_icon_size",
-                                                       "disabled_icon_size", "enabled_icon_color",
-                                                       "disabled_icon_color"]
+    compo_js_params = FormInputBase.compo_js_params + ["enabled_icon", "disabled_icon",
+                                                       "enabled_icon_size", "disabled_icon_size",
+                                                       "enabled_icon_color", "disabled_icon_color",
+                                                       "readonly"]
     compo_js_extras = ['handle_click']
 
     # derived attribute overrides

@@ -6,3 +6,6 @@ a.epfl-simpletoggle-button:hover {
 	color:#333;
 }
 
+div.epfl-toggle-input.readonly .epfl-simpletoggle-button {
+	cursor: no-drop;
+}
