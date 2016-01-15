@@ -13,7 +13,9 @@ Subpackages
     solute.epfl.components.button
     solute.epfl.components.buttonradio
     solute.epfl.components.cardinal_layout
+    solute.epfl.components.carousel
     solute.epfl.components.checkbox
+    solute.epfl.components.codeeditor
     solute.epfl.components.col_layout
     solute.epfl.components.colorpicker
     solute.epfl.components.colorthief
@@ -23,7 +25,6 @@ Subpackages
     solute.epfl.components.download
     solute.epfl.components.dropdown
     solute.epfl.components.embedded_video
-    solute.epfl.components.flexible_text_list
     solute.epfl.components.form
     solute.epfl.components.grouped_link_list_layout
     solute.epfl.components.hover_link_list_layout
