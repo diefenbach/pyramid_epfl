@@ -17,9 +17,8 @@ epfl.CodeEditor.prototype.handle_changes = function (event, changes) {
 
 epfl.CodeEditor.prototype.after_response = function (data) {
     epfl.FormInputBase.prototype.after_response.call(this, data);
-
     this.code_mirror = CodeMirror.fromTextArea(this.textarea[0], {
-        mode: "javascript"
+        mode: this.params.language_mode
     });
 
     var obj = this;

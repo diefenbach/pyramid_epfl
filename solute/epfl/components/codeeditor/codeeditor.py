@@ -23,9 +23,14 @@ class CodeEditor(FormInputBase):
 
     # js settings
     compo_js_name = 'CodeEditor'
+    compo_js_params = FormInputBase.compo_js_params + ['language_mode']
 
     # derived attribute overrides
     validation_type = 'text'  #: Validate this component as text.
+
+    # custom component parameter
+
+    language_mode = 'javascript'  #: Change the syntax highlighting based on the language_mode. Supported: yaml, python, css, javascript
 
     def __init__(self, page, cid,
                  name=None,
@@ -46,6 +51,7 @@ class CodeEditor(FormInputBase):
                  compo_col=None,
                  label_col=None,
                  validation_type=None,
+                 language_mode=None,
                  **extra_params):
         """A code editor.
 
@@ -69,5 +75,6 @@ class CodeEditor(FormInputBase):
         :param compo_col: Set the width of the complete input component (default: max: 12)
         :param label_col: Set the width of the complete input component (default: 2)
         :param validation_type: Set the validation type, default 'text'
+        :param language_mode: Change the syntax highlighting based on the language_mode. Supported: yaml, python, css, javascript
         """
         pass
