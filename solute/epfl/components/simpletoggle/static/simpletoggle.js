@@ -10,6 +10,10 @@ epfl.SimpleToggle.prototype.handle_click = function (event) {
     var target = $(event.target);
     var obj = this;
 
+    if(obj.params.readonly){
+        return;
+    }
+
     if (target.attr('id') == this.cid + "_button" || target.parent().attr('id') == this.cid + "_button") {
         event.stopImmediatePropagation();
         event.preventDefault();
