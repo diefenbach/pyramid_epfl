@@ -4,53 +4,84 @@ Tutorial Part 3: Authentication & Authorization
 ===============================================
 
 In the following part of the tutorial, we show how rights management works in EPFL.
-We are going to build a view that provides a login dialog and UI elements which should only
-be visible upon login.
+We are going to build a view that provides a login dialog and UI elements which should only be visible upon login.
 
-We start with a basic empty page and add two boxes to the page:
-
-.. code-block:: python
-
-    class HomeRoot(epfl.components.CardinalLayout):
-    
-        def init_struct(self):
-            self.node_list.extend([Box(title='This box should only be displayed to authenticated users.'),
-                                   Box(title='This box should only be displayed to authenticated admin users.')])
-
-
-    @view_config(route_name='home')
-    class HomePage(epfl.Page):
-        root_node = HomeRoot(
-            constrained=True, node_list=[NavLayout(slot='north', title='Demo Notes App')])
-
-Currently, this view only displays the two boxes to everyone. Lets add authentication:
-We do this by simply adding a login dialog to the same page:
+We start with an empty skeleton like this as file third_step in the views folder:
 
 .. code-block:: python
 
-    class Login(Box):
-    
-        title = 'Login'
-    
-        node_list = [Form(cid='login_form',
-                            node_list=[TextInput(label='Username',
-                                              name='username'),
-                                       PasswordInput(label='Password',
-                                              name='password'),
-                                       Button(value='Login',
-                                                event_name='login')])]
-        def handle_login(self):
-            pass
-    
-    class HomeRoot(epfl.components.CardinalLayout):
-    
-        def init_struct(self):
-            self.node_list.extend([Login(),
-                                   Box(title='This box should only be displayed to authenticated users.'),
-                                   Box(title='This box should only be displayed to authenticated admin users.')])
+    # * encoding: utf-8
 
-Let's add authentication checks.
-We simple add a hard-coded dict of two users to our Login box, and check in the handle_login method whether the form is valid and the
+    from solute import epfl
+    from solute.epfl import components
+    from solute.epfl.core.epflassets import EPFLView
+    from solute.epfl.core.epflassets import ModelBase
+
+    from .first_step import NoteLayout
+
+    class ThirdStepAuthenticatedRoot(NoteLayout):
+
+        pass
+
+
+    @EPFLView(route_name='third', route_pattern='/third', permission='access')
+    class ThirdStep(epfl.Page):
+
+        root_node = ThirdStepAuthenticatedRoot()
+
+Then add this to the list of active modules, like it was already done for the second step:
+
+
+.. code-block:: ini
+
+    epfl.active_modules = epfl_starter.views.first_step
+                          epfl_starter.views.third_step
+
+Note: if you also have made the second step of the tutorial, you will have three module entries here with all three steps.
+
+After starting your pyramid instance and accessing the /third url with your browser you will notice a 403 Error with message Forbidden.
+
+This is caused by the permission 'access' which is added to the view definition of the third page. If you remove the permission parameter, the empty page with the menu is displayed. Try it!
+
+So, next thing is to provide a custom Forbidden view cause the current one is pyramid's default one and doesn't look that nice. To do so, we add a new page, which will have just one parameter, named forbidden_view.
+
+.. code-block:: python
+
+    ## the forbidden view is used without route. If there is no custom
+    ## Page used, the pyramid's default 403 permission view is shown.
+    @EPFLView(forbidden_view=True)
+    class LoginPage(epfl.Page):
+
+        root_node = components.Text(value='This is a custom forbidden view')
+
+After reloading (and don't forget to set the permission parameter back to the ThirdStep Page again) the given text of the Text component is displayed.
+
+In general, the forbidden view should handle two cases: provide a login if the current user is not already authenticated or provide some informations if the user is logged in but the access to "something" (lika a page) is prohibited.
+
+So first, add the login component by extending the node list of the root component.
+
+.. code-block:: python
+
+    ## This root node is used for the forbidden view. It displays the LoginBox
+    ## integrated in the NoteLayout
+    class ThirdStepLogin(NoteLayout):
+
+        def init_struct(self):
+            self.node_list.extend([components.LoginBox(hover_box=False)])
+
+
+And use it in your LoginPage:
+
+.. code-block:: python
+
+    @EPFLView(forbidden_view=True)
+    class LoginPage(epfl.Page):
+
+        root_node = ThirdStepLogin()
+
+Now the forbidden view shows a nice Login box based on the LoginBox component declared above.
+
+Let's add authentication checks: we simple add a hard-coded dict of two users to our Login box, and check in the handle_login method whether the form is valid and the
 corresponding users can be found in our user dict. In this case, we know that the user has passed valid credentials and can authenticate
 the user.
 
@@ -59,109 +90,108 @@ Your view should then use its model to access the authentication logic.
 
 .. code-block:: python
 
-    class Login(Box):
-        
-        users = {'admin': 'abcdefg',
-                 'someuser': '12345'}
-    
-        ...
-        
-        def handle_login(self):
-            if not self.page.login_form.validate():
-                return
-            values = self.page.login_form.get_values()
-    
-            if self.users.get(values['username'], None) != values['password']:
+    class LoginPage(epfl.Page):
+
+        root_node = ThirdStepLogin()
+        users = {'admin': 'adminsecret',
+                 'user': 'usersecret'}
+
+        def login(self, username, password):
+            if self.users.get(username, None) != password:
                 self.show_fading_message('Invalid authentication details!', 'error')
-                return
-    
-            self.page.reload()
+                return False
 
-Now the user gets an error message if the credentials are invalid, but nothing happens if they are valid.
-To authenticate the user on the current session, we call remember() on the page with the user id of the user to authenticate:
+            self.remember(username)
+            return True
 
-.. code-block:: python
+The LoginBox component calls a method login() on the page object, so we define it there. By calling self.remember(username) we delegate the authentication to pyramids api.
 
-    class Login(Box):
-    
-        ...
-        
-        def handle_login(self):
-            ...
-            self.page.remember(values['username'])
-            self.page.reload()
+Now you can try it: given wrong credentials, the fading error message 'Invalid authentication details' are displayed. Given one of the two example users, the login will succeed.
 
-The actual authentication logic is handled by pyramid's authentication framework.
-Now the session knows when an authenticated user has called the view.
-Let's hide the login dialog in such as case.
-For this, we use the EPFL @epfl_acl annotation.
-This annotation can be put before component classes or methods to indicate which parts of the view should be displayed to whom, 
-and which operations should be allowed.
+This also covers the second case of the Forbidden view mentioned above: now the user is authenticated, but still has no permission "access" which is declared to view the ThirdStep page. So a accordingly message is shown. You can change this text via parameters, given to the LoginBox.
+
+The assignment of permissions to some users EPFL is based on pyramid's authentication and authorisation system. This might be a good time to read some general fundamental concepts about it here: http://docs.pylonsproject.org/projects/pyramid/en/latest/narr/security.html
+
+To fullfill this tutorial, we need to grant the permission 'access' to all authenticated users. This is done globally for all the complete app like this:
 
 .. code-block:: python
 
-    from solute.epfl.core.epflassets import epfl_acl
-    
-    @epfl_acl(['access',
-               (False, 'system.Authenticated', 'access')])
-    class Login(Box):
-    
-        ...
-    
-After adding the ACL, the login dialog is not displayed anymore once valid credentials have been submitted.
-The given ACL can be read as follows:
+    from solute.epfl.core.epflacl import epfl_acl
 
-* By default, anyone can access the Login dialog
-* If the user has the role "system.Authenticated" (which is set upon calling remember() on the page), the permission
-  "access" is causing the action "deny", hence the dialog is hidden from the view.
+    ## grant authenticated users the authenticated permission globally
+    ## which is used below to pretect the "Homepage" Page
+    epfl_acl([(True, 'system.Authenticated', 'access')], use_as_global=True)
 
-Let's add logout functionality. We add a logout box with a logout button that is only visible for authenticated users,
-and call forget() on the page (the counterpart of page.remember()) upon a click on the logout button:
+
+epfl_acl() expects a list of tuples where the first value is True or False which maps to pyramids Allow or Deny. The second value is the principal, so in your case pyramid's default prinicipal for all authenticad users. And last, we declare the 'access' permission for them. epfl_acl() can also be used to declare accesses or denys to views or components. But as written above, in this case the use_as_global parameter is used to grant this permissions globally.
+
+We will see next, how single components can be proteced with epfl_acl. But first try to reload your Browser to see the effect after adding the last lines. The Login will succeed and an empty page is displayed (which should not wonder, cause we didn't define any useful components for the third page until now).
+
+So next we will add two components, that will display some Text, either the authenticated user is the admin one or just the general one. So let's define two components:
 
 .. code-block:: python
 
-    @epfl_acl([('system.Authenticated', 'access')])
-    class Logout(Box):
-    
-        title = 'Logout'
-        node_list = [Button(value='Logout',
-                              event_name='logout')]
-    
-        def handle_logout(self):
-            self.page.forget()
-            self.page.reload()
-    
-    class HomeRoot(epfl.components.CardinalLayout):
+    ## Grant the access permission only to the principal admin
+    @epfl_acl([(True, 'admin', 'access')])
+    class Admin(components.Box):
+        """ Display a box to verify, that the current user is 'admin'. """
+
+        title = 'Admin Box'
+
+        node_list = [
+            components.Text(value='This box is only visible for the admin prinicipal.')
+        ]
+
+    ## Grant the access permission to all authenticated users
+    @epfl_acl([(True, 'system.Authenticated', 'access')])
+    class User(components.Box):
+        """ Display a box to verify, that the current user is authenticated. """
+        title = 'User Box'
+
+        node_list = [
+            components.Text(value='This box is visible for all authenticated prinicipals.')
+        ]
+
+
+And add them to the root node of the page:
+
+.. code-block:: python
+
+    ## This root node is used on the ThirdStep page
+    class ThirdStepAuthenticatedRoot(NoteLayout):
 
         def init_struct(self):
-            self.node_list.extend([Login(),
-                                   Logout(),
-                                   Box(title='This box should only be displayed to authenticated users.'),
-                                   Box(title='This box should only be displayed to authenticated admin users.')])
+            self.node_list.extend([Admin(),
+                                   User()])
 
-Finally, we only have to set the correct rights to the two boxes on the page, which are currently displayed to everyone.
-Since ACLs can only be set for classes or methods, but not for object instances, we have to provide own classes the
-two boxes in order to provide ACLs for them:
+
+So after browser reload you will get displayed either the User and the Admin Box or just the User Box - depending on the login you used last. As written, this is handled again by epfl_acl which are now used as decorators for the according component.
+
+And finally, to complete this tutorial we also need a some logout mechanism. So we add another component that is only viewable for authenticated users:
 
 .. code-block:: python
 
-    @epfl_acl([('system.Authenticated', 'access')])
-    class UserBox(Box):
-    
-        title='This box should only be displayed to authenticated users.'
-    
-    @epfl_acl([('admin', 'access')])
-    class AdminBox(Box):
-    
-        title='This box should only be displayed to authenticated admin users.'
-    
-    class HomeRoot(epfl.components.CardinalLayout):
-    
-            def init_struct(self):
-                self.node_list.extend([Login(),
-                                       Logout(),
-                                       UserBox(),
-                                       AdminBox()])
+    ## The Logout Box is only displayed, if the user is authenticated
+    @epfl_acl([(True, 'system.Authenticated', 'access')])
+    class Logout(components.Box):
+        """ Component that displays the Logout Button with some text. """
+        title = 'Logout Box'
+        node_list = [
+            components.Text(value='This box is only visible for all authenticated users'),
+            components.Button(value='Logout',
+                              color='warning',
+                              event_name='logout')]
 
-Now, only the user box is displayed for all authenticated user, and since the admin box has a more restrictive ACL, it is only displayed when the admin
-user is authenticated.  
+        def handle_logout(self):
+            self.page.forget()
+            self.page.show_fading_message('Logout done.', 'success')
+            self.page.jump(self.page.request.matched_route.name, 1000)
+
+
+And add it again to the list of nodes for your page.
+
+Now you can try to log out and log in back with the different users and see how the page content changes depending on the permissions of the current user.
+
+The important step of the logout mechanism is, to call forget() on your page, which gets delegated to pyramid's api. The logout handler ends with a page.jump call to force a reload of the current page. This finally will show the login box (of the forbidden view) again.
+
+You can have a look of the complete file of this step at https://github.com/solute/pyramid_epfl/blob/master/solute/epfl/scaffolds/epfl_tutorial_scaffold/epfl_tutorial/views/third_step.py

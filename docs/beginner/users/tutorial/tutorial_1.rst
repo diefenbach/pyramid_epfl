@@ -33,12 +33,12 @@ virtualenv environment for it.
 If you want to view both the final tutorial app and your working version (demo_app), change the port in the
 development.ini file of the tutorial app to run both server instances in parallel on your machine.
 
-Let's go back to our empty notes app. In demo_app/epf_starter/views/home.py, we will do most of the work.
+Let's go back to our empty notes app. In demo_app/epf_starter/views/first_step.py, we will do most of the work.
 
 In this file we already added a navbar to the root component. The root component is the component that
 resides directly on the page and is basically responsible for the overall layout of the page.
 
-In home.py, we see that the root component is instantiated as follows:
+In first_step.py, we see that the root component is instantiated as follows:
 
 .. code-block:: python
 
@@ -79,7 +79,7 @@ A lot of EPFL's components are so-called container components. They support nest
 
 Next, we will add some components to the root component: the component that will display the form where we can create a new note or
 edit an existing one.
-We could do this by just extending note_list with further components when instantiating the FirstStepRoot class, or
+We could do this by just extending node_list with further components when instantiating the FirstStepRoot class, or
 by extending the HomeRoot
 class itself. We choose the latter way by implementing the init_struct method and extending the node_list.
 
@@ -180,7 +180,7 @@ The easiest way to handle this event is by using an inherited class from Form an
 Nothing has changed so far, we have just moved the form to our own subclass from Form.
 
 We now add the event handling method to the form. Since the button is instanciated with the value "submit"
-of its attribute "event_name", epfl expects a method "handle_submit" to call for event handling. We provide this
+of its attribute "event_name", epfl expects a method "handle_submit" to call for event handling (event handler methods are always prefixed with 'handle'). We provide this
 method in our NoteForm class:
 
 .. code-block:: python
@@ -434,7 +434,7 @@ The first line queries the component, which was triggered by the click. This is 
 
 Each component has a cid - even if they are not set explicit. To work with dynamically created cids you can work with the dict-like attribute 'components'. After the calling component object is available, the id of the note can be get. Now we have all informations to display a ModalBox with the detail informations of the note entry (which is, to be honest, just the same as we display in the notes_list, but the journey is the reward).
 
-There is another itneresting method called in this handler: add_component(). This method takes a component and adds it to the current container. As always after changing the container structure, a redraw is required.
+There is another interesting method called in this handler: add_component(). This method takes a component and adds it to the current container. As always after changing the container structure, a redraw is required.
 
 Until now, we can add and display notes. But next, we want to use the note form not only for creating new notes, but also for editing existing notes.
 

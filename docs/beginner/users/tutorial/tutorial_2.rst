@@ -98,7 +98,7 @@ As always, we set the Model as attribute to our page:
 Note that we've added the parameter calling_component to the load_note_children() method.
 We need this later because this method, being prefixed with "load_", will serve later for a component to obtain note children via
 the get_data attribute. When this method is called then, the calling_component parameter can be used to obtain the component that has
-called, and obtain the note children for the calling components note. We well dig into that a little later.
+called, and obtain the note children for the calling components note.
 
 Up to now, nothing has changed in our page. So let's add the form known from step one again and extend it by a new input to enter the parent's id of a note.
 
@@ -218,4 +218,4 @@ This is enough to complete the second step of our tutorial. Just replace one com
 
 The only thing missing here, is the event handler method for the open_details event of the notes_link_list which can be copied from step one over here. It's up to you if you want to.
 
-In the next step, we create a simple login dialog to demonstrate rights management in EPFL.
+In the next step, we create a simple login dialog to demonstrate rights management in EPFL. You can have a look of the complete file of this step at https://github.com/solute/pyramid_epfl/blob/master/solute/epfl/scaffolds/epfl_tutorial_scaffold/epfl_tutorial/views/second_step.py
