@@ -285,3 +285,15 @@ def test_btn_link_color(page):
     compo = page.root_node
 
     assert 'btn btn-primary' in compo.render(), 'btn_link_color set but btn_link_color is missing or malformed in html.'
+
+def test_btn_disabled(page):
+    page.root_node = components.Link(
+        text='foobar',
+        btn_link=True,
+        btn_disabled=True
+    )
+    page.handle_transaction()
+
+    compo = page.root_node
+
+    assert 'btn btn-default disabled' in compo.render(), 'btn_disabled set but disabled is missing or malformed in html.'
