@@ -4,10 +4,10 @@ Tutorial Part 1: Basic Notes App
 ================================
 
 In this tutorial, we create a simple EPFL app that provides a simple functionality to create, edit and delete notes.
-For this reason, the app simply provides one view, which is by the way a rather common use case in EPFL apps.
+For this reason, the app simply provides one view, which is by the way a rather common use case in EPFL apps, since they can be easily be deployed combined with other EPFL apps.
 
 First, we start by creating and setting up the app based on an empty EPFL starter pyramid scaffold.
-We create the demo app, run setup.py to set it up, and launch it using the pserve command. Make sure you have a (idally virtualenv-based) environment with pyramid_epfl installed.
+We create the demo app, run setup.py to set it up, and launch it using the pserve command. Make sure you have an (ideally virtualenv-based) environment with pyramid_epfl installed.
 
 
 .. code-block:: bash
