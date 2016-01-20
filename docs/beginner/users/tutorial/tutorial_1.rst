@@ -196,7 +196,7 @@ method in our NoteForm class:
                     )
                     return
 
-	    print self.get_values()
+                print self.get_values()
 
 
 What happens in handle_submit()? First, the form is validated. If validation fails (both input fields are mandatory, so validation fails
