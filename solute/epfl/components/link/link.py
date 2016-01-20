@@ -9,7 +9,8 @@ class Link(ComponentBase):
     asset_spec = "solute.epfl.components:link/static"
     js_name = ["link.js", "jquery.tooltipster.min.js"]
     css_name = ["link.css", "tooltipster.css", "tooltipster-shadow.css"]
-    compo_state = ["url", "route", "text", "icon", "name", "active", "context_menu", "popover_text", "popover_trigger"]
+    compo_state = ["url", "route", "text", "icon", "name", "active", "context_menu", "popover_text",
+                   "popover_trigger", "btn_disabled"]
 
     # js settings
     compo_js_auto_parts = True
@@ -35,6 +36,7 @@ class Link(ComponentBase):
     shift_click_event_name = None
     btn_link = False  #: Set to true if link should be displayed as a button.
     btn_link_color = "default"  #: the color of the link button possible values: bootstrap colors: primary default etc.
+    btn_disabled = False  #: Set to true if button should be disabled.
     new_window = False  #: Set to true if link should be opened in new window or tab
     popover_text = None  #: If set, click on link displays this text
     popover_trigger = "hover"  #: trigger for popover text
@@ -67,6 +69,7 @@ class Link(ComponentBase):
                  popover_trigger=None,
                  popover_position=None,
                  btn_link_color=None,
+                 btn_disabled=None,
                  **extra_params):
         """Simple Link component.
 
@@ -101,6 +104,7 @@ class Link(ComponentBase):
         list of dicts example: [{'name': u"Delete", 'event': "delete", 'type': "link"},{'name': "Rename",
                                'event': "rename", 'type': "link"}]
         if string is set link component calls container compos context_menu function with context_menu as parameter
+        :param btn_disabled: Set to true if button should be disabled.
         """
         pass
 
