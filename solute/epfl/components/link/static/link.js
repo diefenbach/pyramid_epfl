@@ -61,10 +61,6 @@ epfl.Link.prototype.after_response = function (data) {
 epfl.Link.prototype.handle_local_click = function (event) {
     epfl.ComponentBase.prototype.handle_local_click.call(this, event);
 
-    if (this.params.event_name) {
-        this.send_event(this.params.event_name);
-        event.originalEvent.preventDefault();
-    }
     if (this.params.stop_propagation_on_click) {
         event.stopPropagation();
     }
@@ -85,6 +81,9 @@ epfl.Link.prototype.handle_local_click = function (event) {
         }
         this.context_menu.hide();
         this.send_event($(event.target).data("event"), {});
+    } else if (this.params.event_name) {
+        this.send_event(this.params.event_name);
+        event.originalEvent.preventDefault();
     }
 
 };

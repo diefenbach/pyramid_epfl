@@ -98,15 +98,12 @@ class ExampleModel(epflassets.ModelBase):
     ]
 
     def load_first(self, *args, **kwargs):
-        print 'first'
         return self.data[0:10]
 
     def load_second(self, *args, **kwargs):
-        print 'second'
         return self.data[10:20]
 
     def load_third(self, *args, **kwargs):
-        print 'third'
         return self.data[20:30]
 
 
