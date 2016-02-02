@@ -6,6 +6,6 @@
         <i class="fa fa-{{ compo.icon_open }}"></i>
     {% endif %}
     {% if compo.label is defined and compo.label %}
-        <span>{{ compo.label }} ({{ compo.id }})</span>
+        <span>{{ compo.label }}{{ '(' + compo.id + ')' if compo.show_id else ''}}</span>
     {% endif %}
 {% endmacro %}

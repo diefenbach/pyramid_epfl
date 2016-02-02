@@ -10,7 +10,7 @@ class RecursiveTree(epflcomponentbase.ComponentContainerBase):
     css_name = ['recursive_tree.css']
     compo_state = epflcomponentbase.ComponentContainerBase.compo_state + [
         'icon_open', 'icon_close', 'label', 'get_data', 'show_children', 'data_interface', 'scroll_position',
-        'default_child_cls'
+        'default_child_cls', 'show_id'
     ]
 
     # js settings
@@ -29,6 +29,7 @@ class RecursiveTree(epflcomponentbase.ComponentContainerBase):
     id = None
     show_children = False  #: Toggle whether the child components are currently visible or not.
     scroll_position = None  #: Position in pixels the component will scroll to on loading.
+    show_id = False  #: show the id in tree leaf
 
     def __init__(self, page, cid,
                  node_list=None,
@@ -41,6 +42,7 @@ class RecursiveTree(epflcomponentbase.ComponentContainerBase):
                  id=None,
                  show_children=None,
                  scroll_position=None,
+                 show_id=None,
                  **kwargs):
         """Simple tree component.
 
@@ -57,6 +59,7 @@ class RecursiveTree(epflcomponentbase.ComponentContainerBase):
                    against it.
         :param show_children: Load and show any potential children that would be returned by polling get_data.
         :param scroll_position: Position in pixels the component will scroll to on loading.
+        :param show_id: show the id in tree leaf
         """
         pass
 
