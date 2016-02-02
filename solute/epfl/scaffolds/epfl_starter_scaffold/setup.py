@@ -19,9 +19,9 @@ requires = [
     'ujson',
     ]
 
-setup(name='epfl_pyramid_barebone',
+setup(name='epfl_starter',
       version='0.0',
-      description='epfl_pyramid_barebone',
+      description='EPFL Starter',
       long_description=README + '\n\n' + CHANGES,
       classifiers=[
         "Programming Language :: Python",
@@ -38,9 +38,9 @@ setup(name='epfl_pyramid_barebone',
       zip_safe=False,
       install_requires=requires,
       tests_require=requires,
-      test_suite="epfl_pyramid_barebone",
+      test_suite="epfl_starter",
       entry_points="""\
       [paste.app_factory]
-      main = epfl_pyramid_barebone:main
+      main = epfl_starter:main
       """,
       )

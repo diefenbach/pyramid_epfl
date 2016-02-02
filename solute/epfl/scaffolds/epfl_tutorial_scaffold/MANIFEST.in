@@ -1,2 +1,2 @@
 include *.txt *.ini *.cfg *.rst
-recursive-include epfl_pyramid_barebone *.ico *.png *.css *.gif *.jpg *.pt *.txt *.mak *.mako *.js *.html *.xml
+recursive-include epfl_tutorial *.ico *.png *.css *.gif *.jpg *.pt *.txt *.mak *.mako *.js *.html *.xml
