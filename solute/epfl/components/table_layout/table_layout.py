@@ -53,6 +53,8 @@ class TableLayout(PaginatedListLayout):
                  search_focus_after_search=None,
                  search_timeout=None,
                  infinite_scroll_debounce_delay=None,
+                 show_row_count=None,
+                 show_page_count=None,
                  map_child_cls=None,
                  fixed_header=None,
                  column_visibility=None,
@@ -98,6 +100,8 @@ class TableLayout(PaginatedListLayout):
         :param search_timeout: The timeout in ms until the search event fires
         :param infinite_scroll_debounce_delay: The delay for scroll debounce in infinite scrolling lists
         :param map_child_cls: Used to map specific fields to child classes.
+        :param show_row_count: Show the row count in the pagination bar (depends on show_pagination=True)
+        :param show_page_count: Show the page count in the pagination bar (depends on show_pagination=True)
         :param fixed_header: Set to False if header should not be fixed.
         :param column_visibility: An optional tuple denoting which columns should be initially displayed or not.
                                   If set, its length has to match the length of table columns.

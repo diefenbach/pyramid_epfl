@@ -31,14 +31,16 @@
                         {% for header in compo.headings %}
                             {% if compo.column_visibility is not none and compo.column_visibility[loop.index0] == False %}
                             <th style="width: 20px;">
-                                <i class="show-column-icon fa fa-angle-double-right"></i>
+                              <i class="show-column-icon fa fa-angle-double-right"
+                                 title="Spalte &quot;{{ header.title }}&quot; anzeigen"></i>
                             </th>
                             {% else %}
                             <th {% if header.width is defined %}style="width: {{ header.width }}px;"{% endif %}><span>{{ header.title }}</span>
 
                             {% if header.toggle_visibility_supported is defined and header.toggle_visibility_supported %}
-                                <i class="hide-column-icon fa fa-angle-double-left"></i>
-                            {% elif header.sortable is defined and header.sortable %}
+                              <i title="Spalte &quot;{{ header.title }}&quot; verbergen" class="hide-column-icon fa fa-angle-double-left"></i>
+                              {% endif %}
+                            {% if header.sortable is defined and header.sortable %}
                                 {% if compo.orderby != header.name or compo.ordertype is none %}
                                     <i class="header-sortable fa fa-sort"></i>
                                 {% elif compo.orderby == header.name and compo.ordertype == "asc" %}

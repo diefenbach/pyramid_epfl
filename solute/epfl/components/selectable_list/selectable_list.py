@@ -41,6 +41,8 @@ class SelectableList(LinkListLayout):
                  infinite_scroll_debounce_delay=None,
                  links=None,
                  event_name=None,
+                 show_row_count=None,
+                 show_page_count=None,
                  data_interface=None,
                  search_text=None,
                  scroll_pos=None,
@@ -64,6 +66,8 @@ class SelectableList(LinkListLayout):
         :param infinite_scroll_debounce_delay: The delay for scroll debounce in infinite scrolling lists
         :param links: List of dicts with text and url. May contain an icon entry.
         :param event_name: The name of an event to be triggered instead of rendering normal links.
+        :param show_row_count: Show the row count in the pagination bar (depends on show_pagination=True)
+        :param show_page_count: Show the page count in the pagination bar (depends on show_pagination=True)
         :param data_interface: data interface for child class needs id and text
         :param search_text: search text for custom search text handling
         :param scroll_pos: Scrollbar position this is used to jump back to the last scroll pos after redraw

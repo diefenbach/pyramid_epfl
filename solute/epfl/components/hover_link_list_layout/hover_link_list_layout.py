@@ -40,6 +40,8 @@ class HoverLinkListLayout(LinkListLayout):
                  search_focus_after_search=None,
                  search_timeout=None,
                  infinite_scroll_debounce_delay=None,
+                 show_row_count=None,
+                 show_page_count=None,
                  links=None,
                  event_name=None,
                  **kwargs):
@@ -59,6 +61,8 @@ class HoverLinkListLayout(LinkListLayout):
         :param search_focus_after_search: Focus the search input after a search
         :param search_timeout: The timeout in ms until the search event fires
         :param infinite_scroll_debounce_delay: The delay for scroll debounce in infinite scrolling lists
+        :param show_row_count: Show the row count in the pagination bar (depends on show_pagination=True)
+        :param show_page_count: Show the page count in the pagination bar (depends on show_pagination=True)
         :param links: List of dicts with text and url. May contain an icon entry.
         :param event_name: The name of an event to be triggered instead of rendering normal links.
         """
