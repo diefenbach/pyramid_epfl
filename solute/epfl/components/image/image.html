@@ -1,25 +1,48 @@
-<div id="{{compo.cid}}" epflid="{{compo.cid}}" class="epfl-image">
-    <img src="{{ compo.get_image_path() }}"
-         class="epfl-img-component-image"
-         data-cid="{{ compo.cid }}"
-         style="height: {{ 'auto' if compo.height is none else compo.height }};
-                width: {{ 'auto' if compo.width is none else compo.width }};
-                 {{ "padding: 10px;" if compo.padding else "" }}" />
-    {% if compo.show_dominant_color %}
-    <div class="row">
-        <div style="float:left">Dominante Farbe:<br>
-            <div class="epfl-img-component-dominant-color epfl-img-component-color" style="float:left; width:100%; height: 30px;"></div>
-        </div>
-        {% if compo.show_additional_colors %}
-        <div style="float:left; margin-left:10px;">Weitere Farben:<br>
-            <div id="{{compo.cid}}_palette1" class="epfl-img-component-color" style="float:left; width:15px; height: 15px;"></div>
-            <div id="{{compo.cid}}_palette2" class="epfl-img-component-color" style="float:left; width:15px; height: 15px;"></div>
-            <div id="{{compo.cid}}_palette3" class="epfl-img-component-color" style="float:left; width:15px; height: 15px;"></div>
-            <div id="{{compo.cid}}_palette4" class="epfl-img-component-color" style="float:left; width:15px; height: 15px;"></div>
-            <div id="{{compo.cid}}_palette5" class="epfl-img-component-color" style="float:left; width:15px; height: 15px;"></div>
-            <div id="{{compo.cid}}_palette6" class="epfl-img-component-color" style="float:left; width:15px; height: 15px;"></div>
-        </div>
+{% set compo_col = compo.compo_col %}
+<div id="{{ compo.cid }}" epflid="{{ compo.cid }}" class="row epfl-image">
+    {% if compo.label %}
+        {% if compo.layout_vertical == True %}
+            <div class="row">
+                <div class="col-sm-{{ compo_col }}">
+                    <label for="{{ compo.cid }}_image" class="control-label">{{ compo.label }}</label>
+                </div>
+            </div>
+        {% else %}
+            {% set compo_col = compo_col - compo.label_col %}
+            <label for="{{ compo.cid }}_image" class="control-label col-sm-{{ compo.label_col }}"
+                {% if compo.label_style is defined %}
+                    style="{{ compo.label_style }}"
+                {% endif %}
+                >{{ compo.label }}</label>
+        {% endif %}
+    {% endif %}
+
+    {% if compo.layout_vertical == True %}<div class="row">{% endif %}
+    <div class="col-sm-{{ compo_col }}">
+        <img src="{{ compo.get_image_path() }}"
+             class="epfl-img-component-image"
+             data-cid="{{ compo.cid }}"
+             id="{{ compo.cid }}_image"
+             style="height: {{ 'auto' if compo.height is none else compo.height }};
+                    width: {{ 'auto' if compo.width is none else compo.width }};
+                    {{ "padding: 10px;" if compo.padding else "" }}" />
+        {% if compo.show_dominant_color %}
+            <div class="row">
+                <div style="float:left">Dominante Farbe:<br>
+                    <div class="epfl-img-component-dominant-color epfl-img-component-color" style="float:left; width:100%; height: 30px;"></div>
+                </div>
+                {% if compo.show_additional_colors %}
+                <div style="float:left; margin-left:10px;">Weitere Farben:<br>
+                    <div id="{{compo.cid}}_palette1" class="epfl-img-component-color" style="float:left; width:15px; height: 15px;"></div>
+                    <div id="{{compo.cid}}_palette2" class="epfl-img-component-color" style="float:left; width:15px; height: 15px;"></div>
+                    <div id="{{compo.cid}}_palette3" class="epfl-img-component-color" style="float:left; width:15px; height: 15px;"></div>
+                    <div id="{{compo.cid}}_palette4" class="epfl-img-component-color" style="float:left; width:15px; height: 15px;"></div>
+                    <div id="{{compo.cid}}_palette5" class="epfl-img-component-color" style="float:left; width:15px; height: 15px;"></div>
+                    <div id="{{compo.cid}}_palette6" class="epfl-img-component-color" style="float:left; width:15px; height: 15px;"></div>
+                </div>
+                {% endif %}
+            </div>
         {% endif %}
     </div>
-    {% endif %}
+    {% if compo.layout_vertical == True %}</div>{% endif %}
 </div>

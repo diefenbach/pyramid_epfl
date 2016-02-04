@@ -51,17 +51,6 @@ def test_value(page):
                 label='test label',
                 tag='foo'
             ),
-            components.Text(
-                cid='text_verbose_tag',
-                value='test value',
-                verbose=True,
-                tag='foo'
-            ),
-            components.Text(
-                cid='text_verbose',
-                value='test value',
-                verbose=True,
-            ),
         ]
     )
 
@@ -73,10 +62,7 @@ def test_value(page):
     assert 'test value' in page.text_vertical.render()
     assert 'test value' in page.text_vertical_tag.render()
     assert 'test value' in page.text_label.render()
-    assert '>test value<' in page.text_verbose.render()
 
-    assert '<foo ' in page.text_verbose_tag.render()
-    assert '</foo>' in page.text_verbose_tag.render()
     assert '<foo ' in page.text_vertical_tag.render()
     assert '</foo>' in page.text_vertical_tag.render()
     assert '<foo ' in page.text_label_tag.render()
@@ -99,12 +85,12 @@ def test_label(page, bool_quad):
 
     assert 'test value' in page.root_node.render()
     if on and vertical:
-        assert '<label class="col-sm-12">test label</label>' in page.root_node.render()
+        assert '<label for="root_node_text" class="control-label"' in page.root_node.render()
     elif on:
-        assert '<label class="col-sm-2 control-label">test label</label>' in page.root_node.render()
+        assert '<label for="root_node_text" class="control-label col-sm-2"' in page.root_node.render()
     else:
-        assert '<label class="col-sm-2">test label</label>' not in page.root_node.render()
-        assert '<label class="col-sm-2 control-label">test label</label>' not in page.root_node.render()
+        assert '<label for="root_node_text" class="control-label"' not in page.root_node.render()
+        assert '<label for="root_node_text" class="control-label col-sm-2"' not in page.root_node.render()
 
 
 def test_tag_class(page):
