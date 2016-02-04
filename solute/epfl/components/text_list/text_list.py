@@ -37,6 +37,8 @@ class TextList(PaginatedListLayout):
                  search_focus_after_search=None,
                  search_timeout=None,
                  infinite_scroll_debounce_delay=None,
+                 show_row_count=None,
+                 show_page_count=None,
                  data_interface=None,
                  **extra_params):
         """
@@ -53,6 +55,8 @@ class TextList(PaginatedListLayout):
         :param search_focus_after_search: Focus the search input after a search
         :param search_timeout: The timeout in ms until the search event fires
         :param infinite_scroll_debounce_delay: The delay for scroll debounce in infinite scrolling lists
+        :param show_row_count: Show the row count in the pagination bar (depends on show_pagination=True)
+        :param show_page_count: Show the page count in the pagination bar (depends on show_pagination=True)
         :param data_interface: data interface for child class needs id and text
         """
         pass

@@ -67,6 +67,7 @@ class ContextListLayout(PaginatedListLayout):
     auto_update_children = True
     data_interface = {'id': None, 'text': None, 'context_menu': None}
 
+
     def __init__(self, page, cid,
                  node_list=None,
                  height=None,
@@ -80,6 +81,8 @@ class ContextListLayout(PaginatedListLayout):
                  search_focus_after_search=None,
                  search_timeout=None,
                  infinite_scroll_debounce_delay=None,
+                 show_row_count=None,
+                 show_page_count=None,
                  get_data=None,
                  auto_update_children=None,
                  data_interface=None,
@@ -98,6 +101,8 @@ class ContextListLayout(PaginatedListLayout):
         :param search_focus_after_search: Focus the search input after a search
         :param search_timeout: The timeout in ms until the search event fires
         :param infinite_scroll_debounce_delay: The delay for scroll debounce in infinite scrolling lists
+        :param show_row_count: Show the row count in the pagination bar (depends on show_pagination=True)
+        :param show_page_count: Show the page count in the pagination bar (depends on show_pagination=True)
         :param get_data: A get_data source that is used for this component
         :param auto_update_children: Updates are triggered every request in after_event_handling if True.
         :param data_interface: Data interface to translate the results from get_data polling.

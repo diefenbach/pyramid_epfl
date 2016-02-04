@@ -58,6 +58,8 @@ class PaginatedListLayout(PrettyListLayout):
     infinite_scroll_debounce_delay = 100  #: The delay for scroll debounce in infinite scrolling lists
     search_focus = False  #: Set to true if the search field should receive focus on load.
     search_focus_after_search = True  #: Focus the search input after a search
+    show_row_count = False  #: Show the row count in the pagination bar (depends on show_pagination=True)
+    show_page_count = False  #: Show the page count in the pagination bar (depends on show_pagination=True)
 
     def __init__(self, page, cid,
                  node_list=None,
@@ -72,6 +74,8 @@ class PaginatedListLayout(PrettyListLayout):
                  search_focus_after_search=None,
                  search_timeout=None,
                  infinite_scroll_debounce_delay=None,
+                 show_row_count=None,
+                 show_page_count=None,
                  **kwargs):
         """Paginated list using the PrettyListLayout based on bootstrap. Offers searchbar above and pagination below
         using the EPFL theming mechanism.
@@ -88,6 +92,8 @@ class PaginatedListLayout(PrettyListLayout):
         :param search_focus_after_search: Focus the search input after a search
         :param search_timeout: The timeout in ms until the search event fires
         :param infinite_scroll_debounce_delay: The delay for scroll debounce in infinite scrolling lists
+        :param show_row_count: Show the row count in the pagination bar (depends on show_pagination=True)
+        :param show_page_count: Show the page count in the pagination bar (depends on show_pagination=True)
         """
         pass
 
