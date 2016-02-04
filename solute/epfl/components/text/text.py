@@ -18,6 +18,9 @@ class Text(epflcomponentbase.ComponentBase):
     #: If set to True, the label will be rendered above the text instead of left before the text.
     #: This attribute is only regarded if the :attr:`label` attribute is set.
     layout_vertical = False
+    label_col = 2
+    compo_col = 12
+
 
     def __init__(self, page, cid,
                  value=None,
