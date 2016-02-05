@@ -41,9 +41,30 @@ def test_label(page, bool_toggle):
     page.handle_transaction()
 
     if bool_toggle:
+        assert '<span>some label</span>' in page.root_node.render()
+    else:
+        assert '<span>some label</span>' not in page.root_node.render()
+
+
+def test_show_id(page, bool_toggle):
+    show_id = False
+    if bool_toggle:
+        show_id = True
+
+    page.root_node = components.RecursiveTree(
+        id=1,
+        label='some label',
+        show_id=show_id,
+    )
+
+    page.handle_transaction()
+
+    if bool_toggle:
         assert '<span>some label (1)</span>' in page.root_node.render()
     else:
-        assert '<span>some label (1)</span>' not in page.root_node.render()
+        assert '<span>some label</span>' not in page.root_node.render()
+
+
 
 
 def test_handle_scroll(page):

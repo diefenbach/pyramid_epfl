@@ -7,7 +7,8 @@ class Popover(Link):
 
     exempt_params = set(['list_element', 'selection', 'double_click_event_name', 'name', 'url', 'route',
                          'btn_link', 'breadcrumb', 'new_window', 'tile', 'btn_link_color', 'event_name',
-                         'stop_propagation_on_click', 'context_menu'])
+                         'stop_propagation_on_click', 'context_menu', 'layout_vertical', 'compo_col', 'label_col',
+                         'label', 'label_style', 'btn_disabled'])
 
     def __init__(self, page, cid,
                  text=None,

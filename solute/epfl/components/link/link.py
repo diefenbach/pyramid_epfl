@@ -1,4 +1,5 @@
 # coding: utf-8
+
 from solute.epfl.core.epflcomponentbase import ComponentBase
 
 
@@ -25,7 +26,6 @@ class Link(ComponentBase):
     name = None  #: The name displayed for this link.
     text = None  #: Alias for name.
     icon = None  #: The icon to be displayed in front of the text.
-    breadcrumb = False  #: Display the link as a breadcrumb.
     tile = False  #: Display the link as a rectangular tile.
     list_element = False  #: Display the link as a bootstrap style list element.
     selection = None  #: Tuple of integers: (selection_start, selection_end). MARK-Tag will be applied there.
@@ -48,6 +48,13 @@ class Link(ComponentBase):
     #: {'name': "Rename", 'event': "rename", 'type': "link", 'disabled': True}]
     #: if string is set link component calls container compos context_menu function with context_menu as parameter
     context_menu = None
+    label = None  #: Label to be used for this text component.
+    #: If set to True, the label will be rendered above the text instead of left before the text.
+    #: This attribute is only regarded if the :attr:`label` attribute is set.
+    layout_vertical = False  #: Set to True if label should be displayed on top of the compo and not on the left before it
+    label_col = 2  #: Set the width of the label of the component (default: 2, max: 12)
+    compo_col = 12  #: Set the width of the complete component (default: 12, max: 12)
+    label_style = None  #: Can be used to add additional css styles for the label
 
     def __init__(self, page, cid,
                  url=None,
@@ -55,7 +62,6 @@ class Link(ComponentBase):
                  name=None,
                  text=None,
                  icon=None,
-                 breadcrumb=None,
                  tile=None,
                  list_element=None,
                  btn_link=None,
@@ -70,6 +76,11 @@ class Link(ComponentBase):
                  popover_position=None,
                  btn_link_color=None,
                  btn_disabled=None,
+                 label=None,
+                 label_col=None,
+                 label_style=None,
+                 compo_col=None,
+                 layout_vertical=None,
                  **extra_params):
         """Simple Link component.
 
@@ -86,7 +97,6 @@ class Link(ComponentBase):
         :param name: The name displayed for this component.
         :param text: Alias for name.
         :param icon: The icon to be displayed in front of the text.
-        :param breadcrumb: Display the link as a breadcrumb.
         :param tile: Display the link as a rectangular tile.
         :param list_element: Display the link as a bootstrap style list element.
         :param btn_link: Display the link as a bootstrap style button.
@@ -105,6 +115,11 @@ class Link(ComponentBase):
                                'event': "rename", 'type': "link"}]
         if string is set link component calls container compos context_menu function with context_menu as parameter
         :param btn_disabled: Set to true if button should be disabled.
+        :param label: Label to be used for this text component.
+        :param layout_vertical: Set to True if label should be displayed on top of the compo and not on the left before it
+        :param label_col: Set the width of the label of the component (default: 2, max: 12)
+        :param compo_col: Set the width of the complete component (default: 12, max: 12)
+        :param label_style: Can be used to add additional css styles for the label
         """
         pass
 
