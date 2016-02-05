@@ -27,9 +27,7 @@
     {% set name = compo.name %}
 {% endif %}
 <a id="{{ compo.cid }}_link"
-   {% if compo.breadcrumb %}
-       class="breadcrumb-link {{ "first" if compo.is_first() else "" }}"
-   {% elif compo.tile %}
+   {% if compo.tile %}
        class="tile-link"
    {% elif compo.list_element %}
        class="list-group-item col-sm-12{{ " active" if compo.is_current_url() or compo.active else "" }}"

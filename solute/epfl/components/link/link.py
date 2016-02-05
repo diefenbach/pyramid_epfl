@@ -1,4 +1,5 @@
 # coding: utf-8
+
 from solute.epfl.core.epflcomponentbase import ComponentBase
 
 
@@ -25,7 +26,6 @@ class Link(ComponentBase):
     name = None  #: The name displayed for this link.
     text = None  #: Alias for name.
     icon = None  #: The icon to be displayed in front of the text.
-    breadcrumb = False  #: Display the link as a breadcrumb.
     tile = False  #: Display the link as a rectangular tile.
     list_element = False  #: Display the link as a bootstrap style list element.
     selection = None  #: Tuple of integers: (selection_start, selection_end). MARK-Tag will be applied there.
@@ -62,7 +62,6 @@ class Link(ComponentBase):
                  name=None,
                  text=None,
                  icon=None,
-                 breadcrumb=None,
                  tile=None,
                  list_element=None,
                  btn_link=None,
@@ -98,7 +97,6 @@ class Link(ComponentBase):
         :param name: The name displayed for this component.
         :param text: Alias for name.
         :param icon: The icon to be displayed in front of the text.
-        :param breadcrumb: Display the link as a breadcrumb.
         :param tile: Display the link as a rectangular tile.
         :param list_element: Display the link as a bootstrap style list element.
         :param btn_link: Display the link as a bootstrap style button.
