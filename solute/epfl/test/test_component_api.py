@@ -55,7 +55,11 @@ def container_type(request, page, component_container_type_class):
     # The child_cls to be used if one is required. If possible the components own default_child_cls is used for better
     # compatibility.
     child_cls = getattr(component_container_type_class, 'default_child_cls', None)
+
     if child_cls is None:
+        child_cls = ComponentBase
+    elif isinstance(child_cls, CompoStateAttribute):
+        ## XXX: why is recursive tree giving a CompoStateAttribute object as default_child_cls?
         child_cls = ComponentBase
 
     default_args = getattr(component_container_type_class, 'data_interface', {})

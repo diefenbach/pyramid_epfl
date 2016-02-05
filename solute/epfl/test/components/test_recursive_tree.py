@@ -86,10 +86,14 @@ def test_recursive_generation(pyramid_req, bool_toggle):
 
     root_node = page.root_node
 
+    ## three levels and the last one is empty
     assert len(root_node.components) == 10
-    for compo in root_node.components:
-        assert len(compo.components) == 10
-
+    for first in root_node.components:
+        assert len(first.components) == 10
+        for second in first.components:
+            assert len(second.components) == 10
+            for third in second.components:
+                assert len(third.components) == 0
 
 class ExampleModel(epflassets.ModelBase):
     data = [
@@ -106,22 +110,29 @@ class ExampleModel(epflassets.ModelBase):
     def load_third(self, *args, **kwargs):
         return self.data[20:30]
 
+    def load_fourth(self, *args, **kwargs):
+        return []
 
 class ExamplePage(epflpage.Page):
+    """ By given 4 get_data elements and only one data_interface, it should be used for all 4. """
+
     model = ExampleModel
 
     root_node = components.RecursiveTree(
-        get_data=['first', 'second', 'third'],
+        get_data=['first', 'second', 'third', 'fourth'],
         data_interface=components.RecursiveTree.data_interface,
     )
 
 
 class ExamplePageComplex(ExamplePage):
+    """ Mapping 4 get_data elements to 4 data_interface. """
+
     root_node = components.RecursiveTree(
-        get_data=['first', 'second', 'third'],
+        get_data=['first', 'second', 'third', 'fourth'],
         data_interface=[
             components.RecursiveTree.data_interface,
             components.RecursiveTree.data_interface,
-            components.RecursiveTree.data_interface
+            components.RecursiveTree.data_interface,
+            components.RecursiveTree.data_interface,
         ]
     )
