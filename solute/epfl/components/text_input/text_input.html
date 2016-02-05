@@ -36,7 +36,8 @@
                 </div>
             {% endif %}
             {%  if compo.max_length is not none and compo.show_count is defined and compo.show_count %}
-                <div style="float: left;">(<span id="{{ compo.cid }}_input_count">0</span>/{{ compo.max_length }})</div>
+                {% set init_len = compo.value|length %}
+                <div style="float: left;">(<span id="{{ compo.cid }}_input_count">{{ init_len }}</span>/{{ compo.max_length }})</div>
             {%  endif %}
         {% if compo.validation_error %}
             <small class="help-block">{{ compo.validation_error }}</small>
@@ -44,4 +45,3 @@
     </div>
     {% if compo.layout_vertical == True %}</div>{% endif %}
 </div>
-
