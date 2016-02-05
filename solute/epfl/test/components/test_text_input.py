@@ -32,9 +32,10 @@ def test_value(page):
 
 
 def test_max_length(page, bool_toggle):
+    value = 'test value'
     page.root_node = components.TextInput(
         cid='text_with_title',
-        value='test value',
+        value=value,
         max_length=120,
         show_count=bool_toggle
     )
@@ -43,10 +44,11 @@ def test_max_length(page, bool_toggle):
 
     assert 'maxlength="120"' in page.root_node.render()
 
+    assert_string = '_input_count">{len}</span>/120)</div>'.format(len=len(value))
     if bool_toggle:
-        assert '_input_count">0</span>/120)</div>' in page.root_node.render()
+        assert assert_string in page.root_node.render()
     else:
-        assert '_input_count">0</span>/120)</div>' not in page.root_node.render()
+        assert assert_string not in page.root_node.render()
 
 
 def test_typeahead_date(page, bool_quad):

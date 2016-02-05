@@ -20,9 +20,14 @@ class Textarea(FormInputBase):
 
     # js settings
     compo_js_name = 'Textarea'
+    compo_js_params = FormInputBase.compo_js_params + ['show_count', 'max_length']
 
     # derived attribute overrides
     validation_type = 'text'  #: Validate component as text.
+
+    # custom compo attributes
+    show_count = False  #: Set to true to show a input counter right to the field. Requires a max_length to be set
+    max_length = None  #: Maximum length for the input in characters
 
     def __init__(self, page, cid,
                  name=None,
@@ -43,6 +48,8 @@ class Textarea(FormInputBase):
                  compo_col=None,
                  label_col=None,
                  validation_type=None,
+                 show_count=None,
+                 max_length=None,
                  **extra_params):
         """Simple Textarea form input.
 
@@ -66,5 +73,7 @@ class Textarea(FormInputBase):
         :param compo_col: Set the width of the complete input component (default: max: 12)
         :param label_col: Set the width of the complete input component (default: 2)
         :param validation_type: Set the validation type, default 'text'
+        :param show_count: Set to true to show a input counter right to the field. Requires a max_length to be set
+        :param max_length: Maximum length for the input in characters
         """
         pass
