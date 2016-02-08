@@ -1,6 +1,7 @@
 {% set compo_col = compo.compo_col %}
-<div id="{{ compo.cid }}" epflid="{{ compo.cid }}" class="row epfl-text">
-    {% if compo.label %}
+{% set is_breadcrumb = compo.breadcrumb == True %}
+<div id="{{ compo.cid }}" epflid="{{ compo.cid }}" class="epfl-text {{ "epfl-text" if not is_breadcrumb else "" }}">
+    {% if compo.label and not is_breadcrumb %}
         {% if compo.layout_vertical == True %}
             <div class="row">
                 <div class="col-sm-{{ compo_col }}">
@@ -17,58 +18,63 @@
         {% endif %}
     {% endif %}
 
-    {% if compo.layout_vertical == True %}<div class="row">{% endif %}
-    <div class="col-sm-{{ compo_col }}">
-
-
-{% if not compo.name and compo.text %}
-    {% set name = compo.text %}
-{% else %}
-    {% set name = compo.name %}
-{% endif %}
-<a id="{{ compo.cid }}_link"
-   {% if compo.tile %}
-       class="tile-link"
-   {% elif compo.list_element %}
-       class="list-group-item col-sm-12{{ " active" if compo.is_current_url() or compo.active else "" }}"
-   {% elif compo.btn_link %}
-       class="btn btn-{{ compo.btn_link_color }}{{ " active" if compo.is_current_url() or compo.active else "" }}{{ " disabled" if compo.btn_disabled else "" }}"
-   {% endif %}
-   {% if compo._url %}
-   href="{{ compo._url }}"
-   {% endif %}
-   {% if compo.new_window %}
-       target="_blank"
-   {% endif %}
-   >
-    {% if compo.icon %}
-        <i class="fa fa-{{ compo.icon }}"></i>
+    {% if compo.layout_vertical == True and is_breadcrumb %}<div class="row">{% endif %}
+    {% if not is_breadcrumb %}
+        <div class="col-sm-{{ compo_col }}">
     {% endif %}
-    {% if compo.selection %}
-        {% set pre_marked = name[0:compo.selection[0]] %}
-        {% set marked = name[compo.selection[0]:compo.selection[1]] %}
-        {% set post_marked = name[compo.selection[1]:] %}
-        <span class="marked_link">{{ pre_marked }}<mark>{{ marked }}</mark>{{ post_marked }}</span>
+
+    {% if not compo.name and compo.text %}
+        {% set name = compo.text %}
     {% else %}
-        <span>{{ name if name else ''}}</span>
+        {% set name = compo.name %}
     {% endif %}
-    {% if compo.get_context_menu() %}
-        <button class='btn btn-default btn-xs epfl-context-menu-btn' type='button'><i class='fa fa-bars'></i></button>
-        <ul class="context-dropdown-menu">
-            {% for entry in compo.get_context_menu() %}
-                {% if entry.type == "link" %}
-                    <li class="entry{{ " disabled" if entry.disabled is defined and entry.disabled else "" }}" data-event="{{ entry.event }}">{{ entry.name }}</li>
-                {% else %}
-                    <li class="divider"></li>
-                {% endif %}
-            {% endfor %}
-        </ul>
-    {% endif %}
-</a>
+    <a id="{{ compo.cid }}_link"
+        {% if compo.breadcrumb %}
+            class="breadcrumb-link {{ "first" if compo.is_first() else "" }}"
+        {% elif compo.tile %}
+            class="tile-link"
+        {% elif compo.list_element %}
+            class="list-group-item col-sm-12{{ " active" if compo.is_current_url() or compo.active else "" }}"
+        {% elif compo.btn_link %}
+            class="btn btn-{{ compo.btn_link_color }}{{ " active" if compo.is_current_url() or compo.active else "" }}{{ " disabled" if compo.btn_disabled else "" }}"
+        {% endif %}
 
+        {% if compo._url %}
+            href="{{ compo._url }}"
+        {% endif %}
 
+        {% if compo.new_window %}
+            target="_blank"
+        {% endif %}
+        >
 
+        {% if compo.icon %}
+            <i class="fa fa-{{ compo.icon }}"></i>
+        {% endif %}
 
-    </div>
-    {% if compo.layout_vertical == True %}</div>{% endif %}
+        {% if compo.selection %}
+            {% set pre_marked = name[0:compo.selection[0]] %}
+            {% set marked = name[compo.selection[0]:compo.selection[1]] %}
+            {% set post_marked = name[compo.selection[1]:] %}
+            <span class="marked_link">{{ pre_marked }}<mark>{{ marked }}</mark>{{ post_marked }}</span>
+        {% else %}
+            <span>{{ name if name else ''}}</span>
+        {% endif %}
+
+        {% if compo.get_context_menu() %}
+            <button class='btn btn-default btn-xs epfl-context-menu-btn' type='button'><i class='fa fa-bars'></i></button>
+            <ul class="context-dropdown-menu">
+                {% for entry in compo.get_context_menu() %}
+                    {% if entry.type == "link" %}
+                        <li class="entry{{ " disabled" if entry.disabled is defined and entry.disabled else "" }}" data-event="{{ entry.event }}">{{ entry.name }}</li>
+                    {% else %}
+                        <li class="divider"></li>
+                    {% endif %}
+                {% endfor %}
+           </ul>
+        {% endif %}
+    </a>
+
+    {% if not is_breadcrumb %}</div>{% endif %}
+    {% if compo.layout_vertical == True and not compo.breadcrumb %}</div>{% endif %}
 </div>

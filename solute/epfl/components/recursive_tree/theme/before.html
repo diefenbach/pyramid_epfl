@@ -5,7 +5,7 @@
     {% elif compo.icon_open is defined and not compo.show_children and compo.icon_open %}
         <i class="fa fa-{{ compo.icon_open }}"></i>
     {% endif %}
-    {% if compo.label is defined and compo.label %}
-        <span>{{ compo.label }}{{ '(' + compo.id + ')' if compo.show_id else ''}}</span>
+        {% if compo.label is defined and compo.label %}
+        <span>{{ compo.label }}{{ ' (' ~ compo.id ~ ')' if compo.show_id else ''}}</span>
     {% endif %}
 {% endmacro %}

@@ -5,9 +5,6 @@ from solute.epfl.components.link.link import Link
 
 class Breadcrumb(Link):
 
-    # core internals
-    template_name = "breadcrumb/breadcrumb.html"
-
     exempt_params = set(['list_element', 'selection', 'double_click_event_name', 'context_menu',
                          'popover_position', 'event_name', 'text', 'btn_link', 'breadcrumb', 'new_window',
                          'popover_trigger', 'tile', 'btn_link_color', 'popover_text', 'stop_propagation_on_click',
@@ -15,7 +12,6 @@ class Breadcrumb(Link):
 
     # custom compo attributes
     breadcrumb = True  #: The link is used as a breadcrumb per default.
-    slot = 'left'
 
     def __init__(self, page, cid,
                  url=None,
