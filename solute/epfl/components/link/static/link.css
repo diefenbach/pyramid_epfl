@@ -1,3 +1,19 @@
+/* redefine styles suitable for navbar based breadcrumbs, like theme.css */
+.navbar-nav > li > div > a {
+    line-height: 20px;
+    padding-bottom: 10px;
+    padding-top: 10px;
+    font-size: 12px;
+    padding: 15px;
+    display: block;
+    position: relative;
+}
+
+.navbar-nav > li > div > a:hover {
+    color: white;
+    text-decoration: none;
+}
+
 a.breadcrumb-link, a.breadcrumb-link:active, a.breadcrumb-link:focus {
     background: #393a46 !important;
 }

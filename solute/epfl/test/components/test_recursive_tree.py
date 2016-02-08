@@ -62,9 +62,7 @@ def test_show_id(page, bool_toggle):
     if bool_toggle:
         assert '<span>some label (1)</span>' in page.root_node.render()
     else:
-        assert '<span>some label</span>' not in page.root_node.render()
-
-
+        assert '<span>some label</span>' in page.root_node.render()
 
 
 def test_handle_scroll(page):
