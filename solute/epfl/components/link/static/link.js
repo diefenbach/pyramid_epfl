@@ -5,13 +5,13 @@ epfl.Link.inherits_from(epfl.ComponentBase);
 
 Object.defineProperty(epfl.Link.prototype, 'context_menu', {
     get: function () {
-        return this.elm.children('ul.context-dropdown-menu');
+        return this.elm.find('ul.context-dropdown-menu');
     }
 });
 
 Object.defineProperty(epfl.Link.prototype, 'context_menu_button', {
     get: function () {
-        return this.elm.children('button');
+        return this.elm.find('button.epfl-context-menu-btn');
     }
 });
 
