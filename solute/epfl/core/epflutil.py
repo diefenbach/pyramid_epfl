@@ -18,6 +18,7 @@ import threading
 import functools
 import itertools
 from os import getpid
+import hashlib
 
 # statsd is preferred over pystatsd since the latter is apparently not maintained any longer.
 use_statsd = True
@@ -188,24 +189,6 @@ class ClassAttributeExtender(type):
     def __init__(cls, name, bases, dct):
         super(ClassAttributeExtender, cls).__init__(name, bases, dct)
 
-def add_extra_contents(response, obj):
-    """ Adds CSS and JS extra-Contents of this object to the response.
-    The object must have the following attributes:
-    asset_spec
-    js_name
-    css_name
-    """
-
-    if obj.js_name:
-        for js_name in obj.js_name:
-            js_script_src = create_static_url(obj, js_name, wrapper_class=core.epflclient.JSLink)
-            response.add_extra_content(js_script_src)
-
-    if obj.css_name:
-        for css_name in obj.css_name:
-            css_link_src = create_static_url(obj, css_name, wrapper_class=core.epflclient.CSSLink)
-            response.add_extra_content(css_link_src)
-
 static_url_cache = {}
 
 
@@ -239,6 +222,8 @@ def create_static_url(obj, mixin_name, spec=None, wrapper_class=None):
 
     if exists(absolute_path):
         static_url_cache[(asset_spec, wrapper_class)] = obj.request.static_path(asset_spec)
+        if asbool(obj.request.registry.settings.get('epfl.cache_breaker.active', False)):
+            static_url_cache[(asset_spec, wrapper_class)] += '?' + get_static_file_hash(absolute_path)
         if wrapper_class:
             static_url_cache[(asset_spec, wrapper_class)] = wrapper_class(static_url_cache[(asset_spec, wrapper_class)])
         return static_url_cache[(asset_spec, wrapper_class)]
@@ -250,6 +235,17 @@ def create_static_url(obj, mixin_name, spec=None, wrapper_class=None):
     else:
         # return obj.request.static_path(asset_spec)
         raise Exception('Static dependency not found. %s' % asset_spec)
+
+
+static_file_hash_cache = {}
+
+
+def get_static_file_hash(absolute_path):
+    try:
+        return static_file_hash_cache[absolute_path]
+    except KeyError:
+        static_file_hash_cache[absolute_path] = hashlib.md5(file(absolute_path, 'r').read()).hexdigest()
+        return static_file_hash_cache[absolute_path]
 
 
 def get_page_class_by_name(request, page_name):
