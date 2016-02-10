@@ -36,7 +36,10 @@
                 </div>
             {% endif %}
             {%  if compo.max_length is not none and compo.show_count is defined and compo.show_count %}
-                {% set init_len = compo.value|length %}
+                {% set init_len = 0 %}
+                {% if compo.value %}
+                    {% set init_len = compo.value|length %}
+                {% endif %}
                 <div style="float: left;">(<span id="{{ compo.cid }}_input_count">{{ init_len }}</span>/{{ compo.max_length }})</div>
             {%  endif %}
         {% if compo.validation_error %}
