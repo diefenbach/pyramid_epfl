@@ -74,8 +74,8 @@ epfl.TypeAhead.prototype.after_response = function (data) {
     }
 
     obj.elm.keydown(function (event) {
-        var available_entries = obj.elm.find('[data-parent-epflid=' + obj.cid + ']');
-        var active_entry = obj.elm.find('[data-parent-epflid=' + obj.cid + '].active');
+        var available_entries = obj.elm.find('[data-parent-epflid=' + obj.cid + '] a');
+        var active_entry = obj.elm.find('[data-parent-epflid=' + obj.cid + '] a.active ');
         var position = -1;
 
         available_entries.each(function (i, elm) {
@@ -88,7 +88,7 @@ epfl.TypeAhead.prototype.after_response = function (data) {
                 if (position === -1) {
                     obj.submit();
                 } else {
-                    var active_compo = epfl.components[active_entry.attr('epflid')];
+                    var active_compo = epfl.components[active_entry.parent().parent().attr('epflid')];
                     active_compo.handle_click({
                         target: active_entry, originalEvent: {
                             preventDefault: function () {
