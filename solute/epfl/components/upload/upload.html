@@ -59,7 +59,7 @@
             {# File Input #}
             {% if compo.show_file_upload_input %}
                 <div class="epfl-upload-input-zone">
-                    {% if compo.value is none or compo.file_upload_input_preview == False %}
+                    {% if not compo.value or compo.file_upload_input_preview == False %}
                         <input class="form-control" type="file" id="{{ compo.cid }}_input" name="{{ compo.name }}"
                                value="{{ compo.value if compo.value is not none else '' }}"
                                placeholder="{{ compo.placeholder if compo.placeholder is not none else '' }}"/>
