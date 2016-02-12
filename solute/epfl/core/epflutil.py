@@ -186,7 +186,7 @@ class StaticUrlFactory(object):
         try:
             return cls.hash_cache[absolute_path]
         except KeyError:
-            cls.hash_cache[absolute_path] = hashlib.md5(file(absolute_path, 'r').read()).hexdigest()
+            cls.hash_cache[absolute_path] = hashlib.md5(resolved_asset.stream().read()).hexdigest()
             return cls.hash_cache[absolute_path]
 
 
