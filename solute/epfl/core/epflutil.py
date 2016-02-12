@@ -190,22 +190,6 @@ class StaticUrlFactory(object):
             return cls.hash_cache[absolute_path]
 
 
-def get_page_class_by_name(request, page_name):
-    """
-    Given a page-name (the page.get_name()-result), it returns this page - or raises an error.
-    todo: This needs some caching!
-    """
-    introspector = request.registry.introspector
-
-    for intr in introspector.get_category("views"):
-        view_callable = intr["introspectable"]["callable"]
-        if type(view_callable) is type and issubclass(view_callable, core.epflpage.Page):
-            if view_callable.get_name() == page_name:
-                return view_callable
-
-    raise ValueError, "Page '" + page_name + "' not found!"
-
-
 def get_page_classes_from_route(request, route_name):
     """
     Given the request and a route-name, it collects all Page-Objects that are bound to this route.
