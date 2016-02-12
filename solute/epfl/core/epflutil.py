@@ -16,6 +16,7 @@ import functools
 import itertools
 from os import getpid
 import hashlib
+import inspect
 
 # statsd is preferred over pystatsd since the latter is apparently not maintained any longer.
 use_statsd = True
@@ -238,8 +239,6 @@ def has_permission_for_route(request, route_name, permission=None):
             break
 
     return default
-
-import inspect
 
 
 class Discover(object):
