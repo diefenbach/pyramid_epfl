@@ -1,8 +1,10 @@
-.navbar-header a.navbar-brand, .nav.navbar-inverse .navbar-nav > li  a {
+.navbar-header a.navbar-brand, .nav.navbar-inverse .navbar-nav li  a {
     color: white;
+    padding: 15px;
+    display: block;
 }
 
-.nav.navbar-inverse .navbar-nav > li a {
+.nav.navbar-inverse .navbar-nav li a {
     font-size: 12px;
 }
 
