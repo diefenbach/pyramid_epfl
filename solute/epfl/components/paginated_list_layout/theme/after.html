@@ -50,8 +50,8 @@
                <li class="disabled"><span>Gesamt: {{ compo.row_count }} Zeilen</span></li>
             {% endif %}
             {% if compo.show_page_count %}
-               {% set page_count = (compo.row_count / compo.row_limit|round(method='floor'))|int %}
-               <li class="disabled"><span>Gesamt: {{ page_count + 1}} Seiten</span></li>
+               {% set page_count = (compo.row_count / compo.row_limit)|round(method='ceil')|int %}
+               <li class="disabled"><span>Gesamt: {{ page_count}} Seiten</span></li>
             {% endif %}
           </ul>
         {% endif %}
