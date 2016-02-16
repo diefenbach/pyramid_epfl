@@ -45,7 +45,7 @@
             {% endif %}
         </ul>
         {% if compo.show_row_count or compo.show_page_count %}
-          <ul class="pagination-sm pagination" id="{{ compo.cid }}_pagination" style="margin: 5px 0; float: right;">
+          <ul class="pagination-sm pagination" id="{{ compo.cid }}_counter" style="margin: 5px 0; float: right;">
             {% if compo.show_row_count %}
                <li class="disabled"><span>Gesamt: {{ compo.row_count }} Zeilen</span></li>
             {% endif %}
