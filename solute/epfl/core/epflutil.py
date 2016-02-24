@@ -159,12 +159,25 @@ class ClassAttributeExtender(type):
 
 
 class StaticUrlFactory(object):
-    asset_resolver = AssetResolver()
-    hash_cache = {}
-    static_url_cache = {}
+    """This class contains the factory methods to create a static url from an asset spec while providing error handling.
+    """
+    asset_resolver = AssetResolver()  #: Main asset resolver instance shared across the whole thread.
+    hash_cache = {}  #: Cache dict for file hashes.
+    static_url_cache = {}  #: Cache dict for static urls.
 
     @classmethod
     def create_static_url(cls, page, mixin_name, spec):
+        """Factory method to translate and cache a given asset_spec into a static url. Raises an exception if the given
+        resource does not actually exist. Adds a version hash using :func:`get_static_file_hash` if
+        epfl.cache_breaker.active is set to True in the configuration.
+        The caching prevents hash changes for static files if the instance is not restarted to avoid performance loss by
+        preventing continuous access to the file on the hard drive.
+
+        :param page: The :class:`epflpage.Page` instance of the current request.
+        :param mixin_name: Filename including the optional sub path.
+        :param spec: Pyramid asset path identifier.
+        :return str: The resulting static url string.
+        """
         asset_spec = "{spec}/{name}".format(spec=spec, name=mixin_name)
         try:
             return cls.static_url_cache[asset_spec]
@@ -183,6 +196,12 @@ class StaticUrlFactory(object):
 
     @classmethod
     def get_static_file_hash(cls, resolved_asset):
+        """Generates and caches an md5 file hash based on the content of the given resolved pyramid asset.
+
+        :param resolved_asset: The resolved pyramid asset to be hashed.
+        :return str: The resulting md5 hex digest of the file content.
+        """
+
         absolute_path = resolved_asset.abspath()
         try:
             return cls.hash_cache[absolute_path]
