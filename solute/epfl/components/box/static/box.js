@@ -29,6 +29,9 @@ epfl.Box.prototype.after_response = function (data) {
         this.elm.find("*").unbind();
         this.elm.find("*").prop("disabled", true);
     }
+
+    console.log(1);
+    $('body').css('overflow', 'hidden');
 };
 
 epfl.Box.prototype.handle_local_click = function (event) {
@@ -42,6 +45,7 @@ epfl.Box.prototype.handle_local_click = function (event) {
         } else {
             this.send_event("removed", {});
         }
+        $('body').css('overflow', 'auto');
         event.stopImmediatePropagation();
         event.preventDefault();
     }

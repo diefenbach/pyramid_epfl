@@ -5,7 +5,7 @@
          class="epfl_hover_box"
          style="position: fixed; overflow: auto; top: 0; left: 0; bottom: 0; right: 0; background: rgba(0, 0, 0, 0.3); z-index: 10; ">
         <div class="panel panel-default {{ "epfl_box_border" if compo.box_shown else "epfl_box" }}"
-                style="position:relative; margin: auto; width: {{ compo.hover_box_width if (compo.hover_box_width is defined and not compo.hover_box_width is none) else '50' }}%; min-width: 800px; top: 100px; ">
+                style="position:relative; margin: auto; width: {{ compo.hover_box_width if (compo.hover_box_width is defined and not compo.hover_box_width is none) else '50' }}%; min-width: 800px; top: 100px; height: 80%; overflow: auto;">
             {{ caller() }}
         </div>
     </div>
