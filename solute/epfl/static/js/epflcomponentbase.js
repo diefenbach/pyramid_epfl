@@ -56,6 +56,42 @@ epfl.ComponentBase.prototype.closest_cid = function (element) {
     return cid;
 };
 
+epfl.ComponentBase.prototype.execute_in_context = function (code) {
+    /* Execute the given string of code inside the context of this epfl component object. */
+    var obj = this;
+    eval(code);
+};
+
+epfl.ComponentBase.prototype.trigger = function (event_name, data, async) {
+    if (!async) {
+        this.send_event('epfl_trigger', {name: event_name, data: data});
+    } else {
+        this.send_async_event('epfl_trigger', {name: event_name, data: data});
+    }
+};
+
+epfl.ComponentBase.prototype.broadcast = function (event_name, data, async) {
+    if (!async) {
+        this.send_event('epfl_broadcast', {name: event_name, data: data});
+    } else {
+        this.send_async_event('epfl_broadcast', {name: event_name, data: data});
+    }
+};
+
+epfl.ComponentBase.prototype.link_js = function (js_event_name, event_name, predicate_func, async, data_func) {
+    var obj = this;
+    obj.elm.on(js_event_name, function(event) {
+        if (predicate_func && !predicate_func()) {
+            return;
+        }
+        var data;
+        if (data_func) {
+            data = data_func();
+        }
+        obj.trigger(event_name, data, async);
+    });
+};
+
 /* Lifecycle methods */
 
 epfl.ComponentBase.prototype.after_response = function (data) {

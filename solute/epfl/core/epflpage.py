@@ -454,12 +454,6 @@ class Page(object):
                 event_handler = getattr(self, "handle_" + event_name)
                 event_handler(**event_params)
 
-            elif event_type == "upl":  # upload-event
-                event_id = event["id"]
-                cid = event["cid"]
-                component_obj = self.components[cid]
-                component_obj.handle_event("UploadFile", {"widget_name": event["widget_name"]})
-
             else:
                 raise Exception("Unknown ajax-event: " + repr(event))
 
