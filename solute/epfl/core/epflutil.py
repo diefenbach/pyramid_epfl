@@ -1,9 +1,5 @@
 # coding: utf-8
 
-import urllib
-import urlparse
-from os.path import exists
-import logging
 import time
 import socket
 
@@ -11,6 +7,7 @@ from pyramid import security
 from pyramid import path
 from pyramid import threadlocal
 from pyramid.settings import asbool
+from pyramid.path import AssetResolver
 
 import solute.epfl
 from solute.epfl import core
@@ -19,6 +16,7 @@ import functools
 import itertools
 from os import getpid
 import hashlib
+import inspect
 
 # statsd is preferred over pystatsd since the latter is apparently not maintained any longer.
 use_statsd = True
@@ -152,36 +150,6 @@ class Lifecycle(object):
         log_timing(key, int((self.end_time - self.start_time) * 1000), server=server, port=port)
 
 
-class DictTransformer(object):
-    def __init__(self, target_keys):
-        self.target_keys = target_keys
-
-    def __call__(self, data):
-        out = {}
-        for key in self.target_keys:
-            out[key] = data[key]
-        return out
-
-
-class Dict2ListTransformer(object):
-    def __init__(self, target_keys):
-        self.target_keys = target_keys
-
-    def __call__(self, data):
-        out = []
-        for key in self.target_keys:
-            out.append(data[key])
-        return out
-
-
-def make_dict_transformer(target_keys):
-    return DictTransformer(target_keys)
-
-
-def make_dict2list_transformer(target_keys):
-    return Dict2ListTransformer(target_keys)
-
-
 class ClassAttributeExtender(type):
     def __new__(cls, name, bases, dct):
         return type.__new__(cls, name, bases, dct)
@@ -189,79 +157,57 @@ class ClassAttributeExtender(type):
     def __init__(cls, name, bases, dct):
         super(ClassAttributeExtender, cls).__init__(name, bases, dct)
 
-static_url_cache = {}
 
-
-def create_static_url(obj, mixin_name, spec=None, wrapper_class=None):
-    if spec is None:
-        spec = obj.asset_spec
-    if type(mixin_name) is tuple:
-        spec, mixin_name = mixin_name
-    asset_spec = "{spec}/{name}".format(spec=spec, name=mixin_name)
-    try:
-        return static_url_cache[(asset_spec, wrapper_class)]
-    except KeyError:
-        pass
-
-    if spec[0:12] != 'solute.epfl:' and spec[0:12] != 'solute.epfl.':
-        static_url_cache[(asset_spec, wrapper_class)] = obj.request.static_path(asset_spec)
-        if wrapper_class:
-            static_url_cache[(asset_spec, wrapper_class)] = wrapper_class(static_url_cache[(asset_spec, wrapper_class)])
-        return static_url_cache[(asset_spec, wrapper_class)]
-    static_path = obj.request.static_path(asset_spec)
-
-    static_mixin = 'static/'
-    if spec == 'solute.epfl:static':
-        static_mixin = ''
-
-    output = {'base_path': path.package_path(solute.epfl),
-              'relative_path': static_path[5:len(static_path) - len(mixin_name)],
-              'mixin': static_mixin,
-              'mixin_name': mixin_name}
-    absolute_path = "{base_path}{relative_path}{mixin}{mixin_name}".format(**output)
-
-    if exists(absolute_path):
-        static_url_cache[(asset_spec, wrapper_class)] = obj.request.static_path(asset_spec)
-        if asbool(obj.request.registry.settings.get('epfl.cache_breaker.active', False)):
-            static_url_cache[(asset_spec, wrapper_class)] += '?' + get_static_file_hash(absolute_path)
-        if wrapper_class:
-            static_url_cache[(asset_spec, wrapper_class)] = wrapper_class(static_url_cache[(asset_spec, wrapper_class)])
-        return static_url_cache[(asset_spec, wrapper_class)]
-    elif spec != 'solute.epfl:static':
-        static_url_cache[(asset_spec, wrapper_class)] = create_static_url(obj, mixin_name, 'solute.epfl:static')
-        if wrapper_class:
-            static_url_cache[(asset_spec, wrapper_class)] = wrapper_class(static_url_cache[(asset_spec, wrapper_class)])
-        return static_url_cache[(asset_spec, wrapper_class)]
-    else:
-        # return obj.request.static_path(asset_spec)
-        raise Exception('Static dependency not found. %s' % asset_spec)
-
-
-static_file_hash_cache = {}
-
-
-def get_static_file_hash(absolute_path):
-    try:
-        return static_file_hash_cache[absolute_path]
-    except KeyError:
-        static_file_hash_cache[absolute_path] = hashlib.md5(file(absolute_path, 'r').read()).hexdigest()
-        return static_file_hash_cache[absolute_path]
-
-
-def get_page_class_by_name(request, page_name):
+class StaticUrlFactory(object):
+    """This class contains the factory methods to create a static url from an asset spec while providing error handling.
     """
-    Given a page-name (the page.get_name()-result), it returns this page - or raises an error.
-    todo: This needs some caching!
-    """
-    introspector = request.registry.introspector
+    asset_resolver = AssetResolver()  #: Main asset resolver instance shared across the whole thread.
+    hash_cache = {}  #: Cache dict for file hashes.
+    static_url_cache = {}  #: Cache dict for static urls.
 
-    for intr in introspector.get_category("views"):
-        view_callable = intr["introspectable"]["callable"]
-        if type(view_callable) is type and issubclass(view_callable, core.epflpage.Page):
-            if view_callable.get_name() == page_name:
-                return view_callable
+    @classmethod
+    def create_static_url(cls, page, mixin_name, spec):
+        """Factory method to translate and cache a given asset_spec into a static url. Raises an exception if the given
+        resource does not actually exist. Adds a version hash using :func:`get_static_file_hash` if
+        epfl.cache_breaker.active is set to True in the configuration.
+        The caching prevents hash changes for static files if the instance is not restarted to avoid performance loss by
+        preventing continuous access to the file on the hard drive.
 
-    raise ValueError, "Page '" + page_name + "' not found!"
+        :param page: The :class:`epflpage.Page` instance of the current request.
+        :param mixin_name: Filename including the optional sub path.
+        :param spec: Pyramid asset path identifier.
+        :return str: The resulting static url string.
+        """
+        asset_spec = "{spec}/{name}".format(spec=spec, name=mixin_name)
+        try:
+            return cls.static_url_cache[asset_spec]
+        except KeyError:
+            pass
+
+        resolved_asset = cls.asset_resolver.resolve(asset_spec)
+
+        if not resolved_asset.exists():
+            raise ValueError('Static dependency not found. %s' % asset_spec)
+
+        cls.static_url_cache[asset_spec] = page.request.static_path(asset_spec)
+        if asbool(page.request.registry.settings.get('epfl.cache_breaker.active', False)):
+            cls.static_url_cache[asset_spec] += '?' + cls.get_static_file_hash(resolved_asset)
+        return cls.static_url_cache[asset_spec]
+
+    @classmethod
+    def get_static_file_hash(cls, resolved_asset):
+        """Generates and caches an md5 file hash based on the content of the given resolved pyramid asset.
+
+        :param resolved_asset: The resolved pyramid asset to be hashed.
+        :return str: The resulting md5 hex digest of the file content.
+        """
+
+        absolute_path = resolved_asset.abspath()
+        try:
+            return cls.hash_cache[absolute_path]
+        except KeyError:
+            cls.hash_cache[absolute_path] = hashlib.md5(resolved_asset.stream().read()).hexdigest()
+            return cls.hash_cache[absolute_path]
 
 
 def get_page_classes_from_route(request, route_name):
@@ -312,63 +258,6 @@ def has_permission_for_route(request, route_name, permission=None):
             break
 
     return default
-
-
-def get_component(request, tid, cid):
-    """
-    If you do not have a page_obj (maybe you are in a pure pyramid-view-function), and you need a component,
-    this is the function for you!
-    """
-
-    transaction = core.epfltransaction.Transaction(request, tid)
-    page_name = transaction.get_page_name()
-    page_class = get_page_class_by_name(request, page_name)
-    page_obj = page_class(request, transaction)
-    page_obj.setup_components()
-    return page_obj.components[cid]
-
-
-def get_component_from_root_node(request, tid, cid):
-    """
-    Same as get_component but for the new pages which always have a root node with the compos in it
-    """
-
-    transaction = core.epfltransaction.Transaction(request, tid)
-    page_name = transaction.get_page_name()
-    page_class = get_page_class_by_name(request, page_name)
-    page_obj = page_class(request, transaction)
-    page_obj.setup_components()
-    root_node = page_obj.components['root_node']
-    root_node.init_transaction()
-    return page_obj.components[cid]
-
-
-def get_widget(request, tid, cid, wid):
-    """
-    Same as get_component, but it returns a widget - in case the compo is a form!
-    """
-    compo_obj = get_component(request, tid, cid)
-    return compo_obj.get_widget_by_wid(wid)
-
-
-class URL(object):
-    def __init__(self, url):
-        self.parsed_url = urlparse.urlsplit(url)
-
-    def update_query(self, **kwargs):
-        qsl = urlparse.parse_qsl(self.parsed_url.query)
-        for key, value in kwargs.items():
-            qsl.append((key, value))
-        new_url = urlparse.SplitResult(scheme=self.parsed_url.scheme,
-                                       netloc=self.parsed_url.netloc,
-                                       path=self.parsed_url.path,
-                                       query=urllib.urlencode(qsl),
-                                       fragment=self.parsed_url.fragment)
-
-        return new_url.geturl()
-
-
-import inspect
 
 
 class Discover(object):
