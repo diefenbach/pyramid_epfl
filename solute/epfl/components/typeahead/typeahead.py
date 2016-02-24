@@ -5,7 +5,7 @@ from solute.epfl.validators.text import TextValidator
 class TypeAhead(GroupedLinkListLayout):
 
     # core internals
-    compo_state = GroupedLinkListLayout.compo_state + ["selected_id", "label"]
+    compo_state = GroupedLinkListLayout.compo_state + ["selected_id", "label", "use_id_as_value"]
     js_name = GroupedLinkListLayout.js_name + [('solute.epfl.components:typeahead/static', 'typeahead.js')]
     css_name = GroupedLinkListLayout.css_name + [('solute.epfl.components:typeahead/static', 'typeahead.css')]
     theme_path = GroupedLinkListLayout.theme_path.copy()
@@ -42,6 +42,7 @@ class TypeAhead(GroupedLinkListLayout):
     compo_col = 12  #: col width of the component
     label_col = 2  #: label col width, input col is compo_col - label_col
     selected_id = None  #: Id param of selected option
+    use_id_as_value = False  #: Return the selected_id in get_value if set to True, otherwise the text value
 
     def __init__(self, page, cid,
                  node_list=None,
@@ -70,6 +71,7 @@ class TypeAhead(GroupedLinkListLayout):
                  compo_col=None,
                  label_col=None,
                  selected_id=None,
+                 use_id_as_value=None,
                  **kwargs):
         """TypeAhead component that offers grouping of entries under a common heading. Offers search bar above and
         pagination below using the EPFL theming mechanism. Links given as parameters are checked against the existing
@@ -117,6 +119,7 @@ class TypeAhead(GroupedLinkListLayout):
         :param compo_col: col width of the component
         :param label_col: label col width, input col is compo_col - label_col
         :param selected_id: Id param of selected option
+        :param use_id_as_value: Return the selected_id in get_value if set to True, otherwise the text value
         """
         pass
 
@@ -138,13 +141,19 @@ class TypeAhead(GroupedLinkListLayout):
         self.row_data["search"] = self.value
         self.redraw()
 
+    def get_value(self):
+        if self.use_id_as_value:
+            return self.selected_id
+        else:
+            return self.value
+
     def set_state_attr(self, key, value):
-        super(GroupedLinkListLayout,self).set_state_attr(key=key,value=value)
+        super(GroupedLinkListLayout, self).set_state_attr(key=key, value=value)
         if key == "value":
             if value is not None:
                 self.row_data["search"] = value
 
     def handle_set_row(self, row_offset, row_limit, row_data=None):
-        super(GroupedLinkListLayout,self).handle_set_row(row_offset=row_offset,row_limit=row_limit,row_data=row_data)
-        self.value = None # if something in search changed set the value to None
+        super(GroupedLinkListLayout, self).handle_set_row(row_offset=row_offset, row_limit=row_limit, row_data=row_data)
+        self.value = None  # if something in search changed set the value to None
         self.selected_id = None
