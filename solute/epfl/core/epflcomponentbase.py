@@ -1438,7 +1438,12 @@ class Event(object):
                 if self.immediate_propagation_stopped:
                     break
                 self.accepted_async = False
-                getattr(self.target, 'handle_' + target_func_name)(self)
+                target = self.target
+                if type(target_func_name) is tuple:
+                    target_cid, target_func_name = target_func_name
+                    target = target.page.components[target_cid]
+
+                getattr(target, 'handle_' + target_func_name)(self)
                 if unqueued and not self.accepted_async:
                     raise Exception("Async request handled by a function that does not call Event.accept_async()!")
                 self.accepted_async = False
