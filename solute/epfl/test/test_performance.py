@@ -110,16 +110,102 @@ def performance_page(request, page, compo_count):
     return page
 
 
+@pytest.fixture(params=[True, False])
+def performance_page(request, page, compo_count):
+
+    class MyRootBox(components.Box):
+
+        def handle_event(self, event):
+            pass
+
+    page.model = MyModel
+    if request.param:
+        page.root_node = components.CardinalLayout(
+            node_list=[
+                MyRootBox(
+                    cid='node',
+                    node_list=[
+                        components.Box(
+                            node_list=[
+                                components.Box(
+                                    node_list=[
+                                        components.ColLayout(
+                                            node_list=[
+                                                components.SelectableList(
+                                                    skip_child_access=True,
+                                                    row_limit=compo_count,
+                                                    data_interface={'id': None, 'text': None},
+                                                    get_data='my_data',
+                                                ),
+                                                components.SelectableList(
+                                                    skip_child_access=True,
+                                                    row_limit=compo_count,
+                                                    data_interface={'id': None, 'text': None},
+                                                    get_data='my_data',
+                                                ),
+                                                components.SelectableList(
+                                                    skip_child_access=True,
+                                                    row_limit=compo_count,
+                                                    data_interface={'id': None, 'text': None},
+                                                    get_data='my_data',
+                                                ),
+                                                components.SelectableList(
+                                                    skip_child_access=True,
+                                                    row_limit=compo_count,
+                                                    data_interface={'id': None, 'text': None},
+                                                    get_data='my_data',
+                                                ),
+                                            ]
+                                        )
+                                    ]
+                                )
+                            ]
+                        )
+                    ]
+                )
+            ]
+        )
+    else:
+        page.root_node = components.CardinalLayout(
+            node_list=[
+                MyRootBox(
+                    cid='node',
+                    node_list=[
+                        components.Box(
+                            node_list=[
+                                components.Box(
+                                    node_list=[
+                                        components.ColLayout(
+                                            node_list=[
+                                                components.SelectableList(
+                                                    skip_child_access=True,
+                                                    row_limit=compo_count * 4,
+                                                    data_interface={'id': None, 'text': None},
+                                                    get_data='my_data'
+                                                ),
+                                            ]
+                                        )
+                                    ]
+                                )
+                            ]
+                        )
+                    ]
+                )
+            ]
+        )
+    return page
+
+
 def test_performance(performance_page, compo_count):
     # initial run to get a cache
     timings = [time.time()]
-    out = performance_page()
+    performance_page()
     timings.append(time.time())
 
     # rerun a second time to check cached performance
     new_page = epflpage.Page(None, performance_page.request, performance_page.transaction)
     timings.append(time.time())
-    out = new_page()
+    new_page()
     timings.append(time.time())
 
     start, end, rerun_start, rerun_end = timings
@@ -133,6 +219,16 @@ def test_performance(performance_page, compo_count):
     print "Start run: {0:.3}s ({1:.3}ms)".format(runtime, runtime/compo_count*1000)
     print "Cache run: {0:.3}s ({1:.3}ms)".format(rerun_time, rerun_time/compo_count*1000)
     print "Cache Speedup: {0:.1%}".format(runtime/rerun_time)
+    print "=" * 50
+
+    t0 = time.time()
+    for compo in new_page.get_active_components():
+        compo.bind('Event', ('node', 'event'))
+    print "registering 'Event': {0:.3}s".format(time.time() - t0)
+
+    t0 = time.time()
+    new_page.node.broadcast('Event')
+    print "broadcasting 'Event': {0:.3}s".format(time.time() - t0)
     print "=" * 50
 
 
