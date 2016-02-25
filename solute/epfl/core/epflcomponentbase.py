@@ -1455,7 +1455,7 @@ class Event(object):
                 self.clone(target).trigger()
 
         elif direction == 'broadcast':
-            for compo in self.target.components:
+            for compo in self.target.components or []:
                 self.clone(compo).broadcast()
 
     def accept_async(self):
