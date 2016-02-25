@@ -11,7 +11,7 @@ class Box(epflcomponentbase.ComponentContainerBase):
     # core internals
     asset_spec = "solute.epfl.components:box/static"
     theme_path = ['box/theme']
-    compo_state = epflcomponentbase.ComponentContainerBase.compo_state + ['title', 'read_only']
+    compo_state = epflcomponentbase.ComponentContainerBase.compo_state + ['title', 'read_only', 'show_title']
     css_name = ["box.css"]
     js_name = ["box.js"]
 

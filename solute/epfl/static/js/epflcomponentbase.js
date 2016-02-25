@@ -59,7 +59,6 @@ epfl.ComponentBase.prototype.closest_cid = function (element) {
 epfl.ComponentBase.prototype.execute_in_context = function (code) {
     /* Execute the given string of code inside the context of this epfl component object. */
     var obj = this;
-    console.log(code);
     eval(code);
 };
 
@@ -79,18 +78,16 @@ epfl.ComponentBase.prototype.broadcast = function (event_name, data, async) {
     }
 };
 
-epfl.ComponentBase.prototype.link_js = function (js_event_name, event_name, predicate_func_str, async, data_func_str) {
+epfl.ComponentBase.prototype.link_js = function (js_event_name, event_name, predicate_func, async, data_func) {
     var obj = this;
 
     obj.elm.on(js_event_name, function(event) {
-        eval(predicate_func_str);
-        if (predicate_func_str && !predicate_func()) {
+        if (predicate_func && !eval('(' + predicate_func + ')')) {
             return;
         }
         var data = {};
-        eval(data_func_str);
-        if (data_func_str) {
-            data = data_func();
+        if (data_func) {
+            data = eval('(' + data_func + ')');
         }
         obj.trigger(event_name, data, async);
     });

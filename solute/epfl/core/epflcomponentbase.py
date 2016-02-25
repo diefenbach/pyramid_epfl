@@ -400,8 +400,6 @@ class ComponentBase(object):
         self = super(ComponentBase, cls).__new__(cls, **config)
 
         self.page, self.cid = args[:2]
-        print "*"*76
-        print self.cid
         self.__config = config
 
         for attr_name in self.compo_config:
@@ -746,28 +744,15 @@ class ComponentBase(object):
         self.handle_epfl_broadcast(event_name=event_name, data=data)
 
     def bind(self, event_name, event_func_name):
-        print "*"*76
         self.event_registry.setdefault(event_name, []).append(event_func_name)
-        from pprint import pprint
-        pprint(self.event_registry)
-        print self
-        print
 
     def link_js(self, js_event_name, event_name, predicate=None, async=False, data=None):
-        predicate_func_str = ""
-        if predicate:
-            predicate_func_str = "var predicate_func = function(){{return {predicate} }}".format(predicate=predicate)
-        data_func_str = ""
-        if data:
-            data_func_str = "var data_func = function(){{return {data} }}".format(data=data)
-
-        self._linked_js.append("obj.link_js({js_event_name}, {event_name}, '{predicate_func_str}', {async}, '{data_func_str}')".format(
+        self._linked_js.append("obj.link_js({js_event_name}, {event_name}, {predicate}, {async}, {data})".format(
             js_event_name=json.dumps(js_event_name),
             event_name=json.dumps(event_name),
-            predicate_func_str=predicate_func_str,
-#            predicate_func="var predicate_func_var = function(){return " + str(predicate) + "}",
+            predicate=json.dumps(predicate),
             async=json.dumps(async),
-            data_func_str=data_func_str,
+            data=json.dumps(data),
         ))
 
     def post_event_handling(self, post_event_handlers, event_params):
