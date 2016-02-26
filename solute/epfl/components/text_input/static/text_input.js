@@ -60,7 +60,7 @@ epfl.TextInput.prototype.after_response = function(data) {
         }
     }, 0);
 
-    this.register_change_handler();
+    //this.register_change_handler();
 
     if (compo.params.show_count || compo.params.submit_form_on_enter) {
         compo.elm.keyup(compo.handle_keypress.bind(compo));

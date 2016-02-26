@@ -966,13 +966,13 @@ class ComponentBase(object):
     # Start of value handling #
     ###########################
 
-    def handle_change(self, value):
-        """Default handle method to update a value. Will rebubble if the current component is not a valid carrier for a
-        value.
-        """
-        if self.name is None:
-            raise MissingEventHandlerException
-        self.value = value
+    # def handle_change(self, value):
+    #     """Default handle method to update a value. Will rebubble if the current component is not a valid carrier for a
+    #     value.
+    #     """
+    #     if self.name is None:
+    #         raise MissingEventHandlerException
+    #     self.value = value
 
     def register_field(self, field):
         """Recursive lookup to find a component that considers itself a valid field registration target and register

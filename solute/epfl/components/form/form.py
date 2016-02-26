@@ -36,9 +36,17 @@ class Form(epflcomponentbase.ComponentContainerBase):
         pass
 
     def handle_submit(self):
+        print "handle submit"
         pass
 
-    def handle_set_dirty(self):
+    def init_transaction(self):
+        super(Form, self).init_transaction()
+
+        self.bind('FormInputChange', 'set_dirty')
+        self.bind('Submit', 'submit')
+
+    def handle_set_dirty(self, event):
+        print 'in set_dirty: %s' % (event.data)
         self.is_dirty = True
 
     def get_parent_form(self):

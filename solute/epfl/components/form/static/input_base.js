@@ -32,6 +32,7 @@ epfl.FormInputBase.prototype.send_change = function(event, value) {
     if (enqueue_event === undefined) {
         enqueue_event = true;
     }
+    console.log('enqueue_event: ', enqueue_event);
 
     var parent_form = this.elm.closest('.epfl-form');
     if (parent_form.length == 1) {
@@ -41,13 +42,20 @@ epfl.FormInputBase.prototype.send_change = function(event, value) {
 	    // first change to the form. always send event immediately so that
 	    // the serve can handle is_dirty change
 	    enqueue_event = false;
-            this.repeat_enqueue('set_dirty', {}, this.cid + "_set_dirty");
+            //this.repeat_enqueue('set_dirty', {}, this.cid + "_set_dirty");
+            parent_form.trigger('FormInputChange', {'dirty': 1}, true);
+            console.log('triggered');
 	}
     }
     if (enqueue_event) {
+        console.log(1);
+        //this.trigger('FormInputChange', {value: value}, true);
+
         this.repeat_enqueue('change', {value: value}, this.cid + "_change");
     } else {
-        this.send_event('change', {value: value});
+        console.log(2);
+        // this.send_event('change', {value: value});
+        this.trigger('FormInputChange', {value: value});
     }
 };
 
@@ -73,7 +81,9 @@ epfl.FormInputBase.prototype.register_change_handler = function() {
     /* if the compo has a form_element set, register it with blur() and change() events
        to trigger handle_change */
     if (this.form_element && this.form_element.length) {
+        console.log(0);
         this.form_element.blur(this.handle_change.bind(this)).change(this.handle_change.bind(this));
+
     } else {
         console.log('Called FromInputBase.register_change_handler without set form_element',
                     this.form_element);

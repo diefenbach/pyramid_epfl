@@ -32,6 +32,18 @@ class FormInputBase(ComponentBase):
         if self.value is None and self.default is not None:
             self.value = self.default
 
+        self.bind('FormInputChange', 'form_input_change')
+
+    def handle_form_input_change(self, event):
+        data = getattr(event, 'data', {})
+        value = data.get('value', None)
+        if value is not None:
+            self.value = value
+        print self.value
+
+    def handle_fire_change_immediately(self, event):
+        import pdb; pdb.set_trace()
+
     def set_focus(self):
         self.add_js_response("setTimeout(function(){$('#%s_input').focus(); }, 0);" % self.cid)
         self.redraw()

@@ -62,6 +62,7 @@ epfl.ComponentBase.prototype.execute_in_context = function (code) {
     eval(code);
 };
 
+
 epfl.ComponentBase.prototype.trigger = function (event_name, data, async) {
     if (!async) {
         this.send_event('epfl_trigger', {event_name: event_name, data: data});
