@@ -44,6 +44,7 @@ epfl.FormInputBase.prototype.send_change = function(event, value) {
             this.repeat_enqueue('set_dirty', {}, this.cid + "_set_dirty");
 	}
     }
+
     if (enqueue_event) {
         this.repeat_enqueue('change', {value: value}, this.cid + "_change");
     } else {
@@ -70,10 +71,10 @@ epfl.FormInputBase.prototype.handle_keydown = function(event) {
 };
 
 epfl.FormInputBase.prototype.register_change_handler = function() {
-    /* if the compo has a form_element set, register it with blur() and change() events
+    /* if the compo has a form_element set, register it change() events
        to trigger handle_change */
     if (this.form_element && this.form_element.length) {
-        this.form_element.blur(this.handle_change.bind(this)).change(this.handle_change.bind(this));
+        this.form_element.change(this.handle_change.bind(this));
     } else {
         console.log('Called FromInputBase.register_change_handler without set form_element',
                     this.form_element);
@@ -81,7 +82,7 @@ epfl.FormInputBase.prototype.register_change_handler = function() {
 };
 
 epfl.FormInputBase.prototype.register_submit_form_on_enter_handler = function() {
-   /* if the compo has a form_element set, register it with blur() and change() events
+   /* if the compo has a form_element set, register it keydown event
        to trigger handle_change */
     if (this.form_element && this.form_element.length) {
         if (this.params.submit_form_on_enter) {
