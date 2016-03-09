@@ -434,8 +434,8 @@ class ComponentBase(object):
                 hash(value)
             except TypeError:
                 # Only the immutable builtins are hashable, mutable builtins are not and cause a TypeError.
-                setattr(self, key, copy.deepcopy(value))
-                return getattr(self, key, value)
+                value = copy.deepcopy(value)
+                setattr(self, key, value)
             return value
 
     def set_state_attr(self, key, value):
