@@ -71,7 +71,7 @@ epfl.Link.prototype.handle_local_click = function (event) {
         } else {
             this.context_menu.show();
             this.context_menu.css({
-                top: (this.context_menu_button.offset().top + this.context_menu_button.height() + 3) - $(window).scrollTop(),
+                top: (this.context_menu_button.offset().top + this.context_menu_button.height() + 1) - $(window).scrollTop(),
                 left: this.context_menu_button.offset().left - (this.context_menu.width() - this.context_menu_button.width() - 10)
             });
         }
