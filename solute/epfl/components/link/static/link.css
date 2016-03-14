@@ -134,3 +134,9 @@ ul.context-dropdown-menu li.entry.disabled {
     color: #AAA;
     cursor:not-allowed;
 }
+
+.epfl-link-container:after {
+    content:"";
+    display:block;
+    clear:both;
+}

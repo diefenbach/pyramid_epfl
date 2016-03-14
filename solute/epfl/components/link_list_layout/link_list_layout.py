@@ -22,8 +22,6 @@ class LinkListLayout(PaginatedListLayout):
     # js settings
     compo_js_auto_parts = True
     compo_js_name = 'LinkListLayout'
-    compo_js_params = ['row_offset', 'row_limit', 'row_count', 'row_data', 'show_pagination', 'show_search',
-                       'search_focus']
 
     # derived attribute overrides
     data_interface = {'id': None,

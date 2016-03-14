@@ -1,6 +1,6 @@
 {% set compo_col = compo.compo_col %}
 {% set is_breadcrumb = compo.breadcrumb == True %}
-<div id="{{ compo.cid }}" epflid="{{ compo.cid }}" class="epfl-text {{ "epfl-text" if not is_breadcrumb else "" }}">
+<div id="{{ compo.cid }}" epflid="{{ compo.cid }}" class="epfl-link-container epfl-text {{ "epfl-text" if not is_breadcrumb else "" }}">
     {% if compo.label and not is_breadcrumb %}
         {% if compo.layout_vertical == True %}
             <div class="row">
