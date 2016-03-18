@@ -1,6 +1,40 @@
 from solute.epfl.components import PaginatedListLayout
 from collections2.dicts import OrderedDict
 
+import csv
+import cStringIO
+import codecs
+
+
+class UnicodeWriter:
+    """
+    A CSV writer which will write rows to CSV file "f",
+    which is encoded in the given encoding.
+    """
+
+    def __init__(self, f, dialect=csv.excel, encoding="utf-8", **kwds):
+        # Redirect output to a queue
+        self.queue = cStringIO.StringIO()
+        self.writer = csv.writer(self.queue, dialect=dialect, **kwds)
+        self.stream = f
+        self.encoder = codecs.getincrementalencoder(encoding)()
+
+    def writerow(self, row):
+        self.writer.writerow([s.encode("utf-8") for s in row])
+        # Fetch UTF-8 output from the queue ...
+        data = self.queue.getvalue()
+        data = data.decode("utf-8")
+        # ... and reencode it into the target encoding
+        data = self.encoder.encode(data)
+        # write to the target stream
+        self.stream.write(data)
+        # empty queue
+        self.queue.truncate(0)
+
+    def writerows(self, rows):
+        for row in rows:
+            self.writerow(row)
+
 
 class TableLayout(PaginatedListLayout):
 
@@ -186,9 +220,38 @@ class TableLayout(PaginatedListLayout):
         self.row_data.update({'ordertype': self.ordertype})
         self.redraw()
 
+    def _new_export_csv(self):
+        import csv
+        from StringIO import StringIO
+
+        def safe_encode(str_or_unicode):
+            if type(str_or_unicode) is not str and type(str_or_unicode) is not unicode:
+                str_or_unicode = str(str_or_unicode)  # for ints
+            if type(str_or_unicode) is not unicode:
+                str_or_unicode = str_or_unicode.decode('utf-8')
+            encoded = str_or_unicode.encode('utf-8')
+            return encoded
+
+        result = self._get_data(0, max(self.row_count, self.row_limit), self.row_data)
+        import ipdb; ipdb.set_trace()
+        csvfile = StringIO()
+
+        headings = getattr(self, 'headings', [])
+        fieldnames = [safe_encode(heading['name']) for heading in headings]
+
+        writer = csv.DictWriter(csvfile, fieldnames=fieldnames, extrasaction='ignore')
+        writer.writeheader()
+        for row in result:
+            writer.writerow({k: safe_encode(v) for k, v in row['row'].items()})
+
+        csvfile.seek(0)
+        csvcontent = csvfile.read()
+        return csvcontent.decode('utf-8')
+
     def export_csv(self):
         csv = []
-        result = self._get_data(0, max(self.row_count, self.row_limit), self.row_data, {})
+        result = self._get_data(0, max(self.row_count, self.row_limit), self.row_data)
+        import ipdb; ipdb.set_trace()
         if getattr(self, 'headings', None):
             headings = []
             csv.append(headings)
@@ -206,7 +269,7 @@ class TableLayout(PaginatedListLayout):
                 row_id = row['row']['id']
                 csv_row = []
                 csv.append(csv_row)
-            csv_row.append(row['value'])
+            csv_row.append(row.get('value', 'xxx')) # ['value'])
 
         return '\n'.join([';'.join([unicode(entry) for entry in row]) for row in csv])
 
