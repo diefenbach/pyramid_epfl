@@ -30,6 +30,7 @@ epfl_module = function () {
     epfl.show_please_wait_counter = 0;
     epfl.flush_queue = [];
     epfl.flush_queue_active = false;
+    epfl.executing_request = false;
 
     epfl.init_page = function (opts) {
         $("body").append("<div id='epfl_please_wait'><i class='fa fa-spinner fa-spin fa-5x text-primary'></i></div>");
@@ -192,6 +193,9 @@ epfl_module = function () {
             data: JSON.stringify({"tid": epfl.tid, "q": queue, unqueued: unqueued}),
             contentType: "application/json",
             dataType: "text",
+            beforeSend: function() {
+                epfl.executing_request = true;
+            },
             success: function (data) {
                 try {
                     data = $.parseJSON(data);
@@ -241,6 +245,7 @@ epfl_module = function () {
                 epfl.hide_please_wait(true);
             },
             complete: function (jqXHR, status) {
+                epfl.executing_request = false;
                 if (unqueued) {
                     return;
                 }
@@ -433,9 +438,18 @@ epfl_module = function () {
             confirmed = window.confirm(confirmation_msg);
         }
         if (confirmed === true) {
-            window.setTimeout(function() {
-                epfl.setLocation(encodeURI(target_url));
-            }, timeout);
+            var interval_id;
+
+            function doit() {
+                if (!epfl.executing_request) {
+                    window.clearInterval(interval_id);
+                    window.setTimeout(function() {
+                        epfl.setLocation(encodeURI(target_url));
+                    }, timeout);
+                }
+            }
+
+            interval_id = window.setInterval(doit, 100);
         }
     };
 
