@@ -185,7 +185,7 @@ epfl_module = function () {
 
         return $.ajax({
             url: location.href,
-            global: false,
+            global: true,
             async: !sync,
             type: "POST",
             cache: false,
@@ -234,7 +234,7 @@ epfl_module = function () {
             },
             error: function (httpRequest, message, errorThrown) {
                 epfl.show_message({"msg": "Server Error: " + errorThrown, "typ": "error", "fading": true});
-                console.log(httpRequest);
+                console.log('error on ajax request: ', httpRequest, message, errorThrown);
                 if (unqueued) {
                     return;
                 }
@@ -319,7 +319,7 @@ epfl_module = function () {
             var ajax_target_url = location.href;
             $.ajax({
                 url: ajax_target_url,
-                global: false,
+                global: true,
                 type: "POST",
                 cache: false,
                 data: JSON.stringify({"tid": epfl.tid, "q": [event]}),
@@ -433,9 +433,19 @@ epfl_module = function () {
             confirmed = window.confirm(confirmation_msg);
         }
         if (confirmed === true) {
-            window.setTimeout(function() {
-                epfl.setLocation(encodeURI(target_url));
-            }, timeout);
+            function _jump() {
+                window.setTimeout(function() {
+                    epfl.setLocation(encodeURI(target_url));
+                }, timeout);
+            }
+            // if there are running ajax request, the jump is trigger on ajaxStop event
+            // $.active is an integer with the amount of running requests, so 0 means "no requests"
+            if ($.active !== 0) {
+                $(document).ajaxStop(_jump);
+            } else {
+                // no requests running, so execute the jump directly
+                _jump();
+            }
         }
     };
 
