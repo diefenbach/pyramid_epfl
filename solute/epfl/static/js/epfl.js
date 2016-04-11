@@ -30,7 +30,6 @@ epfl_module = function () {
     epfl.show_please_wait_counter = 0;
     epfl.flush_queue = [];
     epfl.flush_queue_active = false;
-    epfl.executing_request = false;
 
     epfl.init_page = function (opts) {
         $("body").append("<div id='epfl_please_wait'><i class='fa fa-spinner fa-spin fa-5x text-primary'></i></div>");
@@ -186,16 +185,13 @@ epfl_module = function () {
 
         return $.ajax({
             url: location.href,
-            global: false,
+            global: true,
             async: !sync,
             type: "POST",
             cache: false,
             data: JSON.stringify({"tid": epfl.tid, "q": queue, unqueued: unqueued}),
             contentType: "application/json",
             dataType: "text",
-            beforeSend: function() {
-                epfl.executing_request = true;
-            },
             success: function (data) {
                 try {
                     data = $.parseJSON(data);
@@ -238,14 +234,13 @@ epfl_module = function () {
             },
             error: function (httpRequest, message, errorThrown) {
                 epfl.show_message({"msg": "Server Error: " + errorThrown, "typ": "error", "fading": true});
-                console.log(httpRequest);
+                console.log('error on ajax request: ', httpRequest, message, errorThrown);
                 if (unqueued) {
                     return;
                 }
                 epfl.hide_please_wait(true);
             },
             complete: function (jqXHR, status) {
-                epfl.executing_request = false;
                 if (unqueued) {
                     return;
                 }
@@ -324,7 +319,7 @@ epfl_module = function () {
             var ajax_target_url = location.href;
             $.ajax({
                 url: ajax_target_url,
-                global: false,
+                global: true,
                 type: "POST",
                 cache: false,
                 data: JSON.stringify({"tid": epfl.tid, "q": [event]}),
@@ -438,18 +433,21 @@ epfl_module = function () {
             confirmed = window.confirm(confirmation_msg);
         }
         if (confirmed === true) {
-            var interval_id;
-
             function doit() {
-                if (!epfl.executing_request) {
-                    window.clearInterval(interval_id);
-                    window.setTimeout(function() {
-                        epfl.setLocation(encodeURI(target_url));
-                    }, timeout);
-                }
+                window.setTimeout(function() {
+                    epfl.setLocation(encodeURI(target_url));
+                }, timeout);
             }
-
-            interval_id = window.setInterval(doit, 100);
+            // if there are running ajax request, the jump is trigger on ajaxStop event
+            // $.active is an integer with the amount of running requests, so 0 means "no requests"
+            if ($.active !== 0) {
+                $(document).ajaxStop(function() {
+                    doit();
+                });
+            } else {
+                // no requests running, so execute the jump directly
+                doit();
+            }
         }
     };
 
