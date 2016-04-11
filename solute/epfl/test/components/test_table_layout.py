@@ -313,11 +313,13 @@ def test_csv_export_with_headings(page):
     page.setup_model()
 
     page.root_node = components.TableLayout(
+        # even with given row_limit all rows should exported
+        row_limit=1,
         headings=[
-            {'title': 'field 1', 'name': 'col1'},
-            {'title': 'field 2', 'name': 'value', 'sortable': True},
-            {'title': 'field 3', 'toggle_visibility_supported': True},
-            {'title': 'field 4', 'toggle_visibility_supported': True},
+            {'title': 'field 1', 'name': 'field 1', 'export_value': 'col1'},
+            {'title': 'field 2', 'name': 'field 2', 'sortable': True, 'export_value': 'col2'},
+            {'title': 'field 3', 'name': 'field 3', 'toggle_visibility_supported': True, 'export_value': 'col3'},
+            {'title': 'field 4', 'name': 'field 4', 'toggle_visibility_supported': True},
         ],
         get_data='entries',
         data_interface={
@@ -335,8 +337,8 @@ def test_csv_export_with_headings(page):
 
     page.handle_transaction()
     root_node = page.root_node
-    csv = 'field 1;field 2;field 3;field 4\ncol1 0;col2 0;col3 0\ncol1 1;col2 1;col3 1\ncol1 2;col2 2;col3 2\n' \
-          'col1 3;col2 3;col3 3\ncol1 4;col2 4;col3 4'
+    csv = 'field 1,field 2,field 3\r\ncol1 0,col2 0,col3 0\r\ncol1 1,col2 1,col3 1\r\ncol1 2,col2 2,col3 2\r\n' \
+          'col1 3,col2 3,col3 3\r\ncol1 4,col2 4,col3 4\r\n'
     assert csv == root_node.export_csv()
 
 
