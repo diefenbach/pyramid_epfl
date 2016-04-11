@@ -433,7 +433,7 @@ epfl_module = function () {
             confirmed = window.confirm(confirmation_msg);
         }
         if (confirmed === true) {
-            function doit() {
+            function _jump() {
                 window.setTimeout(function() {
                     epfl.setLocation(encodeURI(target_url));
                 }, timeout);
@@ -441,12 +441,10 @@ epfl_module = function () {
             // if there are running ajax request, the jump is trigger on ajaxStop event
             // $.active is an integer with the amount of running requests, so 0 means "no requests"
             if ($.active !== 0) {
-                $(document).ajaxStop(function() {
-                    doit();
-                });
+                $(document).ajaxStop(_jump);
             } else {
                 // no requests running, so execute the jump directly
-                doit();
+                _jump();
             }
         }
     };
