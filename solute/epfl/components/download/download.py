@@ -88,7 +88,7 @@ class Download(Button):
         if not data:
             return
         download_data = json.encode({'data': data, 'type': self.file_type, 'name': filename})
-        self.add_js_response('epfl.components["%s"].do_download(%s)' % (cid, download_data))
+        self.add_js_response('epfl.components["%s"].do_download(%s);' % (cid, download_data))
 
     def direct_download(self):
         """ Default direct_download function

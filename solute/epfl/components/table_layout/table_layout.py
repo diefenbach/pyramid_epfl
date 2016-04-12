@@ -1,5 +1,10 @@
+# -*- coding: utf-8 -*-
+
 from solute.epfl.components import PaginatedListLayout
 from collections2.dicts import OrderedDict
+
+import csv
+from StringIO import StringIO
 
 
 class TableLayout(PaginatedListLayout):
@@ -121,7 +126,15 @@ class TableLayout(PaginatedListLayout):
         return self.map_child_cls[compo_info['compo_type']][1](**compo_info)
 
     def _get_data(self, *args, **kwargs):
+        as_raw = kwargs.get('raw', False)
+        if 'raw' in kwargs:
+            del(kwargs['raw'])
+
         result = super(TableLayout, self)._get_data(*args, **kwargs)
+        # used for exort
+        if as_raw:
+            return result
+
         out = []
         child_maps = list(enumerate(self.map_child_cls))
         for row in result:
@@ -187,29 +200,41 @@ class TableLayout(PaginatedListLayout):
         self.redraw()
 
     def export_csv(self):
-        csv = []
-        result = self._get_data(0, max(self.row_count, self.row_limit), self.row_data, {})
-        if getattr(self, 'headings', None):
-            headings = []
-            csv.append(headings)
-            for heading in self.headings:
-                headings.append(heading.get('title', ''))
-        else:
-            headings = []
-            csv.append(headings)
-            for child_map in self.map_child_cls:
-                headings.append(child_map[0])
-        row_id = None
-        csv_row = None
-        for row in result:
-            if row_id != row['row']['id']:
-                row_id = row['row']['id']
-                csv_row = []
-                csv.append(csv_row)
-            csv_row.append(row['value'])
+        def safe_encode(value):
+            """ A value encoder: take a value of any kind and return it as encoded utf-8 string. """
+            if type(value) is not str and type(value) is not unicode:
+                value = str(value)  # for ints
+            if type(value) is not unicode:
+                value = value.decode('utf-8')
+            return value.encode('utf-8')
 
-        return '\n'.join([';'.join([unicode(entry) for entry in row]) for row in csv])
+        result = self._get_data(0, max(self.row_count, self.row_limit), self.row_data, raw=True)
+        csvfile = StringIO()
+
+        headings = getattr(self, 'headings', [])
+        fieldnames = [safe_encode(heading['name']) for heading in headings
+                      if heading.get('export_value', None) is not None]
+        export_values = [heading['export_value'] for heading in headings
+                         if heading.get('export_value', None) is not None]
+
+        writer = csv.DictWriter(csvfile, fieldnames=fieldnames, extrasaction='ignore')
+        writer.writeheader()
+
+        for row in result:
+            writer.writerow({fieldnames[i]: safe_encode(row[value]) for i, value in enumerate(export_values)})
+
+        csvfile.seek(0)
+
+        csvcontent = csvfile.read()
+        return csvcontent.decode('utf-8')
 
     def handle_export_csv(self):
-        csv = self.export_csv()
-        self.return_ajax_response([csv, 'table_data.csv'])
+        # check export_max_rows setting to avoid long running exports
+        if self.export_max_rows is not None and self.export_max_rows < self.row_count:
+            self.return_ajax_response(
+                ['msg',
+                 'warning',
+                 u'Es können nur maximal {max} Datensätze exportiert werden'.format(max=self.export_max_rows)]
+            )
+        else:
+            self.return_ajax_response(['csv', self.export_csv(), 'table_data.csv'])

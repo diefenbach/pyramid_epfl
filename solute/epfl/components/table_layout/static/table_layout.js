@@ -40,21 +40,27 @@ epfl.TableLayout.prototype.handle_click = function (event) {
         this.send_event("adjust_sorting", {column_index: $(parent_col).index()});
     } else if (this.export_button.is(event.target)) {
         this.send_event("export_csv", {}, function(response){
-            var filename;
+            var type, filename;
             var result = response;
             if (jQuery.isEmptyObject(result)) {
                 epfl.show_message({'msg': 'Keine Daten vorhanden.', 'typ': 'warning', 'fading': true});
                 return;
             }
-            var data = result[0];
-            if(result.length > 1) {
-                filename = result[1];
+            type = result[0];
+            if (type == 'msg') {
+                epfl.show_message({'msg': result[2], 'typ': result[1], 'fading': true});
+                return;
+            } else {
+                var data = result[1];
+                if(result.length > 2) {
+                    filename = result[2];
+                }
+                else {
+                    filename = 'download.txt';
+                }
+                var blob = new Blob([data], {type:'text/csv'});
+                saveAs(blob, filename);
             }
-            else {
-                filename = 'download.txt';
-            }
-            var blob = new Blob([data], {type:'text/csv'});
-            saveAs(blob, filename);
         });
     }
 };
