@@ -8,7 +8,7 @@ class Popover(Link):
     exempt_params = set(['list_element', 'selection', 'double_click_event_name', 'name', 'url', 'route',
                          'btn_link', 'breadcrumb', 'new_window', 'tile', 'btn_link_color', 'event_name',
                          'stop_propagation_on_click', 'context_menu', 'layout_vertical', 'compo_col', 'label_col',
-                         'label', 'label_style', 'btn_disabled'])
+                         'label', 'label_style', 'btn_disabled', 'popover_max_width'])
 
     def __init__(self, page, cid,
                  text=None,
@@ -16,6 +16,7 @@ class Popover(Link):
                  popover_text=None,
                  popover_trigger=None,
                  popover_position=None,
+                 popover_max_width=None,
                  **extra_params):
         """Popover convenience component
 
@@ -25,5 +26,6 @@ class Popover(Link):
         :param popover_text: If set, click on link displays this text
         :param popover_trigger: trigger for popover text
         :param popover_position: popover position possible values: left right top bottom
+        :param popover_max_width: popover max width as number
         """
         pass

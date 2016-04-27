@@ -51,9 +51,10 @@ epfl.Link.prototype.after_response = function (data) {
             contentAsHTML: true,
             debug: false,
             position: obj.params.popover_position,
-            trigger:obj.params.propver_trigger,
+            trigger:obj.params.popover_trigger,
             theme:"tooltipster-shadow",
-            delay:100
+            delay:100,
+            maxWidth:obj.params.popover_max_width
         });
     }
 };

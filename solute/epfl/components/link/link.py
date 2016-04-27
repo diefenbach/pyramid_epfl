@@ -42,6 +42,7 @@ class Link(ComponentBase):
     popover_text = None  #: If set, click on link displays this text
     popover_trigger = "hover"  #: trigger for popover text
     popover_position = "top"  #: popover position possible values: left right top bottom
+    popover_max_width = None   #: popover max width as number
     active = False  #: Sets the active class in html
     stop_propagation_on_click = False  #: Set to true if click event should not be propagated to parent components
     #: Set to context menu list of dicts or to string
@@ -83,6 +84,7 @@ class Link(ComponentBase):
                  label_style=None,
                  compo_col=None,
                  layout_vertical=None,
+                 popover_max_width=None,
                  **extra_params):
         """Simple Link component.
 
@@ -123,6 +125,8 @@ class Link(ComponentBase):
         :param label_col: Set the width of the label of the component (default: 2, max: 12)
         :param compo_col: Set the width of the complete component (default: 12, max: 12)
         :param label_style: Can be used to add additional css styles for the label
+        :param popover_max_width: popover max width as number
+
         """
         pass
 
