@@ -16,6 +16,7 @@ class Popover(Link):
                  popover_text=None,
                  popover_trigger=None,
                  popover_position=None,
+                 popover_max_width=None,
                  **extra_params):
         """Popover convenience component
 
@@ -25,5 +26,6 @@ class Popover(Link):
         :param popover_text: If set, click on link displays this text
         :param popover_trigger: trigger for popover text
         :param popover_position: popover position possible values: left right top bottom
+        :param popover_max_width: popover max width as number
         """
         pass

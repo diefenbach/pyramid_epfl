@@ -8,7 +8,8 @@ class Breadcrumb(Link):
     exempt_params = set(['list_element', 'selection', 'double_click_event_name', 'context_menu',
                          'popover_position', 'event_name', 'text', 'btn_link', 'breadcrumb', 'new_window',
                          'popover_trigger', 'tile', 'btn_link_color', 'popover_text', 'stop_propagation_on_click',
-                         'layout_vertical', 'compo_col', 'label_col', 'label', 'label_style', 'btn_disabled'])
+                         'layout_vertical', 'compo_col', 'label_col', 'label', 'label_style', 'btn_disabled',
+                         'popover_max_width'])
 
     # custom compo attributes
     breadcrumb = True  #: The link is used as a breadcrumb per default.
