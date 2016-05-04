@@ -100,6 +100,13 @@ def route():
 
 
 @pytest.fixture(scope='function')
+def another_route():
+    """Fixture to access a mocked (pyramid) route object.
+    """
+    return DummyRoute(name='another', path='/another')
+
+
+@pytest.fixture(scope='function')
 def config():
     """Fixture to access a pyramid mock config.
     """

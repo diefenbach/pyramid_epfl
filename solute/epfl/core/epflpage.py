@@ -116,7 +116,7 @@ class Page(object):
 
         if transaction:
             self.transaction = transaction
-
+        # TODO: use else?
         if not hasattr(self, 'transaction'):
             try:
                 self.transaction = self.__get_transaction_from_request()
@@ -498,10 +498,7 @@ class Page(object):
                 event_handler(**event_params)
 
             elif event_type == "upl":  # upload-event
-                event_id = event["id"]
-                cid = event["cid"]
-                component_obj = self.components[cid]
-                component_obj.handle_event("UploadFile", {"widget_name": event["widget_name"]})
+                raise Exception("The event type 'upl' is deprecated.")
 
             else:
                 raise Exception("Unknown ajax-event: " + repr(event))

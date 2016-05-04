@@ -1,20 +1,26 @@
 # * encoding: utf-8
 
-import unittest
 import time
 import pytest
-
-from solute.epfl.core.epflpage import Page
-from solute.epfl.core.epflcomponentbase import ComponentBase
-from solute.epfl.core.epflcomponentbase import ComponentContainerBase
-from solute.epfl import components
-from solute.epfl import extract_static_assets_from_components
-
-from collections2.dicts import OrderedDict
 import inspect
 
-from page import PageWithJS, PageWithJSNoBundle, PageWithCSS, PageWithCSSNoBundle, PageWithCSSandJS, \
-    PageWithCSSandJSNoBundle
+from pyramid import testing
+
+from solute.epfl import extract_static_assets_from_components
+from solute.epfl.core.epflpage import Page
+from solute.epfl.core.epflpage import MissingEventTargetException
+from solute.epfl.core.epflcomponentbase import MissingEventHandlerException
+from solute.epfl.core.epflcomponentbase import ComponentBase
+from solute.epfl.core.epflcomponentbase import ComponentContainerBase
+
+# helper page objects
+from page import PageWithJS
+from page import PageWithJSNoBundle
+from page import PageWithCSS
+from page import PageWithCSSNoBundle
+from page import PageWithCSSandJS
+from page import PageWithCSSandJSNoBundle
+from page import PageWithEventHandler
 
 
 pytestmark = pytest.mark.page_api
@@ -524,3 +530,152 @@ def test_css_js_combination():
     assert css_name[4] == PageWithCSSandJS.css_name
     assert css_name[5] != PageWithCSSandJSNoBundle.css_name
     assert css_name[5] + PageWithCSSandJSNoBundle.css_name_no_bundle == PageWithCSSandJSNoBundle.css_name
+
+
+def test_handle_ajax_events_page_events(pyramid_req):
+    """ Ajax events are given as json to the page_request object. Event Type ('t') for page events is 'pe'.
+    The event name 'e' is used to call the corrosponding handle function. Given event params 'p' are used. """
+
+    # Create a page with a registered root node
+    page = PageWithEventHandler(None, pyramid_req)
+    page.request.is_xhr = True
+    page.page_request.params = {"q": []}
+    page.root_node = ComponentContainerBase
+    page.handle_transaction()
+
+    # initial call - no events registered, so the counter is set to 0
+    assert page.counter == 0
+    page.handle_ajax_events()
+    assert page.counter == 0
+
+    # now add an valid event: this increases the counter
+    page.page_request.params = {"q": [{u'p': {}, u'e': u'increase_counter', u'id': 1, u't': u'pe'}]}
+    page.handle_ajax_events()
+    assert page.counter == 1
+    page.handle_ajax_events()
+    assert page.counter == 2
+
+    # next try to call an event, which has no handler
+    page.page_request.params = {"q": [{u'p': {}, u'e': u'foobar', u'id': 1, u't': u'pe'}]}
+    with pytest.raises(AttributeError) as excinfo:
+        page.handle_ajax_events()
+    assert "object has no attribute 'handle_foobar'" in str(excinfo.value)
+
+    # events can have params, too. check if they are used.
+    page.page_request.params = {"q": [{u'p': {u'counter': 666}, u'e': u'increase_counter', u'id': 1, u't': u'pe'}]}
+    page.handle_ajax_events()
+    assert page.counter == 666
+
+
+def test_handle_ajax_events_component_events(pyramid_req):
+    """ Ajax events are given as json to the page_request object. Event Type ('t') for component events is 'ce'.
+    The event name 'e' is used to call the corrosponding handle function. Given event params 'p' are used. The
+    component is identified by its id via cid. """
+    # define a component with handler method
+    class CounterComponent(ComponentBase):
+        counter = 0
+
+        def handle_increase_counter(self, counter=None):
+            if counter is None:
+                self.counter += 1
+            else:
+                self.counter = counter
+
+    page = PageWithEventHandler(None, pyramid_req)
+    page.request.is_xhr = True
+    page.page_request.params = {"q": []}
+    page.root_node = ComponentContainerBase(
+        node_list=[CounterComponent(cid='counter_compo')]
+    )
+    page.handle_transaction()
+
+    # initial call - no events registered, so the counter is set to 0
+    assert page.counter_compo.counter == 0
+    page.handle_ajax_events()
+    assert page.counter_compo.counter == 0
+
+    # now add an valid event: this increases the counter
+    page.page_request.params = {
+        "q": [{u'cid': 'counter_compo', u'p': {}, u'e': u'increase_counter', u'id': 1, u't': u'ce'}]
+    }
+    page.handle_ajax_events()
+    assert page.counter_compo.counter == 1
+    page.handle_ajax_events()
+    assert page.counter_compo.counter == 2
+
+    # next try to call an event, which has no handler,
+    # note: spot the different exception, in opposite to the page test above!
+    page.page_request.params = {
+        "q": [{u'cid': 'counter_compo', u'p': {}, u'e': u'foobar', u'id': 1, u't': u'ce'}]
+    }
+    with pytest.raises(MissingEventHandlerException) as excinfo:
+        page.handle_ajax_events()
+
+    # events can have params, too. check if they are used.
+    page.page_request.params = {
+        "q": [{u'cid': 'counter_compo', u'p': {u'counter': 666}, u'e': u'increase_counter', u'id': 1, u't': u'ce'}]
+    }
+    page.handle_ajax_events()
+    assert page.counter_compo.counter == 666
+
+    # make sure all event handlers did not modified the counter of the page, as the test above
+    assert page.counter == 0
+
+    # now try to handle an event to an unexisting compo
+    page.page_request.params = {
+        "q": [{u'cid': 'not_existing', u'p': {}, u'e': u'increase_counter', u'id': 1, u't': u'ce'}]
+    }
+    with pytest.raises(MissingEventTargetException) as excinfo:
+        page.handle_ajax_events()
+    assert "Target element with CID 'not_existing' for event" in str(excinfo.value)
+
+
+def test_handle_ajax_events_invalid_types(pyramid_req):
+    """ Event types are either 'pe' for page events or 'ce' for component events. 'upl' is deprecated and all
+    others are invalid. """
+
+    # Create a page with a registered root node
+    page = PageWithEventHandler(None, pyramid_req)
+    page.request.is_xhr = True
+    page.page_request.params = {"q": []}
+    page.root_node = ComponentContainerBase
+    page.handle_transaction()
+
+    # check the depraction warning for 'upl' events
+    page.page_request.params = {"q": [{u'cid': 'counter_compo', u'p': {}, u'e': u'foobar', u'id': 1, u't': u'upl'}]}
+    with pytest.raises(Exception) as excinfo:
+        page.handle_ajax_events()
+    assert "The event type 'upl' is deprecated." == str(excinfo.value)
+
+    # check the unknown event type exception
+    page.page_request.params = {"q": [{u'cid': 'counter_compo', u'p': {}, u'e': u'foobar', u'id': 1, u't': u'foobar'}]}
+    with pytest.raises(Exception) as excinfo:
+        page.handle_ajax_events()
+    assert str(excinfo.value).startswith('Unknown ajax-event:')
+
+
+def test_page_init_transaction_handling(pyramid_req, another_route):
+    """ each page has it's unique transaction. changing the page must lead to a different transaction. """
+
+    # first get the standard page object with the default "dummy route" used in all tests.
+    page = Page(None, pyramid_req)
+    page_tid = page.transaction.tid
+    page.transaction.store()
+
+    # then create another request, with the another_route
+    another_request = testing.DummyRequest()
+    another_request.content_type = ''
+    another_request.is_xhr = False
+    another_request.matched_route = another_route
+
+    # now use the transaction id of the first page object as id to this one
+    another_request.params = {'tid': page_tid}
+    another_page = Page(None, another_request)
+
+    # this sould lead to a new tid for the another_page
+    assert another_page.transaction.tid != page.transaction.tid
+
+    # but using the some tid for the same route/page will use the old tid.
+    pyramid_req.params = {'tid': page_tid}
+    page_reload = Page(None, pyramid_req)
+    assert page_reload.transaction.tid == page.transaction.tid
