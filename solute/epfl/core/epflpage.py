@@ -42,7 +42,7 @@ class LazyProperty(object):
 class Page(object):
     """
     Handles the request-processing-flow of EPFL requests for all its contained :class:`.epflcomponentbase.BaseComponent`
-    instances. The parameter "name" must be unique for the complete application!
+    instances.
 
     There are three response-modes:
 
@@ -100,7 +100,7 @@ class Page(object):
     def __init__(self, context, request, transaction=None):
         """
         The optional parameter "transaction" is needed when creating page_objects manually. So the transaction is not
-        the same as the requests one.
+        the same as the one of the requests.
         The lazy_mode is setup here if the request is an ajax request and all events in it are requesting lazy_mode.
 
         :param context: Pyramid context object.
@@ -129,8 +129,8 @@ class Page(object):
     @Lifecycle(name=('page', 'main'), log_time=True)
     def __call__(self):
         """
-        The page is called by pyramid as view, it returns a rendered page for every request. Uses :meth:`call_ajax`,
-        :meth:`call_default`, :meth:`call_cleanup`.
+        The page is called by pyramid as view, it returns a rendered page for every request.
+
         [request-processing-flow]
         """
 
@@ -161,11 +161,18 @@ class Page(object):
         response = Response(body=out.encode("utf-8"),
                             status=200,
                             content_type=content_type)
+
+        # Append the cookies for the EPFL login tie ins.
         response.headerlist.extend(self.remember_cookies)
         return response
 
     @Lifecycle(name=('page', 'after_event_handling'))
     def after_event_handling(self):
+        """Triggers the component after_event_handling lifecycle.
+
+        [request-processing-flow]
+        """
+
         for compo in self.get_active_components():
             compo.after_event_handling()
 
@@ -182,8 +189,12 @@ class Page(object):
             self.transaction.set_page_obj(self)
 
     def call_cleanup(self, check_tid):
-        """
-        Sub-method of :meth:`__call__` used to cleanup after a request has been handled.
+        """Cleanup of the request, attaches new transaction ID to ajax requests and stores the transaction.
+
+        :param check_tid: Flag whether the transaction ID needs to be checked, usually correlates to request.is_xhr but
+                          is not inherently required to do so (you can extend this logic without causing problems).
+
+        [request-processing-flow]
         """
         self.done_request()
 
@@ -198,8 +209,8 @@ class Page(object):
 
     @Lifecycle(name=('page', 'setup_model'))
     def setup_model(self):
-        """
-        Used every request to instantiate the model.
+        """Instantiate the page model.
+
         """
         if self.model is not None:
             model = self.model
@@ -215,19 +226,24 @@ class Page(object):
                 self.model = self.model(self.request)
 
     def done_request(self):
-        """ [request-processing-flow]
-        The main request teardown.
+        """Call the finalize lifecycle for all active(!) components.
+
+        [request-processing-flow]
         """
         for compo_obj in self.get_active_components():
             if self.transaction.has_component(compo_obj.cid):
                 compo_obj.finalize()
 
+        # Probably deprecated.
         other_pages = self.page_request.get_handeled_pages()
         for page_obj in other_pages:
             page_obj.done_request()
 
     @classmethod
     def get_name(cls):
+        """Used by the transaction to identify this particular page by name. Very probably deprecated, handle with care.
+        """
+
         if not cls.__name:
             cls.__name = cls.__module__ + ":" + cls.__name__
 
@@ -235,13 +251,17 @@ class Page(object):
 
     @classmethod
     def discover(cls):
+        """Stub for discovery specific actions on page. Utilize this for removing __getattribute__ using the
+        LazyAccessor.
+        """
         pass
 
     def __getattribute__(self, item):
-        """
-        Used to provide special handling for components in lazy_mode. Uses default behaviour of super otherwise. If the
-        requested value is an instance of :class:`LazyProperty` it will be called, then reloaded using the default
+        """Used to provide special handling for components in lazy_mode. Uses default behaviour of super otherwise. If
+        the requested value is an instance of :class:`LazyProperty` it will be called, then reloaded using the default
         behaviour of super.
+
+        :param item: Name of the attribute.
         """
         if item not in ['components', 'transaction', '_active_initiations', 'request', 'response'] \
                 and hasattr(self, 'transaction') \
@@ -258,14 +278,15 @@ class Page(object):
 
     def __delattr__(self, key):
         value = getattr(self, key)
+
+        # Removing a static component from a page object leads to bad things.
         if isinstance(value, epflcomponentbase.ComponentBase):
-            raise Exception('This shouldn\'t happen!')
+            raise Exception('Removing static component from page!')
         self.__dict__.pop(key)
 
     def __setattr__(self, key, value):
-        """
-        By assigning components as attributes to the page, they are registered on this page object. Their name is used
-        as cid.
+        """By assigning components as attributes to the page, they are registered on this page object. Their name is
+        used as cid. Only used for static assignment of components, usually only root_node.
         """
         if isinstance(value, epflcomponentbase.ComponentBase):
             self.add_static_component(key, value)
@@ -273,7 +294,13 @@ class Page(object):
             super(Page, self).__setattr__(key, value)  # Use normal behaviour.
 
     def add_static_component(self, cid, compo_obj, overwrite=False):
-        """ Registers the component in the page. """
+        """Registers the component in the transaction and enforces CID uniqueness.
+
+        :param cid: Component ID.
+        :param compo_obj: An active instance of a component.
+        :param overwrite: Potentially deprecated flag. Supposed to give the option of overwriting components which
+                          probably isn't a good idea in any case.
+        """
         if asbool(self.request.registry.settings.get('epfl.debug', False)) \
                 and self.transaction.get_component(cid) is not None and not overwrite:
             raise Exception('A component with CID %(cid)s is already present in this page!\n'
@@ -290,9 +317,10 @@ class Page(object):
             self.transaction.set_component(cid, compo_obj)
 
     def get_active_components(self, sorted_by_depth=False):
-        """
-        If :attr:`active_components` is set this method returns a list of the :class:`.epflcomponentbase.ComponentBase`
-        instances that have registered there upon initialization and are still present on this page.
+        """Returns the currently active components as known to the transaction.
+
+        :param sorted_by_depth: Important flag for rendering process where components need to be rendered in
+                                hierarchical order, expensive feature.
         """
         active_components = self.transaction.get_active_components()[:]
         if sorted_by_depth:
@@ -309,8 +337,8 @@ class Page(object):
             return False
 
     def __get_transaction_from_request(self):
-        """
-        Retrieve the correct transaction for the tid this request contains.
+        """Retrieve the transaction for the tid the request tied to this page contains. Registers the page on the
+        transaction if the transaction was just created.
         """
 
         tid = self.page_request.get_tid()
@@ -323,18 +351,20 @@ class Page(object):
 
     @Lifecycle(name=('page', 'setup_components'))
     def setup_components(self):
-        """
-        Overwrite this function!
-        In this method all components needed by this page must be initialized and assigned to the page (self). It is
-        called only once per transaction to register the "static" components of this page. No need to call this (super)
-        method in derived classes.
+        """In EPFL 0.x used to provide an API method for registering custom components. EPFL 1.0 introduced self
+        building dynamic components making overwriting this method a thing of the past. The existence of a root_node is
+        currently required to get a working Page.
 
         [request-processing-flow]
         """
+
+        # __instantiate__ flag is required to force the unbound component to yield an actual component instance.
         self.root_node = self.root_node(self, 'root_node', __instantiate__=True)
 
     def get_page_init_js(self):
-        """ returns a js-snipped which initializes the page. called only once per page """
+        """Returns a JS-Snippet to initialize the client side page object with the proper parameters.
+        Called once per full page request.
+        """
 
         opts = {"tid": self.transaction.get_id(),
                 "ptid": self.transaction.get_pid(),
@@ -343,7 +373,9 @@ class Page(object):
         return "epfl.init_page(" + json.encode(opts) + ")"
 
     def get_render_environment(self):
-        """ Returns a freshly created dict with all the global variables for the template rendering """
+        """Returns a dict with all global variables for the template rendering, the basic html, css and js snippets, a
+        title and most importantly all actual components at the top level (usually just the root_node).
+        """
 
         env = {"epfl_base_html": self.base_html,
                "epfl_base_title": self.title,
@@ -372,33 +404,46 @@ class Page(object):
         """
         out = ''
 
+        # Full page rendering.
         if not self.request.is_xhr:
+            # Render recursively from the root_node up to get the JS cache filled.
             self.root_node.render()
+            # Append the JS cache as js_response so the environment can find it.
             self.add_js_response(self.root_node.render('js_raw'))
 
+            # Theoretically it is possible to update the js_responses until the template is actually rendered.
             render_env = self.get_render_environment()
             out = self.response.render_jinja(self.template, **render_env)
+
+        # Ajax partial page rendering.
         else:
             # Get render entry points.
             for compo in self.get_active_components(sorted_by_depth=True)[:]:
+                # If a component has requested a redraw and has not yet been rendered (usually courtesy of a parent
+                # being rendered before) it is rendered and added as a js_response using the client function
+                # epfl.replace_component.
                 if compo.redraw_requested and not compo.is_rendered:
                     self.add_js_response("epfl.replace_component('{cid}', {parts})".format(
                         cid=compo.cid,
                         parts=json.encode({'js': compo.render('js_raw'),
                                            'main': compo.render()})))
 
+            # Attach fresh CSS and JS imports dynamically if they were not present on the page before.
             extra_content = self.get_css_imports(only_fresh_imports=True) + self.get_js_imports(only_fresh_imports=True)
             if len(extra_content) > 0:
+                # Since JS imports are a requirement for components they need to be first in the output.
                 out = "epfl.handle_dynamic_extra_content([%s]);\r\n" % json.dumps(extra_content)
+
+            # Render the actual ajax response.
             out += self.response.render_ajax_response()
 
         return out
 
     @Lifecycle(name=('page', 'handle_transaction'))
     def handle_transaction(self):
-        """ This method is called just before the event-handling takes place.
-        It calles the init_transaction-methods of all components, that the event handlers have
-        a complete setup transaction-state.
+        """Called before event_handling is initiated. Handles initial setup of components (aka first static component
+         assignment), triggers the init_transaction lifecycle on the root_node and then triggers the compo_setup
+         lifecycle.
 
         [request-processing-flow]
         """
@@ -416,17 +461,15 @@ class Page(object):
             compo.setup_component()
 
     def make_new_tid(self):
-        """
-        Call this function to create a new transaction to be in effect after this request. The old transaction and its
-        state is preserved, the browser navigation allows for easy skipping between both states.
+        """Call this function to create a new transaction to be in effect after this request. The old transaction and
+        its state is preserved, the browser navigation allows for easy switching between both states.
         """
         self.transaction.store_as_new()
 
     @Lifecycle(name=('page', 'handle_ajax_events'))
     def handle_ajax_events(self):
-        """ Is called by the view-controller directly after the definition of all components (self.instanciate_components).
-        Returns "True" if we are in a ajax-request. self.render_ajax_response must be called in this case.
-        A "False" means we have a full-page-request. In this case self.render must be called.
+        """Called after handle_transaction. Handles all events in this request. Contains possibly deprecated event types
+        page-event and upload-event. If you remove page-event you need to find an alternative or disable log_timing.
 
         [request-processing-flow]
         """
@@ -464,12 +507,13 @@ class Page(object):
                 raise Exception("Unknown ajax-event: " + repr(event))
 
     def handle_redraw_all(self):
-        """
-        Trigger a redraw for the root_node.
+        """Trigger a redraw for the root_node.
         """
         self.root_node.redraw()
 
     def handle_log_time(self, time_used):
+        """Log the time spent parsing js that was reported by a page event.
+        """
         request = self.request
         settings = request.registry.settings
 
@@ -488,8 +532,7 @@ class Page(object):
         epflutil.log_timing(key, time_used, request=self.request)
 
     def add_js_response(self, js_string):
-        """
-        Adds the js either to the ajax-response or to the bottom of the page - depending of the type of the request
+        """Adds the js either to the ajax-response or to the bottom of the page - depending of the type of the request.
         """
         if type(js_string) is str:
             js_string += ";"
