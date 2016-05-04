@@ -581,7 +581,7 @@ class Page(object):
         return names
 
     def get_css_imports(self, only_fresh_imports=False):
-        """ This function delivers the <style src=...>-tags for all stylesheets needed by this page and it's components.
+        """This function delivers the <link> tags for all stylesheets needed by this page and it's components.
         It is available in the template by the jinja-variable {{ css_imports() }}
         """
         imports = self.get_names('css_name', only_fresh_names=only_fresh_imports)
@@ -599,7 +599,7 @@ class Page(object):
         return self.response.render_extra_content('footer')
 
     def get_js_imports(self, only_fresh_imports=False):
-        """ This function delivers the <script src=...>-tags for all js needed by this page and it's components.
+        """This function delivers the <script>-tags for all js needed by this page and its components.
         Additionally it delivers all generated js-snippets from the components or page.
         It is available in the template by the jinja-variable {{ js_imports() }}
         """
@@ -611,8 +611,7 @@ class Page(object):
                                       % js for js in imports]))
 
     def reload(self):
-        """ Reloads the complete page.
-        Normally, you only need to redraw the components.
+        """ Reloads the complete page. Normally you only need to redraw the components.
         """
         self.add_js_response("epfl.reload_page();")
 
@@ -636,15 +635,16 @@ class Page(object):
         self.add_js_response(js)
 
     def jump_extern(self, target_url, target="_blank"):
-        """ Jumps to an external URL.
-        Do not use this to jump to an internal page of this appliaction. Use page.jump instead.
+        """ Jumps to an external URL. Do not use this to jump to an internal page of this application. Use jump instead.
         """
 
         js = "epfl.jump_extern('" + target_url + "', '" + target + "');"
         self.add_js_response(js)
 
     def go_next(self, route=None, target_url=None, **route_params):
-        """ Jumps to a new page and relates the transactions as parent/child.
+        """Deprecated(!) or at the very least unmaintained.
+
+        Jumps to a new page and relates the transactions as parent/child.
         So in the new page-object you can access the current page-object as self.parent .
         The target is given as route/route_params or as target_url.
         E.g. use this in wizards.
@@ -657,14 +657,12 @@ class Page(object):
         self.add_js_response(js)
 
     def remember(self, user_id):
-        """
-        Expose the remember function of pyramid.security for easy access to the pyramid authorization handler.
+        """Expose the remember function of pyramid.security for easy access to the pyramid authorization handler.
         """
         self.remember_cookies = security.remember(self.request, user_id)
 
     def forget(self):
-        """
-        Expose the forget function of pyramid.security for easy access to the pyramid authorization handler.
+        """Expose the forget function of pyramid.security for easy access to the pyramid authorization handler.
         """
         self.remember_cookies = security.forget(self.request)
 
@@ -672,8 +670,7 @@ class Page(object):
         raise Exception('This function is deprecated.')
 
     def get_route_path(self, route, abs_path=False, **kwargs):
-        """
-        Convenience handle for pyramid.request.route_path.
+        """Convenience handle for pyramid.request.route_path.
         """
         if not abs_path:
             return self.request.route_path(route, **kwargs)
@@ -681,8 +678,8 @@ class Page(object):
         return self.request.route_url(route, **kwargs)
 
     def prevent_page_leave(self, prevent_leave=True, message=None):
-        """
-        Show the a browser "are you sure to leave page" warning when the user want to leave or reload the page
+        """Show the a browser "are you sure to leave page" warning when the user want to leave or reload the page.
+
         :param prevent_leave: set this to true to activate the warning set it to false to deactivate it
         :param message: optional message which should be shown in the warning
         """
