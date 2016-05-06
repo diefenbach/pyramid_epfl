@@ -7,6 +7,7 @@ import inspect
 from pyramid import testing
 
 from solute.epfl import extract_static_assets_from_components
+from solute.epfl.core.epflassets import ModelBase
 from solute.epfl.core.epflpage import Page
 from solute.epfl.core.epflpage import MissingEventTargetException
 from solute.epfl.core.epflcomponentbase import MissingEventHandlerException
@@ -779,3 +780,38 @@ def test_page_call_with_prevent_transaction_loss_ajax(pyramid_req):
     assert result.text == 'window.location.reload();'
 
     # this will then reload the page which is tested in the test above and will yield to a new valid transaction
+
+
+def test_setup_model(page):
+    """ check if the models gets instantiated for the 3 kinds (see docstring of setup_model). """
+    class MyModel(ModelBase):
+        pass
+
+    # first kind: model is a type
+    page.model = MyModel
+    page.setup_model()
+
+    # the model is now an instance of MyModel
+    assert page.model != MyModel
+    assert isinstance(page.model, MyModel)
+
+    # second kind: model is a list of types
+    page.model = [MyModel]
+    page.setup_model()
+
+    assert isinstance(page.model, list)
+    assert len(page.model) == 1
+    assert isinstance(page.model[0], MyModel)
+
+    # notable: tuples are not supported
+    page.model = (MyModel,)
+    with pytest.raises(TypeError):
+        page.setup_model()
+
+    # third kind: model is a dict
+    page.model = {'foo': MyModel}
+    page.setup_model()
+
+    assert isinstance(page.model, dict)
+    assert 'foo' in page.model
+    assert isinstance(page.model['foo'], MyModel)

@@ -209,8 +209,12 @@ class Page(object):
 
     @Lifecycle(name=('page', 'setup_model'))
     def setup_model(self):
-        """Instantiate the page model.
-
+        """
+        A model can be defined in 3 kinds:
+        * a single class
+        * a list of classes
+        * a dict of classes
+        Each variant is keeping its kind an instantiates the model object.
         """
         if self.model is not None:
             model = self.model
