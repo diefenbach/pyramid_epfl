@@ -555,6 +555,12 @@ class Page(object):
         self.add_js_response(js)
 
     def get_names(self, name, only_fresh_names=False):
+        """Get the static urls of resources from all components currently active.
+
+        :param name: Resource name, either css_name or js_name.
+        :param only_fresh_names: Prevents resources already loaded previously in this transaction from being reloaded.
+        """
+
         names = []
         for compo in [self] + self.get_active_components():
             if not getattr(compo, 'is_rendered', True):
@@ -580,6 +586,8 @@ class Page(object):
     def get_css_imports(self, only_fresh_imports=False):
         """This function delivers the <link> tags for all stylesheets needed by this page and it's components.
         It is available in the template by the jinja-variable {{ css_imports() }}
+
+        :param only_fresh_imports: Prevents resources already loaded previously in this transaction from being reloaded.
         """
         imports = self.get_names('css_name', only_fresh_names=only_fresh_imports)
 
@@ -589,9 +597,14 @@ class Page(object):
                                       % css for css in imports]))
 
     def get_js(self):
+        """Get the combination of the js imports and the js parts both HTML wrapped for direct inclusion in the HTML
+        source. Used exclusively for full page render.
+        """
         return self.get_js_imports() + self.get_js_parts()
 
     def get_js_parts(self):
+        """Get the js parts HTML wrapped for direct inclusion in the HTML source. Used exclusively for full page render.
+        """
         self.add_js_response(self.get_page_init_js())
         return self.response.render_extra_content('footer')
 
@@ -599,6 +612,8 @@ class Page(object):
         """This function delivers the <script>-tags for all js needed by this page and its components.
         Additionally it delivers all generated js-snippets from the components or page.
         It is available in the template by the jinja-variable {{ js_imports() }}
+
+        :param only_fresh_imports: Prevents resources already loaded previously in this transaction from being reloaded.
         """
         imports = self.get_names('js_name', only_fresh_names=only_fresh_imports)
 
@@ -655,6 +670,8 @@ class Page(object):
 
     def remember(self, user_id):
         """Expose the remember function of pyramid.security for easy access to the pyramid authorization handler.
+
+        :param user_id: Generic user_id, no format enforced by EPFL, check pyramid docs.
         """
         self.remember_cookies = security.remember(self.request, user_id)
 
@@ -686,7 +703,9 @@ class Page(object):
 
 
 class PageRequest(object):
-    """
+    """Deprecated! Sub Requests are a thing of the past, event separation is now handled on component level.
+
+    OLD:
     Abstraction of the "request"-object provided by pyramid. The framework's request-object is global, so creating
     sub-requests (needed when handling events in page-objects other than the page-object created by the framework's
     request) can be hard. Since all classes of EPFL only rely on this abstraction (page_request) it can be created on
@@ -747,7 +766,9 @@ class PageRequest(object):
 
 
 class PageComponents(object):
-    """
+    """DEPRECATED: Just expose the compo_store directly.
+
+    OLD:
     Wrapper dict that just holds the information which component is actually supposed to be present while leaving the
     actual instances stored only in :attr:`Page.__dict__`.
     Implements MutableMapping_.
