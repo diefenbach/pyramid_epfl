@@ -40,15 +40,20 @@ setuptools.setup(
         "redis",
         "statsd",
         "requests",
-        "collections2"
+        "collections2",
+        "Pillow",
+    ],
+    tests_require=[
+        "pytest",
+        "lxml",
     ],
     setup_requires=[
+        "pytest-runner",
         "setuptools-git",
     ],
-    entry_points = """\
+    entry_points="""\
     [pyramid.scaffold]
     pyramid_epfl_starter=solute.epfl.scaffolds:EPFLStarterTemplate
     pyramid_epfl_tutorial=solute.epfl.scaffolds:EPFLTutorialTemplate
     """
 )
-
