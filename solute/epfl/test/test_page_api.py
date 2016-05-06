@@ -380,38 +380,39 @@ def test_re_rendering_components(pyramid_req):
 def test_container_assign(pyramid_req):
     """Check if components are assigned to the proper containers.
     """
+    class MyPage(Page):
 
-    Page.root_node = ComponentContainerBase(
-        cid='root_node',
-        node_list=[
-            ComponentContainerBase(
-                cid='container_1',
-                node_list=[
-                    ComponentBase(cid='compo_1')
-                ]
-            ),
-            ComponentContainerBase(
-                cid='container_2',
-                node_list=[
-                    ComponentBase(cid='compo_2')
-                ]
-            ),
-            ComponentContainerBase(
-                cid='container_3',
-                node_list=[
-                    ComponentBase(cid='compo_3')
-                ]
-            ),
-            ComponentContainerBase(
-                cid='container_4',
-                node_list=[
-                    ComponentBase(cid='compo_4')
-                ]
-            ),
-        ]
-    )
+        root_node = ComponentContainerBase(
+            cid='root_node',
+            node_list=[
+                ComponentContainerBase(
+                    cid='container_1',
+                    node_list=[
+                        ComponentBase(cid='compo_1')
+                    ]
+                ),
+                ComponentContainerBase(
+                    cid='container_2',
+                    node_list=[
+                        ComponentBase(cid='compo_2')
+                    ]
+                ),
+                ComponentContainerBase(
+                    cid='container_3',
+                    node_list=[
+                        ComponentBase(cid='compo_3')
+                    ]
+                ),
+                ComponentContainerBase(
+                    cid='container_4',
+                    node_list=[
+                        ComponentBase(cid='compo_4')
+                    ]
+                ),
+            ]
+        )
 
-    page = Page(None, pyramid_req)
+    page = MyPage(None, pyramid_req)
 
     page.handle_transaction()
 
@@ -679,3 +680,102 @@ def test_page_init_transaction_handling(pyramid_req, another_route):
     pyramid_req.params = {'tid': page_tid}
     page_reload = Page(None, pyramid_req)
     assert page_reload.transaction.tid == page.transaction.tid
+
+
+def test_page_call_ajax(pyramid_req):
+    page = Page(None, pyramid_req)
+
+    # a page without _the_ root node will fail.
+    with pytest.raises(AttributeError) as excinfo:
+        page()
+    assert str(excinfo.value) == "'Page' object has no attribute 'root_node'"
+
+    # so add it:
+    page.root_node = ComponentContainerBase
+
+    # but a request with enabled xhr fails also until the "q" param is given
+    page.request.is_xhr = True
+    with pytest.raises(KeyError):
+        page()
+
+    # so set it:
+    page.page_request.params = {"q": []}
+    response = page()
+
+    # will result in text/javascript content type
+    assert response.content_type == 'text/javascript'
+
+
+def test_page_call_html(pyramid_req):
+    page = Page(None, pyramid_req)
+    page.root_node = ComponentContainerBase
+
+    response = page()
+
+    # we excpect a html page
+    assert response.content_type == 'text/html'
+
+    # with an element with the id root_node
+    assert '<div id="root_node"' in response.text
+
+    # and also as epflid
+    assert 'epflid="root_node"' in response.text
+
+
+def test_page_call_with_prevent_transaction_loss_html(pyramid_req):
+    # first create a default setup: a page with a root node and a valid transaction
+    page = Page(None, pyramid_req)
+    page.root_node = ComponentContainerBase
+    page.handle_transaction()
+
+    original_tid = page.transaction.tid
+    # thats what we want and how it should be
+    assert '__initialized_components__' in page.transaction
+    assert 'root_node' in page.transaction['__initialized_components__']
+
+    # a transaction can be lost (for example) by reaching the timeout setting of the transaction store
+    # we simulate this deleting the memory storage and the transaction cache via _data
+    page.request.registry.transaction_memory = {}
+    page.transaction._data = {}
+
+    # now there are no __initialized_components__ in it any more
+    assert '__initialized_components__' not in page.transaction
+
+    # calling the page will call prevent_transaction_loss which should add the __initialized_components__ again
+    page()
+
+    assert '__initialized_components__' in page.transaction
+    assert 'root_node' in page.transaction['__initialized_components__']
+
+    # also note: this is not a _new_ transaction object - the tid is the same as before
+    # but the data will be resetted to the initial state
+    assert original_tid == page.transaction.tid
+
+
+def test_page_call_with_prevent_transaction_loss_ajax(pyramid_req):
+    # first create a default setup: a page with a root node and a valid transaction
+    page = Page(None, pyramid_req)
+    page.root_node = ComponentContainerBase
+    page.handle_transaction()
+
+    # thats what we want and how it should be
+    assert '__initialized_components__' in page.transaction
+    assert 'root_node' in page.transaction['__initialized_components__']
+
+    # a transaction can be lost (for example) by reaching the timeout setting of the transaction store
+    # we simulate this deleting the memory storage and the transaction cache via _data
+    page.request.registry.transaction_memory = {}
+    page.transaction._data = {}
+
+    # now there are no __initialized_components__ in it any more
+    assert '__initialized_components__' not in page.transaction
+
+    # setting up a valid ajax request
+    page.request.is_xhr = True
+    page.page_request.params = {"q": []}
+
+    # now calling the page will force a location.reload() on the browser
+    result = page()
+    assert result.text == 'window.location.reload();'
+
+    # this will then reload the page which is tested in the test above and will yield to a new valid transaction
