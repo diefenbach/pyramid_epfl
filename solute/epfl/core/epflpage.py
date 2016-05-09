@@ -555,7 +555,11 @@ class Page(object):
         Displays a simple alert box to the user.
         typ = "info" | "ok" | "error" | "alert" | "warning" | "success"
         """
-        js = "epfl.show_message(%s)" % (json.encode({'msg': msg, 'typ': typ, 'fading': fading}))
+        js = "epfl.show_message({{\"msg\":{msg},\"typ\":{typ},\"fading\":{fading}}})".format(
+            msg=json.encode(msg),
+            typ=json.encode(typ),
+            fading=json.encode(fading),
+        )
         self.add_js_response(js)
 
     def get_names(self, name, only_fresh_names=False):
