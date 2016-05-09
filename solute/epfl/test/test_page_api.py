@@ -815,3 +815,72 @@ def test_setup_model(page):
     assert isinstance(page.model, dict)
     assert 'foo' in page.model
     assert isinstance(page.model['foo'], MyModel)
+
+
+@pytest.mark.parametrize(
+    'function_name, kwargs, snippet_in_response',
+    [
+        ('jump_extern',
+         {'target_url': 'http://www.billiger.de'},
+         'epfl.jump_extern(\'http://www.billiger.de\', \'_blank\')'),
+        ('jump_extern',
+         {'target_url': 'http://www.billiger.de', 'target': 'some_frame'},
+         'epfl.jump_extern(\'http://www.billiger.de\', \'some_frame\')'),
+        ('go_next',
+         {'route': None, 'target_url': 'http://www.billiger.de'},
+         'epfl.go_next(\'http://www.billiger.de\')'),
+        # failing
+        # ('go_next',
+        #  {'route': 'dummy_route', 'target_url': 'http://www.billiger.de'},
+        #  'epfl.go_next(\'/\')'),
+        ('jump',
+         {'route': 'dummy_route'},
+         'epfl.jump(\'/\', 0, "")'),
+        ('jump',
+         {'route': 'dummy_route', 'wait': 10},
+         'epfl.jump(\'/\', 10, "")'),
+        ('jump',
+         {'route': 'dummy_route', 'wait': 10, 'confirmation_msg': 'Sure?'},
+         'epfl.jump(\'/\', 10, "Sure?")'),
+        ('reload',
+         {},
+         'epfl.reload_page();'),
+        ('show_message',
+         {'msg': 'Foobar'},
+         'epfl.show_message({"msg":"Foobar","typ":null,"fading":false});'),
+        ('show_message',
+         {'msg': 'Foobar', 'typ': 'info'},
+         'epfl.show_message({"msg":"Foobar","typ":"info","fading":false});'),
+        ('show_message',
+         {'msg': 'Foobar', 'typ': 'error', 'fading': True},
+         'epfl.show_message({"msg":"Foobar","typ":"error","fading":true});'),
+        ('show_fading_message',
+         {'msg': 'FadingFoobar', 'typ': 'info'},
+         'epfl.show_message({"msg":"FadingFoobar","typ":"info","fading":true});'),
+        ('prevent_page_leave',
+         {},
+         'epfl.prevent_page_leave(true,null);'),
+        ('prevent_page_leave',
+         {'prevent_leave': False},
+         'epfl.prevent_page_leave(false,null);'),
+        ('prevent_page_leave',
+         {'message': 'Foobar'},
+         'epfl.prevent_page_leave(true,"Foobar");'),
+    ]
+)
+def test_js_helper_methods(pyramid_req, function_name, kwargs, snippet_in_response):
+    """ test the functions with their parameters which use add_js_response add result. """
+    page = Page(None, pyramid_req)
+    page.root_node = ComponentContainerBase
+    page.handle_transaction()
+
+    func = getattr(page, function_name)
+    func(**kwargs)
+    response = page()
+
+    assert snippet_in_response in response.text
+
+
+def test_add_js_response(pyramid_req):
+    # XXX: add test for the tuple parameter variant, if relevant
+    pass
