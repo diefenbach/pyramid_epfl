@@ -18,14 +18,6 @@ def pytest_configure(config):
         'markers', 'transaction_api: Transaction specific tests ensuring functionality.')
 
 
-def pytest_addoption(parser):
-    parser.addoption(
-        "--runslow",
-        action="store_true",
-        help="Run tests marked as slow (mostly performance related tests)."
-    )
-
-
 def pytest_collection_modifyitems(items):
     for item in items:
         if item.nodeid.startswith("solute/epfl/test/components/"):

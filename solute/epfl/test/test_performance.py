@@ -12,8 +12,7 @@ SelectableList performance on Produktdaten page points toward implementation err
 
 
 pytestmark = [
-    pytest.mark.skipif(not pytest.config.getoption("--runslow"), reason='slow test'),
-    pytest.mark.performance
+    pytest.mark.slow
 ]
 
 
