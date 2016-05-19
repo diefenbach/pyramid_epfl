@@ -10,7 +10,7 @@ Object.defineProperty(epfl.TextEditor.prototype, 'form_element', {
     }
 });
 
-epfl.TextEditor.prototype.custom_handle_change = function(event) {
+epfl.TextEditor.prototype.custom_handle_change_ckeditor = function(event) {
     // custom handler needed, cause the value is not just $elm.val()
     var value =  event.editor.getData();
     this.handle_change(event, value);
@@ -27,6 +27,5 @@ epfl.TextEditor.prototype.after_response = function(data) {
     	customConfig: ed_config,
     	forcePasteAsPlainText: clean_paste
     });
-
-    editor.on('change', this.custom_handle_change.bind(this));
+    editor.on('change', this.custom_handle_change_ckeditor.bind(this));
 };
