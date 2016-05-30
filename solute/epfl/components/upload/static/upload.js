@@ -301,12 +301,24 @@ epfl.Upload.prototype.extract_file_data = function (files, callback) {
                 img.src = this.result;
 
                 var imageLoaded = function (error) {
+
+                    var name = file.name;
+                    var type = file.type.split("/")[1];
+                    if (name === undefined) {
+                        name = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                            var r = Math.random() * 16 | 0,
+                                v = c == 'x' ? r : (r & 0x3 | 0x8);
+                            return v.toString(16);
+                        });
+                        name += "." + type;
+                    }
+
                     file_data.push({
-                        name: file.name,
+                        name: name,
                         reader_result: that.result,
                         file_size: file.size,
-                        file_name: file.name,
-                        file_type: file.name.split('.').pop(),
+                        file_name: name,
+                        file_type: type,
                         file_is_img: !error,
                         file_img_width: error ? null : img.width,
                         file_img_height: error ? null : img.height,
