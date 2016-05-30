@@ -305,6 +305,9 @@ epfl.Upload.prototype.extract_file_data = function (files, callback) {
                     var name = file.name;
                     var type = file.type.split("/")[1];
                     if (name === undefined) {
+                        // copied from
+                        // http://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript
+                        // seems to be the correct way to generate uuid in javascript
                         name = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
                             var r = Math.random() * 16 | 0,
                                 v = c == 'x' ? r : (r & 0x3 | 0x8);
