@@ -582,7 +582,12 @@ class Page(object):
                     sub_name = compo.asset_spec, sub_name
                 if sub_name in getattr(self, 'bundled_names', []):
                     continue
-                static_url = epflutil.StaticUrlFactory.create_static_url(self, sub_name[1], sub_name[0])
+                ## support external urls
+                if sub_name[1].startswith('http://') or sub_name[1].startswith('https://'):
+                    static_url = sub_name[1]
+                else:
+                    static_url = epflutil.StaticUrlFactory.create_static_url(self, sub_name[1], sub_name[0])
+
                 if static_url not in names:
                     names.append(static_url)
 
