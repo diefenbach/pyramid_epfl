@@ -583,7 +583,7 @@ class Page(object):
                 if sub_name in getattr(self, 'bundled_names', []):
                     continue
                 ## support external urls
-                if sub_name[1].startswith('http://') or sub_name[1].startswith('https://'):
+                if sub_name[1].startswith('//') or sub_name[1].startswith('http://') or sub_name[1].startswith('https://'):
                     static_url = sub_name[1]
                 else:
                     static_url = epflutil.StaticUrlFactory.create_static_url(self, sub_name[1], sub_name[0])
